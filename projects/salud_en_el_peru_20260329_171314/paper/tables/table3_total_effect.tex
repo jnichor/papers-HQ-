@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering
+\caption{Total Insurance Association with OOP Share by Quintile}
+\label{tab:total_effect}
+\small
+\begin{tabular}{llccccc}
+\toprule
+Insurance & Quintile & $\tau=0.1$ & $\tau=0.25$ & $\tau=0.5$ & $\tau=0.75$ & $\tau=0.9$ \\
+\midrule
+  SIS & Q1 & +0.0000 & +0.0000 & -0.0000 & +0.0013 & +0.0047 \\
+   & Q2 & -0.0000 & -0.0000 & -0.0003 & -0.0019 & -0.0023 \\
+   & Q3 & -0.0000*** & -0.0000*** & -0.0010*** & -0.0023 & -0.0100 \\
+   & Q4 & -0.0000*** & -0.0000 & -0.0022*** & -0.0052*** & -0.0060 \\
+   & Q5 & -0.0000*** & -0.0010*** & -0.0017** & -0.0044 & -0.0147* \\
+\midrule
+  EsSalud & Q1 & +0.0000 & +0.0000 & +0.0005 & +0.0002 & +0.9183** \\
+   & Q2 & -0.0000 & -0.0000 & -0.0003 & -0.0074 & +0.0239 \\
+   & Q3 & -0.0000* & -0.0000 & -0.0031** & -0.0036 & -0.0181 \\
+   & Q4 & -0.0000** & -0.0000 & -0.0041*** & -0.0126 & -0.0116 \\
+   & Q5 & -0.0000* & -0.0010** & -0.0041*** & -0.0079 & -0.0283 \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Notes:} Total association = base coefficient + interaction.
+Cluster-bootstrapped SEs (200 reps). *** p$<$0.01, ** p$<$0.05, * p$<$0.10.
+\end{minipage}
+\end{table}

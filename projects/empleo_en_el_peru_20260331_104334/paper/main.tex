@@ -1,0 +1,80 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage{threeparttable}
+
+\onehalfspacing
+
+\title{COVID-19 and the Formality Recovery Path in Peru:\\
+A Worker-Level Panel DiD Using Sectoral Teleworkability}
+
+\author{
+  Research Pipeline Output\\
+  \textit{ENAHO Panel Analysis}
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We examine the effect of COVID-19 on labor informality in Peru using a difference-in-differences design that exploits differential occupational exposure via the \citet{dingel2020} teleworkability index. Using five waves of the ENAHO employment panel (2020--2024, 262,733 observations), our continuous treatment specification finds that a one-unit increase in teleworkability is associated with a 19--22 pp smaller informality increase ($p < 0.05$ in 2022 and 2024; $p < 0.10$ in all post-2020 years). The binary specification yields a differential of approximately 9 pp for contact-intensive workers, though this is not statistically significant at the 5\% level with ISCO-clustered standard errors ($p = 0.153$). The differential showed zero attenuation through 2024 (Wald test $p = 0.937$). Survey weights are winsorized and standard errors are clustered at the ISCO-08 2-digit occupation level (40 clusters). The teleworkability index is pre-determined and panel attrition is not differential by treatment ($p = 0.163$). The effect is concentrated in the loss of employer-provided social security rather than firm-size changes. A key limitation is the absence of pre-2020 data to test parallel trends.
+
+\medskip
+\noindent \textbf{Keywords:} COVID-19, informality, scarring, difference-in-differences, teleworkability, Peru
+
+\noindent \textbf{JEL Codes:} J46, O17, J21, I18
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+
+\input{sections/01_introduction}
+\input{sections/02_literature}
+\input{sections/03_data}
+\input{sections/04_empirical_strategy}
+\input{sections/05_results}
+\input{sections/06_robustness}
+\input{sections/07_conclusion}
+
+\clearpage
+\section*{Figures}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig1_raw_trends.png}
+\caption{Raw Informality Trends by Teleworkability (2020--2024)}
+\label{fig:raw_trends}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/fig2_event_study.png}
+\caption{DiD Event Study: Differential Informality for Contact-Intensive Workers}
+\label{fig:event_study}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/fig3_heterogeneous.png}
+\caption{Heterogeneous DiD Effects by Gender, Region, and Age Group}
+\label{fig:heterogeneous}
+\end{figure}
+
+\clearpage
+\bibliographystyle{apalike}
+\bibliography{references}
+
+\end{document}

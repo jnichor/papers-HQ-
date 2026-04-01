@@ -1,0 +1,50 @@
+\begin{table}[htbp]
+\centering
+\caption{Robustness Checks}
+\label{tab:robustness}
+\scriptsize
+\begin{tabular}{llrrrr}
+\toprule
+Check & Outcome & Coef. & SE & p-value & N \\
+\midrule
+\multicolumn{6}{l}{\textit{(a) OLS Comparison}} \\
+  a1-Weighted-FullControls & oop\_share & $-$0.0006 & 0.0019 & 0.772 & 33,691 \\
+  a2-Weighted-NoRegionFE & oop\_share & $-$0.0003 & 0.0020 & 0.874 & 33,691 \\
+  a3-Weighted-Bivariate & oop\_share & 0.0047*** & 0.0017 & 0.006 & 33,691 \\
+  a4-Unweighted-FullControls & oop\_share & 0.0013 & 0.0012 & 0.291 & 33,691 \\
+\multicolumn{6}{l}{\textit{(b) Alternative Samples}} \\
+  b1-UrbanOnly & oop\_share & $-$0.0012 & 0.0021 & 0.577 & 22,031 \\
+  b2-RuralOnly & oop\_share & 0.0056** & 0.0023 & 0.016 & 11,660 \\
+  b3-WorkingAge & oop\_share & $-$0.0003 & 0.0022 & 0.907 & 25,124 \\
+  b4-PositiveOOP & oop\_share & $-$0.0007 & 0.0030 & 0.802 & 18,843 \\
+\multicolumn{6}{l}{\textit{(c) CHE Thresholds}} \\
+  c-CHE10pct & che\_10pct & $-$0.0049 & 0.0041 & 0.231 & 33,691 \\
+  c-CHE25pct & che\_25pct & $-$0.0014 & 0.0024 & 0.551 & 33,691 \\
+  c-CHE40pct & che\_40pct & 0.0008 & 0.0019 & 0.690 & 33,691 \\
+\multicolumn{6}{l}{\textit{(d) Placebo/Falsification}} \\
+  d1-RandomPlacebo & oop\_share & $-$0.0001 & 0.0016 & 0.928 & 33,691 \\
+  d2-EsSalud-vs-Unins & oop\_share & $-$0.0081 & 0.0081 & 0.322 & 1,813 \\
+\multicolumn{6}{l}{\textit{(e) Control Sensitivity}} \\
+  e1-NoControls & oop\_share & 0.0047*** & 0.0017 & 0.006 & 33,691 \\
+  e2-DemoOnly & oop\_share & 0.0036* & 0.0018 & 0.053 & 33,691 \\
+  e3-Demo+HH & oop\_share & $-$0.0004 & 0.0019 & 0.844 & 33,691 \\
+  e4-Full-NoRegion & oop\_share & $-$0.0003 & 0.0020 & 0.874 & 33,691 \\
+  e5-Full+RegionFE & oop\_share & $-$0.0006 & 0.0019 & 0.772 & 33,691 \\
+\multicolumn{6}{l}{\textit{(f) Alt Consumption Floors}} \\
+  f1-Floor-1pct & oop\_share & $-$0.0006 & 0.0019 & 0.756 & 33,691 \\
+  f2-Floor-10pct & oop\_share & $-$0.0005 & 0.0019 & 0.802 & 33,691 \\
+\multicolumn{6}{l}{\textit{(g) x12 Annualization}} \\
+  g1-Annualize-x12 & oop\_share\_x12 & $-$0.0005 & 0.0019 & 0.813 & 33,691 \\
+\multicolumn{6}{l}{\textit{(h) No Cap}} \\
+  h1-NoCap & oop\_share & 0.0064 & 0.0868 & 0.941 & 33,691 \\
+\multicolumn{6}{l}{\textit{(i) QR $\tau$=0.90}} \\
+  i1-QR90-FullSample & oop\_share & 0.0018 & 0.0015 & 0.218 & 33,691 \\
+  i2-QR90-UrbanOnly & oop\_share & $-$0.0021 & 0.0016 & 0.195 & 22,031 \\
+  i3-QR90-RuralOnly & oop\_share & 0.0161*** & 0.0028 & 0.000 & 11,660 \\
+\bottomrule
+\end{tabular}
+\begin{minipage}{\textwidth}\footnotesize
+\textit{Notes:} Panels (a)--(h): survey-weighted OLS with cluster-robust SE (CONGLOME).
+Panel (i): Koenker--Bassett sandwich SE. *** p$<$0.01, ** p$<$0.05, * p$<$0.10.
+\end{minipage}
+\end{table}

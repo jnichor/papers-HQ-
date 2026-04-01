@@ -1,0 +1,50 @@
+\section{Robustness}\label{sec:robustness}
+
+We subject our main findings to 25 robustness checks organized into nine categories. Table~\ref{tab:robustness} reports the SIS coefficient from survey-weighted OLS (or quantile regression where indicated) across these specifications. We emphasize that no familywise multiple testing correction has been applied; the number of significant results (4/25 at $\alpha = 0.05$) is within the range expected by chance alone, and individual significance should be interpreted accordingly.
+
+\input{tables/table4_robustness}
+
+\subsection{OLS Comparison (Panel a)}
+
+We estimate four OLS variants: weighted with full controls and region FE (baseline), weighted without region FE, weighted bivariate, and unweighted with full controls. The bivariate specification (a3) yields a significant positive SIS coefficient ($0.0047$, $p < 0.01$), which disappears with controls (a1: $-0.0006$, $p = 0.77$). This pattern reflects confounding by socioeconomic status: SIS enrollees are poorer, and poorer households spend less absolutely but more as a share when they do spend. The unweighted estimate (a4) is larger than the weighted estimate ($0.0013$ vs.\ $-0.0006$), suggesting that the rural oversample in ENAHO shifts the unweighted distribution, consistent with the design-weighted concern raised in Section~\ref{sec:strategy}.
+
+\subsection{Alternative Samples (Panel b)}
+
+Four subsamples: urban ($N = 22{,}031$), rural ($N = 11{,}660$), working-age heads 25--65 ($N = 25{,}124$), and positive-OOP ($N = 18{,}843$). The urban subsample yields insignificant results ($-0.0012$), while the rural subsample shows a significant positive association ($0.0056$, $p = 0.016$). This divergence is consistent with the different insurance landscapes: in rural areas, SIS is nearly universal but facility access is limited, so insured households that do seek care incur transport and medication costs. The positive-OOP subsample ($-0.0007$, insignificant) addresses the intensive margin but is a selected sample, as noted in Section~\ref{sec:strategy}.
+
+\subsection{CHE Thresholds (Panel c)}
+
+Binary CHE regressions at 10\%, 25\%, and 40\% thresholds yield uniformly insignificant SIS coefficients ($p > 0.20$). This null result at the mean is consistent with the quantile regression finding that the SIS association is concentrated in the tails.
+
+\subsection{Placebo and Falsification (Panel d)}
+
+Random treatment reassignment produces a near-zero, insignificant coefficient ($-0.0001$, $p = 0.93$). We acknowledge that this placebo is weak: random noise regressed on correlated covariates in a large, well-controlled regression is expected to yield null results. A more informative falsification---testing whether insurance predicts non-health expenditure shares at the same quantiles---would better rule out residual confounding and is a direction for future work.
+
+\subsection{Control Sensitivity (Panel e)}
+
+Progressive control addition: the SIS coefficient transitions from significantly positive (bivariate: $0.0047$) to insignificant with household-level controls ($-0.0004$, $p = 0.84$). Stability across the last three specifications indicates that the null OLS result is robust to region FE inclusion and that confounding is driven by household composition.
+
+\subsection{Alternative Consumption Floors (Panel f)}
+
+Replacing the 5th-percentile floor with the 1st or 10th percentile produces identical SIS coefficients ($-0.0006$ and $-0.0005$), confirming insensitivity to floor choice.
+
+\subsection{Annualization and Capping (Panels g--h)}
+
+Using $\times 12$ instead of $\times 13$ yields near-identical estimates ($-0.0005$, $p = 0.81$). The 8\% annualization difference is small relative to residual variance. Removing the cap produces a large but insignificant coefficient ($0.0064$, $\text{SE} = 0.087$), reflecting extreme observations that inflate the standard error.
+
+\subsection{Quantile Regression at $\tau = 0.90$ (Panel i)}
+
+At $\tau = 0.90$ with Koenker--Bassett sandwich SEs: the full-sample SIS estimate is insignificant ($0.0018$, $p = 0.22$). The rural subsample shows a strongly significant positive association ($0.0161$, $p < 0.001$), while urban is insignificant and negative ($-0.0021$). This urban--rural divergence at the upper tail reinforces the finding that the distributional profile of OOP burden differs fundamentally between urban and rural Peru and cautions against pooled-sample interpretation.
+
+\subsection{Summary of Robustness}
+
+Across 25 specifications, 4 yield significant SIS coefficients at the 5\% level (bivariate OLS, no-controls OLS, rural-only OLS, and rural-only QR at $\tau = 0.90$). Without multiple testing correction, we cannot rule out that some of these reflect false discoveries. The remaining 21 specifications produce insignificant point estimates, 16 of which are negative. The overall pattern---no significant average association but emerging negative associations at upper quantiles for higher quintiles---is consistent across the battery of checks, though the quantitative magnitudes at $\tau = 0.90$ depend on the bootstrap precision caveat.
+
+We did not estimate a fractional logit benchmark \citep{Papke1996} or censored quantile regression \citep{Powell1986} in the current version. Both would strengthen the analysis: the former addresses the bounded-outcome concern with OLS, and the latter addresses the zero-mass degeneracy at lower quantiles. These extensions are noted as priorities for a subsequent revision.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/fig5_robustness_coefplot.pdf}
+    \caption{Robustness coefficient plot: SIS coefficient across 25 specifications with 95\% confidence intervals. The horizontal dashed line at zero indicates the null.}
+    \label{fig:robustness}
+\end{figure}

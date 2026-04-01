@@ -1,0 +1,126 @@
+{
+  "project": "data_first_20260401_150259",
+  "created_at": "2026-04-01T15:02:59.677148",
+  "current_stage": 0,
+  "stages": {
+    "stage1": {
+      "status": "completed",
+      "topic": "Oil Price Windfalls and Autocratic Regime Survival",
+      "path": "C",
+      "output_file": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_150259\\stage1_discovery.md",
+      "completed_at": "2026-04-01T15:06:47.239214",
+      "data_path": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_150259\\data\\external\\Ross-Mahdavi Oil and Gas 1932-2014.tab",
+      "data_profile": {
+        "rows": 15521,
+        "cols": 41,
+        "columns": [
+          "cty_name",
+          "iso3numeric",
+          "id",
+          "year",
+          "eiacty",
+          "oil_prod32_14",
+          "oil_price_2000",
+          "oil_price_nom",
+          "oil_value_nom",
+          "oil_value_2000",
+          "oil_value_2014",
+          "gas_prod55_14",
+          "gas_price_2000_mboe",
+          "gas_price_2000",
+          "gas_price_nom",
+          "gas_value_nom",
+          "gas_value_2000",
+          "gas_value_2014",
+          "oil_gas_value_nom",
+          "oil_gas_value_2000",
+          "oil_gas_value_2014",
+          "oil_gas_valuePOP_nom",
+          "oil_gas_valuePOP_2000",
+          "oil_gas_valuePOP_2014",
+          "oil_exports",
+          "net_oil_exports",
+          "net_oil_exports_mt",
+          "net_oil_exports_value",
+          "net_oil_exports_valuePOP",
+          "gas_exports",
+          "net_gas_exports_bcf",
+          "net_gas_exports_mboe",
+          "net_gas_exports_value",
+          "net_gas_exports_valuePOP",
+          "net_oil_gas_exports_valuePOP",
+          "population",
+          "pop_maddison",
+          "sovereign",
+          "mult_nom_2000",
+          "mult_nom_2014",
+          "mult_2000_2014"
+        ],
+        "structure": "panel",
+        "panel_flag": true,
+        "panel_details": {
+          "format": "long",
+          "id_column": "id",
+          "time_column": "year",
+          "n_unique_ids": 181,
+          "n_time_periods": 83,
+          "time_values": [
+            1932,
+            1933,
+            1934,
+            1935,
+            1936,
+            1937,
+            1938,
+            1939,
+            1940,
+            1941,
+            1942,
+            1943,
+            1944,
+            1945,
+            1946,
+            1947,
+            1948,
+            1949,
+            1950,
+            1951
+          ],
+          "pct_ids_multiple_periods": 100.0,
+          "avg_obs_per_id": 85.8
+        },
+        "id_cols": [
+          "id"
+        ],
+        "time_cols": [
+          "year"
+        ],
+        "wide_panel": null
+      },
+      "recommended_data_sources": [
+        {
+          "name": "Oil, Gas and Political Institutions (Ross-Mahdavi 1932-2014)",
+          "provider": "Harvard Dataverse",
+          "url": "https://doi.org/10.7910/DVN/ZTPW0Y",
+          "description": "",
+          "method": "Panel IV",
+          "area": "political economy"
+        },
+        {
+          "name": "Household Plot Soil Rainfall Price Panel (Agricultural)",
+          "provider": "Harvard Dataverse",
+          "url": "https://doi.org/10.7910/DVN/NXILME",
+          "description": "",
+          "method": "Panel / RCT",
+          "area": "agriculture"
+        }
+      ]
+    },
+    "stage1_5": {
+      "status": "skipped",
+      "reason": "Path B or data already profiled"
+    }
+  },
+  "path_c": true,
+  "updated_at": "2026-04-01T15:06:47.249887"
+}

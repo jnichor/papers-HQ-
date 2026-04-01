@@ -1,0 +1,904 @@
+{
+  "project": "data_first_20260401_124533",
+  "created_at": "2026-04-01T12:45:33.842248",
+  "current_stage": 7,
+  "stages": {
+    "stage1": {
+      "status": "completed",
+      "topic": "Commodity Price Shocks and the Sequencing of Civil Liberty Erosion",
+      "path": "C",
+      "output_file": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\stage1_discovery.md",
+      "completed_at": "2026-04-01T12:48:22.202391",
+      "data_path": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\data\\external\\CLD_2.10.xlsx",
+      "data_profile": {
+        "rows": 9292,
+        "cols": 11,
+        "columns": [
+          "Country",
+          "COW id",
+          "V-Dem id",
+          "ID",
+          "IDN",
+          "YEAR",
+          "freexp",
+          "freass",
+          "frerel",
+          "fremov",
+          "fairtrial"
+        ],
+        "structure": "panel",
+        "panel_flag": true,
+        "panel_details": {
+          "format": "long",
+          "id_column": "COW id",
+          "time_column": "YEAR",
+          "n_unique_ids": 200,
+          "n_time_periods": 51,
+          "time_values": [
+            1975,
+            1976,
+            1977,
+            1978,
+            1979,
+            1980,
+            1981,
+            1982,
+            1983,
+            1984,
+            1985,
+            1986,
+            1987,
+            1988,
+            1989,
+            1990,
+            1991,
+            1992,
+            1993,
+            1994
+          ],
+          "pct_ids_multiple_periods": 100.0,
+          "avg_obs_per_id": 46.5
+        },
+        "id_cols": [
+          "COW id",
+          "V-Dem id",
+          "ID",
+          "IDN"
+        ],
+        "time_cols": [
+          "YEAR"
+        ],
+        "wide_panel": null
+      },
+      "recommended_data_sources": [
+        {
+          "name": "Lexical Index of Electoral Democracy (LIED) dataset v6.0",
+          "provider": "Harvard Dataverse",
+          "url": "https://doi.org/10.7910/DVN/WPKNIT",
+          "description": "Updated to 2020, extended with new units (overseas colonies), and new variables (political liberties, LIED+, electoral turnover, modes of democratic transition, modes of democratic breakdown)",
+          "published": "2026-04-01",
+          "source_api": "dataverse"
+        },
+        {
+          "name": "Civil Liberty Dataset",
+          "provider": "Harvard Dataverse",
+          "url": "https://doi.org/10.7910/DVN/0TKJWX",
+          "description": "Dataset on respect for civil liberties. It covers all independent countries 1975 until today and includes five indicators: Freedom of opinion and expression; Freedom of assembly and association; Freedom of thought, conscience, and religion; Freedom of movement and residence; and Fair trial. Hand-cod",
+          "published": "2026-04-01",
+          "source_api": "dataverse"
+        }
+      ]
+    },
+    "stage1_5": {
+      "status": "skipped",
+      "reason": "Path B or data already profiled"
+    },
+    "stage2": {
+      "status": "completed",
+      "output_file": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\stage2_ideation.md",
+      "completed_at": "2026-04-01T12:52:33.438436",
+      "top_ideas": [
+        {
+          "rank": 1,
+          "title": "The Domino Sequence: Commodity Price Collapses and the Predictable Ordering of Civil Liberty Erosion",
+          "research_question": "When a commodity price collapse hits an export-dependent country, which civil liberty erodes first — and does this sequence follow a predictable political-economic logic across 200 countries?",
+          "method": "TWFE Event Study + Markov Transition Matrices (Panel VAR robustness)",
+          "tier": 1,
+          "identifying_variation": "Global commodity price index weighted by predetermined country export shares (Gruss-Kebhaj CTOT shock)",
+          "sub_topic": "Sequencing dynamics",
+          "data_sources": [
+            "V-Dem (freexp, freass, frerel, fremov, fairtrial)",
+            "Gruss-Kebhaj Commodity Terms of Trade dataset (World Bank)",
+            "UN Comtrade for export share construction"
+          ],
+          "novelty": 5,
+          "feasibility": 4,
+          "impact": 5,
+          "total_score": 5.3,
+          "pitch": "No paper has studied the ordering of civil liberty deterioration under commodity shocks using causal identification. Using V-Dem's unique five-dimensional civil liberty data and exogenous CTOT shocks, this paper answers 'which freedom falls first?' — reframing the resource curse from a scalar outcome to a temporal sequence with early-warning implications for human rights monitors.",
+          "first_experiment": "Week 1: Merge V-Dem with Gruss-Kebhaj CTOT data; identify ~250 country-level bust episodes (CTOT > 1.5 SD decline for ≥2 years); estimate TWFE event study for all 5 civil liberties and plot impulse response functions with pre-trend tests to verify identification."
+        },
+        {
+          "rank": 2,
+          "title": "Protest Preemption: Why Freedom of Assembly Is Targeted First When Commodity Revenues Fall",
+          "research_question": "Do governments strategically target freedom of assembly before other civil liberties following commodity price shocks because preempting collective action is the most cost-effective response to anticipated fiscal protests?",
+          "method": "Panel VAR (Holtz-Eakin-Newey-Rosen) with CTOT instrument + Mediation via protest incidence",
+          "tier": 2,
+          "identifying_variation": "CTOT shock instruments for fiscal stress; protest data mediates the assembly-first mechanism",
+          "sub_topic": "Strategic repression mechanisms",
+          "data_sources": [
+            "V-Dem (all 5 liberties + civil society capacity index)",
+            "Gruss-Kebhaj CTOT dataset",
+            "ACLED protest event database or Mass Mobilization Project"
+          ],
+          "novelty": 5,
+          "feasibility": 4,
+          "impact": 5,
+          "total_score": 5.3,
+          "pitch": "This paper provides the first causal test of why, not just whether, governments sequence repression after commodity shocks. Using panel VAR with an external instrument and protest-incidence mediation, it shows that assembly is preemptively restricted before other liberties specifically in countries with higher protest capacity — turning assembly restrictions into a leading indicator of broader democratic backsliding.",
+          "first_experiment": "Week 1: Download ACLED country-year protest event counts (or Mass Mobilization Project); merge with V-Dem and CTOT data; run reduced-form TWFE regressions of freass on CTOT shock and compare lag structure to freexp/fremov/frerel to establish the raw timing differential before formal panel VAR estimation."
+        },
+        {
+          "rank": 3,
+          "title": "The Ratchet Effect: Commodity Booms Don't Undo What Busts Destroy",
+          "research_question": "When commodity prices recover after a bust, do civil liberties restore symmetrically, or does repression exhibit a ratchet — easily installed during crises but resistant to reversal during recoveries?",
+          "method": "Asymmetric Event Study (TWFE) with bust and recovery episodes; joint symmetry test",
+          "tier": 1,
+          "identifying_variation": "Both bust and recovery events driven by exogenous global commodity price movements (CTOT); recovery identified conditional on prior exogenous bust",
+          "sub_topic": "Boom-bust asymmetry and restoration",
+          "data_sources": [
+            "V-Dem (all 5 liberties + judicial independence v2juncind)",
+            "Gruss-Kebhaj CTOT dataset"
+          ],
+          "novelty": 5,
+          "feasibility": 4,
+          "impact": 5,
+          "total_score": 5.3,
+          "pitch": "The ratchet hypothesis — that repression is easy to install but hard to remove — is widely theorized but never causally tested on disaggregated civil liberty data. Using ~50-80 bust-recovery pairs across 200 countries, this paper formally rejects or confirms symmetry for each civil liberty, with the finding that specific freedoms (likely assembly, expression) are permanently lost while others partially recover constituting a landmark result for democratic backsliding theory.",
+          "first_experiment": "Week 1: Using CTOT data, identify all bust episodes (>1.5 SD decline, ≥2 years) and their recovery dates (price returning above pre-bust level) within the 51-year panel; plot raw V-Dem liberty time series for a sample of 10-15 countries around bust-recovery pairs to visually inspect asymmetry before estimating the formal event study."
+        }
+      ]
+    },
+    "stage2_5": {
+      "status": "completed",
+      "action": "SELECT",
+      "completed_at": "2026-04-01T12:53:22.719197",
+      "selected_idea": {
+        "rank": 3,
+        "title": "The Ratchet Effect: Commodity Booms Don't Undo What Busts Destroy",
+        "research_question": "When commodity prices recover after a bust, do civil liberties restore symmetrically, or does repression exhibit a ratchet — easily installed during crises but resistant to reversal during recoveries?",
+        "method": "Asymmetric Event Study (TWFE) with bust and recovery episodes; joint symmetry test",
+        "tier": 1,
+        "identifying_variation": "Both bust and recovery events driven by exogenous global commodity price movements (CTOT); recovery identified conditional on prior exogenous bust",
+        "sub_topic": "Boom-bust asymmetry and restoration",
+        "data_sources": [
+          "V-Dem (all 5 liberties + judicial independence v2juncind)",
+          "Gruss-Kebhaj CTOT dataset"
+        ],
+        "novelty": 5,
+        "feasibility": 4,
+        "impact": 5,
+        "total_score": 5.3,
+        "pitch": "The ratchet hypothesis — that repression is easy to install but hard to remove — is widely theorized but never causally tested on disaggregated civil liberty data. Using ~50-80 bust-recovery pairs across 200 countries, this paper formally rejects or confirms symmetry for each civil liberty, with the finding that specific freedoms (likely assembly, expression) are permanently lost while others partially recover constituting a landmark result for democratic backsliding theory.",
+        "first_experiment": "Week 1: Using CTOT data, identify all bust episodes (>1.5 SD decline, ≥2 years) and their recovery dates (price returning above pre-bust level) within the 51-year panel; plot raw V-Dem liberty time series for a sample of 10-15 countries around bust-recovery pairs to visually inspect asymmetry before estimating the formal event study."
+      }
+    },
+    "stage3": {
+      "status": "completed",
+      "output_file": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\evaluation\\master.md",
+      "idea_file": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\evaluation\\idea.txt",
+      "result": {
+        "question_score": 7,
+        "identification_score": 7,
+        "data_score": 9,
+        "novelty_score": 7,
+        "impact_score": 8,
+        "threats_addressed_score": 9,
+        "composite_score": 7.7,
+        "top_threats": [
+          "OPEC member endogeneity partially violates small-country exogeneity assumption — exclude OPEC members as robustness",
+          "Pre-1985 V-Dem coding uncertainty for low-capacity states introduces measurement error in early bust episodes",
+          "Formal power below 0.8 for judicial independence dimension given lower cross-country variance"
+        ],
+        "verdict": "PROMISING",
+        "one_line_summary": "A genuinely novel ratchet-effect test strengthened by switching to Callaway-Sant'Anna, expanding the panel to 1980-2018, and formally addressing all three prior high-severity threats — now competitive for AEJ: Macroeconomics or JDE.",
+        "final_score": 7.7,
+        "status": "STALLED",
+        "iterations": 3,
+        "title": "The Ratchet Effect: Commodity Booms Don't Undo What Busts Destroy",
+        "refined_question": "When commodity prices recover after a bust, do civil liberties restore symmetrically, or does repression exhibit a ratchet — easily installed during crises but resistant to reversal during recoveries?",
+        "method": "Asymmetric Event Study (TWFE) with bust and recovery episodes; joint symmetry test",
+        "data_sources": [
+          "V-Dem (all 5 liberties + judicial independence v2juncind)",
+          "Gruss-Kebhaj CTOT dataset"
+        ]
+      },
+      "completed_at": "2026-04-01T13:06:58.633335"
+    },
+    "stage3_5_data": {
+      "use_external": true,
+      "manual_files": [
+        "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\data\\external\\dataset_2026-04-01T18_13_32.219913504Z_DEFAULT_INTEGRATION_IMF.RES_CTOT_5.0.1.csv"
+      ],
+      "merge_info": [
+        {
+          "source": "Gruss & Kebhaj — Commodity Terms of Trade (CTOT)",
+          "local_path": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\data\\external\\dataset_2026-04-01T18_13_32.219913504Z_DEFAULT_INTEGRATION_IMF.RES_CTOT_5.0.1.csv",
+          "merge_key": "ISO3 country code + year",
+          "merge_key_column": "UNKNOWN — same caveat as above; assumes CLD carries ISO3 or a crosswalkable country identifier + year",
+          "merge_level": "country-year",
+          "data_type": "panel",
+          "validation": {
+            "valid": true,
+            "details": "Could not verify overlap: Error tokenizing data. C error: Expected 1 fields in line 4, saw 2\n",
+            "n_rows": 4368,
+            "n_cols": 865,
+            "merge_key_found": true
+          }
+        }
+      ]
+    },
+    "stage3_5": {
+      "status": "completed",
+      "action": "APPROVE",
+      "data_selection": {
+        "choice": 2,
+        "use_external": true
+      },
+      "completed_at": "2026-04-01T13:14:45.242954",
+      "approved_strategy": {
+        "title": "The Ratchet Effect: Commodity Booms Don't Undo What Busts Destroy",
+        "method": "Asymmetric Event Study (TWFE) with bust and recovery episodes; joint symmetry test",
+        "design": "When commodity prices recover after a bust, do civil liberties restore symmetrically, or does repression exhibit a ratchet — easily installed during crises but resistant to reversal during recoveries?",
+        "data_sources": [
+          "CLD_2.10.xlsx",
+          "dataset_2026-04-01T18_13_32.219913504Z_DEFAULT_INTEGRATION_IMF.RES_CTOT_5.0.1.csv"
+        ],
+        "pre_analysis_plan": "",
+        "user_notes": "User provided 1 external dataset(s). Merge keys: Gruss & Kebhaj — Commodity Ter via ISO3 country code + year."
+      }
+    },
+    "stage3_7": {
+      "status": "completed",
+      "n_must": 36,
+      "n_should": 18,
+      "n_nice": 1,
+      "n_fatal_pitfalls": 0,
+      "fatal_pitfalls": [],
+      "domain_result": {
+        "code_requirements": [
+          {
+            "category": "estimation",
+            "requirement": "Baseline TWFE: regress civil-liberties index on country FE, year FE, and separate indicators/continuous measures for bust and recovery phases. Compute clustered SE at the country level (not the country-year level) to account for within-country serial correlation in both the outcome and the treatment.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Asymmetric specification: interact price-change measure with a bust dummy and a recovery dummy so each phase gets its own coefficient. The ratchet hypothesis predicts bust_coef < 0 and recovery_coef ≈ 0 (or abs(recovery_coef) << abs(bust_coef)).",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Joint symmetry Wald/F-test: H0: bust_coef + recovery_coef = 0. Report p-value and 95% CI for the difference. This is the paper's headline test — fail to include it and the paper is desk-rejected.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Event-study plots for both bust and recovery phases: estimate leads (t-3 to t-1) and lags (t+1 to t+5 or end-of-episode) separately and plot coefficients with 95% CI bands. Pre-trend coefficients must be jointly insignificant (pre-trends F-test reported).",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Staggered-treatment robustness: run Callaway-Sant'Anna (2021) or Sun-Abraham (2021) estimator because episodes begin in different years across countries. Standard TWFE with staggered timing can produce sign-reversed estimates if treatment effects are heterogeneous. Report both TWFE and the heterogeneity-robust estimator side-by-side.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Bacon-Goodman decomposition: quantify what fraction of the TWFE estimate comes from 'already-treated vs. not-yet-treated', 'treated vs. never-treated', and 'treated vs. timing' comparisons. Flag if the negative-weighting share exceeds 10%.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Wild cluster bootstrap p-values (Cameron-Gelbach-Miller or Roodman boottest): necessary if the number of unique country clusters is < 50. With 9 292 rows and 11 columns the panel is likely ~100-200 countries x ~30-50 years, so cluster count may be borderline. Compute both asymptotic and WCB p-values and report both.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Continuous treatment variant: replace binary bust/recovery indicators with the signed log-change in the commodity price index to test dose-response and avoid threshold-sensitivity bias.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Ordered-outcome robustness: if the civil-liberties index is ordinal (e.g., Freedom House 1-7 or V-Dem 0-1 bounded), run an ordered logit / beta regression alongside OLS-FE and verify sign/significance are preserved.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Heterogeneous treatment effects by initial repression level: split sample into 'already authoritarian' vs. 'hybrid/democratic' at episode onset and interact bust/recovery dummies with regime type. The ratchet should be stronger where institutions are weaker.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Placebo commodity assignment: randomly reassign commodity-exposure labels across countries 1 000 times and re-estimate; the true estimate should lie outside the 95th percentile of the placebo distribution.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Time-varying controls inclusion: add GDP per capita growth, conflict incidence (UCDP), trade openness, and political polity score as controls. Verify that adding controls does not substantially change the bust/recovery coefficients (coefficient stability is an identification argument here).",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Linear time trends by country: augment the baseline TWFE with country-specific linear trends to absorb slow-moving country divergence that could confound price shocks.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Multiple-episode handling: countries may experience more than one bust-recovery cycle. Code must decide explicitly — and justify — whether to (a) use the first episode only, (b) use all episodes with a 'clean window' restriction, or (c) include episode FE. The decision materially affects sample size and interpretation.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Conley spatial standard errors: commodity price shocks are correlated across commodity-linked neighbors. If geography data are available, add Conley (1999) SE as a robustness check on the clustered-SE results.",
+            "priority": "NICE",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Episode-definition transparency: document the exact algorithm for classifying bust vs. recovery. Specify: (1) price decline threshold (e.g., ≥15% peak-to-trough), (2) minimum episode length, (3) recovery completion criterion (return to pre-bust price level vs. price-change sign flip). Sensitivity analysis over threshold values ±5 pp is required.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Country-commodity exposure weights: if exposure is constructed (e.g., export share × commodity price), document the base year and source. Verify no look-ahead bias — exposure weights must be predetermined relative to price shocks.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Balanced vs. unbalanced panel declaration: explicitly test and report whether the panel is balanced. If unbalanced, check whether attrition is correlated with pre-period civil-liberties trends (attrition-on-outcome bias).",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Outcome variable source and interpolation: name the exact dataset (Freedom House Political Rights/Civil Liberties, V-Dem Liberal Democracy Index, CIRI, etc.). If any years are interpolated, flag them and exclude interpolated observations from the main sample; use them only in robustness.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Overlapping episode guard: if a recovery episode begins before the prior bust window closes (episode contamination), the code must detect and resolve this — either by truncating windows or dropping the observation from both samples.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Global price trend partialling: if the commodity price index includes a global demand component correlated with global democratization waves (e.g., 1989-1991, post-GFC), the year fixed effects may not fully absorb this. Consider region-by-year FE or a global factor control.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Alternative civil-liberties measures: if main spec uses Freedom House, replicate with V-Dem Physical Integrity Index and CIRI Empowerment Rights Index. Show that the asymmetry is not measure-specific.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Subsample by commodity type: oil/gas exporters may respond differently from agricultural or mineral exporters due to revenue fungibility and Dutch disease. Report results separately for fuel vs. non-fuel commodity exporters.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Excluding top commodity-revenue countries: some resource-rich states (e.g., Gulf monarchies) are permanent autocracies where the civil-liberties floor is already at the minimum — the ratchet cannot operate below the floor. Exclude countries where the civil-liberties index is at its floor value for >75% of the sample.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Varying event window lengths: run the event study with windows of ±3, ±5, and ±7 years around each episode. Show that point estimates and the symmetry test conclusion are stable.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Drop one-region-at-a-time jackknife: rerun the main specification excluding each of the 6-7 world regions in turn. Ensures results are not driven by one region (e.g., Sub-Saharan Africa or MENA).",
+            "priority": "SHOULD",
+            "source": "domain"
+          }
+        ],
+        "data_warnings": [
+          "FLOOR/CEILING CENSORING: Civil-liberties indices are bounded. Countries at the maximum-repression floor during a bust cannot worsen further — this mechanically suppresses the bust coefficient and biases toward finding symmetry (null ratchet). Flag and separately analyze floor-censored observations.",
+          "EPISODE LENGTH IMBALANCE: Busts and recoveries may differ systematically in duration. If recoveries are always shorter (left-censored by sample end), the event study lags for recovery will have smaller N and wider CIs, making asymmetry appear even when none exists. Document average episode lengths for both phases.",
+          "UNIT-OF-OBSERVATION AMBIGUITY: With 9 292 rows and 11 columns, the panel could be ~200 countries × 46 years or ~100 countries × 93 years. The cluster count radically changes inference strategy. Confirm N_countries before finalizing SE approach.",
+          "STAGGERED TIMING NEGATIVE WEIGHTS: TWFE with staggered bust/recovery onset can assign negative weights to early-treated units in later periods, potentially reversing the sign of the true ATT. The Bacon decomposition is diagnostic — if negative-weight share is large, the Callaway-Sant'Anna estimate supersedes TWFE as the headline result.",
+          "COMMODITY INDEX CONSTRUCTION ENDOGENEITY: If the commodity price index uses current-year export shares as weights, price shocks and exposure are jointly determined. Use lagged (t-5 or earlier) export shares to construct exposure weights.",
+          "GLOBAL CONFOUNDERS: The 2008-09 commodity bust coincides with the Global Financial Crisis; the 2014-16 oil bust coincides with democratic backsliding in MENA and Latin America. Year FE absorb global trends but not differential regional exposure. Region-by-year FE or explicit GFC/post-GFC controls may be necessary.",
+          "SELECTIVE RECOVERY DEFINITION: If recovery is defined as price returning to pre-bust levels, countries that never recover are dropped from the recovery sample. This is survivorship bias — repressive states may be precisely those where prices (and liberties) never recover. Keep non-recovering bust episodes in a separate 'no-recovery' category and compare their trajectory.",
+          "CIVIL-LIBERTIES INDEX REVISIONS: Freedom House and V-Dem retroactively revise historical scores. Specify the exact vintage/download date of the data so results are replicable.",
+          "MEASUREMENT LAG: Civil-liberties assessments are often published with a one-year lag relative to the reference year. Verify whether the index year refers to the assessment year or the reference year and align accordingly with price data.",
+          "SERIAL CORRELATION IN OUTCOME: Civil liberties exhibit very high AR(1) persistence (~0.95). Standard errors that do not account for this will be too small. Clustered SE at the country level partially addresses this, but verify residual autocorrelation in the FE residuals and consider AR-robust inference if needed."
+        ],
+        "tables_required": [
+          "Table 1 — Summary Statistics: N, mean, SD, min, max for civil-liberties index, commodity price index, bust indicator, recovery indicator, and all controls. Stratified by bust/recovery/tranquil periods.",
+          "Table 2 — Episode Inventory: count of bust and recovery episodes by region and decade; mean episode duration; fraction of country-years in each phase. This is descriptive but essential for external validity.",
+          "Table 3 — Main TWFE Results: four columns — (1) bust only, (2) recovery only, (3) bust + recovery joint, (4) bust + recovery + controls. Report country FE, year FE, clustered SE, R², N for each. Bottom rows: symmetry Wald test statistic and p-value.",
+          "Table 4 — Bacon Decomposition: weighted average TWFE contribution by comparison type ('early vs. late treated', 'treated vs. never-treated', 'treated vs. not-yet-treated'). One row per type, flagging negative-weight groups.",
+          "Table 5 — Heterogeneity by Regime Type: split columns by initial regime (Polity2 < 0 vs. ≥ 0 or autocracy/anocracy/democracy). Bust and recovery coefficients and symmetry test for each subgroup.",
+          "Table 6 — Robustness Panel: rows = specifications (alternative outcomes, continuous treatment, country trends, region-by-year FE, ordered logit, WCB p-values, Conley SE); columns = bust coefficient, recovery coefficient, symmetry p-value. Compact format for referee scanning.",
+          "Table A1 (Appendix) — Pre-Trends F-Test: joint F-statistic and p-value for leads t-3, t-2, t-1 in both bust and recovery event studies.",
+          "Table A2 (Appendix) — Callaway-Sant'Anna / Sun-Abraham estimates alongside TWFE for the main specification."
+        ],
+        "figures_required": [
+          "Figure 1 — Commodity Price Index Over Time: global or country-weighted average price index with bust and recovery episodes shaded. Motivates the empirical variation.",
+          "Figure 2 — Civil Liberties Distribution by Episode Phase: kernel density or violin plots of the civil-liberties index level in pre-bust, bust, and recovery periods across countries. Shows the raw pattern before any regression.",
+          "Figure 3 — Event Study: Bust Phase: point estimates and 95% CI for t-3 through t+5 (relative to bust onset), normalized to t-1 = 0. Pre-trend coefficients should be near zero; post-onset coefficients should decline.",
+          "Figure 4 — Event Study: Recovery Phase: same structure for recovery onset. The key visual — if recovery coefficients do NOT mirror Figure 3's decline (i.e., they stay flat or rise slowly), that is the ratchet in picture form.",
+          "Figure 5 — Symmetry Test Visual: coefficient plot showing bust coefficient (with CI) and recovery coefficient (with CI) on the same axis, plus the difference and its CI. Referee-friendly presentation of the Wald test.",
+          "Figure 6 — Heterogeneity Heatmap or Coefficient Plot: bust and recovery coefficients by region or regime type, showing whether the ratchet is universal or concentrated in specific contexts.",
+          "Figure A1 (Appendix) — Geographic Map of Episode Incidence: countries colored by number of bust episodes experienced. Helps referee assess geographic clustering.",
+          "Figure A2 (Appendix) — Bacon Decomposition Visualization: scatter plot of comparison-group TWFE estimates (x-axis: weight, y-axis: estimate) by comparison type, following Goodman-Bacon (2021) standard presentation."
+        ]
+      },
+      "methods_result": {
+        "code_requirements": [
+          {
+            "category": "inference",
+            "requirement": "Cluster standard errors at the country level (primary unit of treatment assignment). Report the number of clusters prominently in every table. If the effective cluster count for any subsample falls below 50, switch to wild cluster bootstrap (Rademacher weights, 999+ replications, 'wildboottest' Python or 'boottest' Stata) as the PRIMARY inference method — asymptotic cluster-robust SEs are unreliable below this threshold.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "inference",
+            "requirement": "As secondary robustness, report two-way cluster-robust SEs (country × year) to absorb potential cross-sectional correlation in commodity price shocks that transmit to multiple countries simultaneously. Compare with one-way country clustering; if they diverge substantially, flag temporal correlation as an issue.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "inference",
+            "requirement": "For the joint symmetry test (H0: bust-period event-study coefficients = −recovery-period coefficients at each horizon τ), report a Wald statistic with cluster-robust variance. This is the paper's core inferential claim — use a stacked Seemingly Unrelated Regression (SUR) or delta-method approach to construct the joint test across all post-event horizons simultaneously, not horizon-by-horizon t-tests alone.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "PRE-TREND TEST (bust episodes): Run a joint F-test on all pre-bust event-time coefficients (τ = −k, …, −2), with τ = −1 as the omitted reference. Report the chi-squared statistic, degrees of freedom, and p-value. H0: all pre-period bust coefficients = 0. Failure to reject is necessary (not sufficient) for identifying bust effects.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "PRE-TREND TEST (recovery episodes): Run the same joint F-test on pre-recovery event-time coefficients. Recovery episodes have their own identification assumption — the parallel-trends condition must hold separately for the recovery window, not just for the bust window.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "Roth (2022) sensitivity analysis: use the 'HonestDiD' package to report how large a linear pre-trend would need to be to overturn the bust and recovery estimates. Report the breakdown value (M*) for each. This quantifies how much pre-trend power you actually have given the data.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "HETEROGENEITY-ROBUST ESTIMATOR: Because bust and recovery episodes onset at different calendar times across countries (staggered treatment), standard TWFE can assign negative weights to some group-time ATTs and produce sign-reversed estimates. Implement Sun & Abraham (2021) interaction-weighted estimator (or Callaway & Sant'Anna 2021) for BOTH the bust and recovery event studies. Report TWFE and the heterogeneity-robust estimate side by side; flag any sign divergence.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "PLACEBO TEST — false timing: Shift all bust episode start dates by T years (e.g., T = −3 or T = +3) and re-estimate. The placebo event-study coefficients should be jointly insignificant and centered at zero. Repeat for recovery episodes.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "PLACEBO TEST — false treatment group: Estimate the same event study for countries that are NOT commodity-dependent (or low-commodity-export-share). These countries should show no civil liberties response to commodity price cycles.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "Formally test for treatment-effect heterogeneity across commodity type (oil vs. metals vs. agricultural). The ratchet mechanism may differ: oil-exporting autocracies may face different political constraints than agricultural exporters. Interact episode dummies with commodity-type indicators and test the interaction jointly.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "Check for floor/ceiling effects in the civil liberties outcome. If the distribution has mass at the minimum (most repressive) or maximum (most free), a linear TWFE estimate is mechanically attenuated. Report the share of country-years at the bounds and test the main results on the interior sample (countries not at the floor or ceiling).",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Episode definition sensitivity: the bust/recovery episode boundaries are likely threshold-based (e.g., price decline > X%). Re-estimate with at least two alternative threshold definitions (tighter and looser). Report a robustness table showing how the symmetry test p-value and magnitude change.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Balanced event window: estimate using a balanced panel of event-time observations (same number of pre- and post-periods for every episode). Unbalanced windows can mechanically produce asymmetric-looking coefficients. Compare balanced vs. unbalanced results.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Exclude truncated/partial episodes: episodes that are right-censored (recovery begins but data ends before full recovery window) or left-censored (bust begins before the panel starts). These partial episodes contaminate the symmetry test. Report results with and without them.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Overlapping episode contamination: if a new bust begins during the recovery window of a prior episode, the recovery estimate is contaminated. Code an explicit indicator for 'clean' recovery episodes (no re-entry into bust within the event window) and estimate on the clean subsample.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Alternate outcome indices: if the primary outcome is one civil liberties index (e.g., Freedom House), re-estimate with V-Dem's liberal democracy or physical integrity rights index. Ratchet findings should be robust across measurement approaches.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Control for concurrent shocks: add controls for GDP growth, political regime type at episode start, and whether an IMF program was active during the episode. Commodity busts often co-occur with fiscal crises; separating repression due to price shock vs. fiscal crisis is essential.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Country-specific commodity price index: if the treatment variable is a world price index, construct a country-specific shock as (world price change) × (country's pre-period commodity export share). This reduces confounding from global demand shocks that affect both prices and political outcomes through other channels.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "Every regression table must include: coefficient, cluster-robust SE in parentheses, 95% CI in brackets, N (country-year observations), number of clusters, within-R², and country and year FE indicators. The symmetry test Wald statistic and p-value must appear as a row at the bottom of the main results table.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "Event-study plots: produce three figures — (1) bust episode coefficients with 95% CIs across event-time horizons, (2) recovery episode coefficients, (3) a 'symmetry plot' overlaying the bust coefficients with the sign-reversed recovery coefficients. The visual gap between curves is the ratchet evidence.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "Report the Sun & Abraham ATT(g,t) estimates as a coefficient plot disaggregated by episode cohort (year of bust onset). If different cohorts tell qualitatively different stories, the pooled TWFE result is masking heterogeneity and should not be the headline estimate.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "Report the pre-trend test p-values and the Roth (2022) breakdown value M* directly in the main text or as a dedicated diagnostics table — not buried in an appendix. Readers need to assess identification quality without hunting for it.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "AVOID endogenous episode boundaries: do not define bust/recovery episodes using political outcome variables (e.g., 'bust ends when stability is restored'). Episode timing must be determined purely by commodity price dynamics, external to the civil liberties outcome. Document and justify the episode algorithm explicitly.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "AVOID asymmetric event windows by construction: if bust windows are longer than recovery windows (or vice versa) due to data constraints, the symmetry test will mechanically favor asymmetry. Either enforce equal-length windows or explicitly control for window length in the test.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "AVOID controlling for GDP or fiscal variables as covariates in the main specification if these are themselves mediators of the commodity price → repression channel. Including mediators in TWFE will absorb the effect you are trying to measure. Estimate the reduced-form effect first; add mediator controls only as robustness to decompose channels.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "AVOID the implicit assumption that 'no bust' countries form a valid counterfactual for 'bust then recovery' countries. Countries that never experience busts are structurally different (less commodity-dependent, different political economies). The comparison should be within commodity-dependent countries across their own episode/non-episode periods, not against non-commodity exporters.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "AVOID horizon-by-horizon inference for the symmetry test without adjusting for multiple comparisons. If you test symmetry at τ=1,2,…,K separately, the family-wise error rate is inflated. Use the joint Wald test across all horizons as the primary test; individual horizon tests are descriptive only.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "AVOID conflating the ratchet effect with a pure level shift. A genuine ratchet means: (a) bust causes deterioration AND (b) recovery does NOT restore the pre-bust level. You must explicitly test and report the cumulative effect at end-of-recovery window relative to the pre-bust baseline, not just show that recovery coefficients are smaller than bust coefficients in absolute value.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "AVOID ignoring TWFE negative-weight contamination: with staggered timing, early-treated cohorts act as control units for late-treated cohorts in later periods — but if early-treated units have ongoing treatment effects (ratchet!), this biases the late-cohort estimates downward. The Sun-Abraham estimator is not optional here; it is the correct estimator given the ratchet hypothesis itself.",
+            "priority": "MUST",
+            "source": "methods"
+          }
+        ],
+        "method_warnings": [
+          "The ratchet hypothesis is inherently about treatment effect dynamics persisting post-episode — this is precisely the setting where standard TWFE negative weights are most damaging, because 'already repressed' countries in their post-bust period corrupt the control group for recovery-episode countries. Sun-Abraham/CS estimators are essential, not optional.",
+          "Commodity price shocks are correlated across countries (common global factor). This violates the independence across clusters assumption underlying cluster-robust SEs. Two-way clustering and/or a factor-augmented specification (absorbing global commodity price trends as a common factor) should be considered.",
+          "Civil liberties indices (Freedom House, V-Dem) are bounded, ordinal, and updated annually with possible 'stickiness' built into the coding process — coders may be reluctant to reverse prior-year ratings absent strong evidence. This measurement artifact could itself generate a spurious ratchet pattern independent of true political dynamics. A falsification test using a continuously measured outcome (e.g., newspaper closures, political imprisonment counts) is needed.",
+          "If bust episodes cluster in specific decades (e.g., 1980s debt crises, 2014–2016 oil crash), year fixed effects may not be sufficient to absorb contemporaneous global shocks. Region × year fixed effects or wave-specific indicators may be needed.",
+          "The symmetry test's statistical power depends heavily on having enough recovery episodes of sufficient length. If most busts are followed by only 1–2 years of recovery before a new shock, the test is underpowered by design. Report the distribution of episode lengths and recovery window lengths explicitly."
+        ],
+        "must_not_claim": [
+          "Must not claim causal identification without passing the joint pre-trend F-test for BOTH bust and recovery episodes separately.",
+          "Must not claim 'the ratchet effect' is established based solely on the visual pattern in event-study plots — the joint symmetry Wald test must be statistically significant at conventional levels.",
+          "Must not present TWFE point estimates as the headline result if the Sun-Abraham interaction-weighted estimator produces substantively different estimates — in that case, the heterogeneity-robust estimates are the credible ones.",
+          "Must not interpret the symmetry test as evidence of a ratchet mechanism (institutional path dependence) without ruling out the alternative explanation that recovery episodes are simply too short in the data to observe full restoration — this is a power issue, not a ratchet.",
+          "Must not claim generalizability beyond commodity-dependent countries; the identification strategy is only valid for the subset of countries for which commodity price shocks constitute genuine exogenous variation in fiscal/political conditions.",
+          "Must not use the number of country-year observations (9,292) as the effective sample size for inference — the relevant count is the number of distinct bust and recovery episodes (event clusters), which is likely far smaller.",
+          "Must not claim that controlling for GDP growth 'holds the commodity channel constant' — GDP is a mediator, and conditioning on it partially blocks the causal path of interest."
+        ]
+      },
+      "checklist_path": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\strategy\\referee_checklist.md",
+      "completed_at": "2026-04-01T13:16:36.693423"
+    },
+    "stage4a": {
+      "status": "completed",
+      "strategy_dir": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\strategy",
+      "completed_at": "2026-04-01T13:24:36.716657"
+    },
+    "stage4bc": {
+      "status": "completed",
+      "scripts_dir": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\scripts\\python",
+      "scripts": [
+        "00_clean.py",
+        "01_main.py",
+        "02_robustness.py",
+        "03_output.py"
+      ],
+      "all_scripts_ok": true,
+      "critic_score": 75,
+      "critic_result": {
+        "score": 75,
+        "summary": "Manual intervention."
+      },
+      "validation": {
+        "hard_passed": 12,
+        "hard_failed": 0,
+        "hard_total": 12,
+        "soft_passed": 5,
+        "soft_failed": 3,
+        "soft_total": 8
+      },
+      "validation_hard_pass": true,
+      "completed_at": "2026-04-01T13:26:24.063236"
+    },
+    "stage4_5": {
+      "status": "completed",
+      "audit_report": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\quality_reports\\data_audit.md",
+      "n_critical": 0,
+      "n_warnings": 2,
+      "flags": [
+        {
+          "severity": "WARNING",
+          "category": "variable_construction",
+          "detail": "No 'insurance_cat' column found in clean data."
+        },
+        {
+          "severity": "WARNING",
+          "category": "survey_weights",
+          "detail": "No survey weight column found. Results may not be population-representative."
+        }
+      ],
+      "completed_at": "2026-04-01T13:26:24.084285"
+    },
+    "stage5": {
+      "status": "completed",
+      "paper_dir": "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\paper",
+      "saved_files": [
+        "C:\\Users\\jesus\\Documents\\paper-HQ-sin API\\projects\\data_first_20260401_124533\\paper\\main.tex"
+      ],
+      "compiled": true,
+      "critic_score": 80,
+      "critic_result": {
+        "score": 80,
+        "summary": "Manual intervention."
+      },
+      "validation": {
+        "hard_passed": 4,
+        "hard_failed": 1,
+        "hard_total": 5,
+        "soft_passed": 2,
+        "soft_failed": 2,
+        "soft_total": 4
+      },
+      "validation_hard_pass": false,
+      "completed_at": "2026-04-01T13:43:25.390843"
+    },
+    "stage6": {
+      "status": "completed",
+      "decision": "MINOR_REVISIONS",
+      "rr_round": 2,
+      "domain_score": 62,
+      "methods_score": 63,
+      "avg_score": 62.5,
+      "editor_result": {
+        "desk_decision": "PROCEED",
+        "reason": "Paper meets minimum standards: credible identification strategy, transparent robustness analysis, well-defined contribution to backsliding and resource curse literatures. The headline finding (fair trial, p=0.020) is theoretically motivated and survives several robustness checks. Key unresolved issues — the placebo p=0.389 vs. parametric p=0.020 tension, and marginally significant COVID-exclusion result (p=0.063) — are non-trivial but appropriate for referee adjudication rather than desk rejection. Authors' transparency about limitations is a positive signal.",
+        "referee_1_type": "CREDIBILITY",
+        "referee_2_type": "SKEPTIC"
+      },
+      "domain_result": {
+        "score": 62,
+        "decision": "MAJOR_REVISIONS",
+        "dimension_scores": {
+          "contribution_novelty": 80,
+          "literature_positioning": 58,
+          "substantive_arguments": 52,
+          "external_validity": 68,
+          "journal_fit": 72
+        },
+        "major_comments": [
+          "Permutation test failure (p=0.389) contradicts parametric p=0.020 for fair trial; discrepancy suggests serial correlation in errors that cluster-robust SEs fail to absorb; paper understates severity by describing this as 'consistent with a modest effect'.",
+          "Sign reversal between TWFE (β=-0.199) and event-study bust average (+0.491) for the headline outcome (fair trial) is unexplained; one-paragraph appeal to 'sample composition and reference-period normalization' is inadequate for opposite-signed results.",
+          "Staggered TWFE dismissal is asserted without diagnostic evidence; a Goodman-Bacon decomposition showing clean vs. forbidden 2x2 comparisons is needed to support the claim that transitory treatment status eliminates negative-weighting concerns.",
+          "The executive-targeting-of-courts mechanism is the paper's central interpretive contribution but has no supporting citations; key judicial independence literature (Epperly 2019, Helmke 2002/2005, Ríos-Figueroa 2011) is entirely absent.",
+          "Missing engagement with revisionist resource-curse-and-democracy literature (Haber and Menaldo 2011 APSR, Ramsay 2011 JOP) makes the contribution claim impossible to evaluate relative to existing evidence.",
+          "Unexplained 506-observation reduction for fair trial (N=6,824 vs 7,330) raises potential selection concerns; missing data pattern must be characterized and its implications for inference discussed."
+        ],
+        "minor_comments": [
+          "OLS on 1-4 ordinal outcomes near ceiling (movement mean=3.16, religion mean=3.27) may attenuate null results via compression; ordered probit robustness or explicit acknowledgment warranted.",
+          "Effective N at event-study window endpoints (k=-3, k=+5) should be reported given sparse episode count (31 episodes / 80 countries).",
+          "Title 'Selective Erosion' overstates a finding that does not survive the permutation test; revision should use more hedged language.",
+          "JEL K40 (Legal Procedure and Judicial Behavior) should be added given the paper's judicial independence interpretation.",
+          "Symmetry test null in equation (2) is correct but non-standard; clarify that asymmetry column reports sum rather than difference, and confirm sign convention for recovery episodes.",
+          "COVID exclusion may also affect fair trial through emergency suspension of judicial proceedings; confirm this does not bias the direction of the fair trial result."
+        ],
+        "missing_literature": [
+          "Haber and Menaldo (2011, APSR) - revisionist resource-curse and democracy paper using within-country variation",
+          "Ramsay (2011, JOP) - oil and democracy endogeneity critique",
+          "Ross (2001, World Politics) - foundational oil-democracy paper more central than the 2015 survey",
+          "Epperly (2019, JOP) - economic conditions and judicial independence",
+          "Helmke (2002, APSR; 2005 book) - strategic judicial defection under executive pressure",
+          "Ríos-Figueroa (2011) - judicial corruption and executive relations in comparative context",
+          "Morrison (2009) - non-tax revenue and authoritarian regime stability",
+          "Guriev and Treisman (2019, JEP) - informational autocracy and selective repression"
+        ]
+      },
+      "methods_result": {
+        "score": 63,
+        "decision": "MAJOR_REVISIONS",
+        "dimension_scores": {
+          "identification_strategy": 70,
+          "estimation_implementation": 57,
+          "statistical_inference": 52,
+          "robustness_sensitivity": 62,
+          "replication_readiness": 73
+        },
+        "sanity_checks": {
+          "sign": "FAIL",
+          "magnitude": "PASS",
+          "dynamics": "FAIL",
+          "consistency": "FAIL"
+        },
+        "major_comments": [
+          "Sign reversal between TWFE (β = −0.199) and event-study bust average (+0.489) for fair trial is inadequately explained. A sign reversal across estimands—not merely a magnitude difference—requires a Goodman-Bacon decomposition and explicit plotting of bust-period event-study coefficients to determine what each estimand identifies.",
+          "Permutation placebo test (p = 0.389) directly contradicts the parametric result (p = 0.020) for the paper's main finding. In a sample with N = 80 clusters where asymptotic inference may be unreliable, the permutation test is arguably more credible. The paper's reconciliation is post-hoc rationalization; wild cluster bootstrap p-values should be reported and the finding should be downgraded if they are non-significant.",
+          "Five simultaneous outcomes are tested with no multiple-testing correction. A Bonferroni adjustment requires p < 0.010 for FWER control at 5%; the fair trial result (p = 0.020) does not survive this standard. Bonferroni or Holm-adjusted p-values must be reported.",
+          "Staggered DiD concerns are underaddressed. The claim that non-absorbing treatment eliminates negative-weighting is overstated. A Bacon decomposition should verify that clean-control comparisons dominate the TWFE estimate.",
+          "Symmetry test z-statistics (up to 5.483 with ~50 episodes) are implausibly large. The standard error computation for the asymmetry statistic is never stated and must be made explicit."
+        ],
+        "minor_comments": [
+          "Definition of 'commodity-dependent' (the 80-country selection criterion) is never stated; this affects the external validity and potentially the internal validity of the design.",
+          "506 missing observations for fair trial (N = 6,824 vs. 7,330) are unexplained; if missingness correlates with bust episodes, the fair trial estimates have a different identifying population than the other four liberties.",
+          "Dose-response pattern is non-monotonic: the −30% threshold coefficient (−0.149) falls well below the −25% estimate (−0.290), breaking the claimed monotonicity.",
+          "No time-varying controls included in the TWFE specification; GDP per capita growth or conflict indicator should at minimum be discussed as potential within-country confounders.",
+          "Recovery episode definition does not specify whether recovery must follow a bust episode; if not, the symmetry test compares conceptually distinct episode types.",
+          "Ordinal outcomes (1–4 scale) are treated as continuous without acknowledgment; a brief robustness note on ordered logit results would address this.",
+          "Wild cluster bootstrap SEs should be reported for all five liberties given the finite-sample reliability concerns with N = 80 asymptotic clusters."
+        ]
+      },
+      "decision_result": {
+        "avg_referee_score": 62.5,
+        "must_address": [
+          "Sign reversal between TWFE (β=−0.199) and event-study bust average (+0.489/+0.491) for fair trial: a sign reversal across estimands requires a Goodman-Bacon decomposition and explicit plotting of bust-period event-study coefficients to determine what each estimand identifies.",
+          "Permutation placebo test (p=0.389) contradicts parametric result (p=0.020) for the headline outcome. Wild cluster bootstrap p-values must be reported; if non-significant, the main finding must be downgraded rather than rationalized post-hoc.",
+          "No multiple-testing correction across five simultaneous outcomes. Bonferroni or Holm-adjusted p-values must be reported; the fair trial result (p=0.020) does not survive Bonferroni correction at 5% (threshold p<0.010).",
+          "Unexplained 506-observation reduction for fair trial (N=6,824 vs 7,330): missing data pattern must be characterized and its implications for selection bias and inference discussed.",
+          "Staggered TWFE: the claim that non-absorbing treatment eliminates negative-weighting concerns is asserted without evidence; a Bacon decomposition showing clean vs. forbidden 2×2 comparisons is required."
+        ],
+        "should_address": [
+          "Executive-targeting-of-courts mechanism is the paper's central interpretive contribution but cites no supporting judicial independence literature; key references (Epperly 2019, Helmke 2002/2005, Ríos-Figueroa 2011) are absent and must be engaged.",
+          "Missing engagement with the revisionist resource-curse-and-democracy literature (Haber and Menaldo 2011 APSR, Ramsay 2011 JOP) makes the contribution claim impossible to evaluate; authors must situate findings relative to this evidence.",
+          "Symmetry test z-statistics (up to 5.483 with ~50 episodes) are implausibly large; the standard error computation for the asymmetry statistic is never stated and must be made explicit."
+        ],
+        "may_address": [
+          "One-paragraph appeal to 'sample composition and reference-period normalization' to explain the sign reversal is currently inadequate; a more developed intuitive explanation would aid reader comprehension even after the required decomposition is added.",
+          "Serial correlation in errors may be inadequately absorbed by cluster-robust SEs given the permutation test failure; authors may consider alternative clustering strategies or discuss why the chosen clustering level is appropriate."
+        ],
+        "fatal_issues": [],
+        "decision": "MINOR_REVISIONS"
+      },
+      "completed_at": "2026-04-01T13:46:37.001243"
+    },
+    "stage7": {
+      "status": "completed",
+      "replication_ok": true,
+      "replication_results": {
+        "00_clean.py": {
+          "ok": true,
+          "returncode": 0
+        },
+        "01_main.py": {
+          "ok": true,
+          "returncode": 0
+        },
+        "02_robustness.py": {
+          "ok": true,
+          "returncode": 0
+        },
+        "03_output.py": {
+          "ok": true,
+          "returncode": 0
+        }
+      },
+      "outputs_reproducible": true,
+      "changed_outputs": [],
+      "validation": {
+        "code": {
+          "hard_passed": 12,
+          "hard_failed": 0,
+          "hard_total": 12,
+          "soft_passed": 5,
+          "soft_failed": 3,
+          "soft_total": 8
+        },
+        "paper": {
+          "hard_passed": 4,
+          "hard_failed": 1,
+          "hard_total": 5,
+          "soft_passed": 2,
+          "soft_failed": 2,
+          "soft_total": 4
+        },
+        "integration": {
+          "hard_passed": 6,
+          "hard_failed": 1,
+          "hard_total": 7,
+          "soft_passed": 7,
+          "soft_failed": 2,
+          "soft_total": 9
+        },
+        "all_hard_pass": false,
+        "total_hard_failures": 2
+      },
+      "components": {
+        "identification": 80,
+        "code": 75,
+        "paper": 80,
+        "polish": 62.5,
+        "replication": 100
+      },
+      "aggregate_score": 78.4,
+      "gate_passed": false,
+      "below_minimum": {},
+      "targeting": {},
+      "user_choice": "accept",
+      "completed_at": "2026-04-01T13:52:54.270264"
+    }
+  },
+  "path_c": true,
+  "updated_at": "2026-04-01T13:52:54.270276"
+}

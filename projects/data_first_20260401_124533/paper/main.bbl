@@ -1,0 +1,57 @@
+\ifx\undefined\bysame
+\newcommand{\bysame}{\leavevmode\hbox to\leftmargin{\hrulefill\,\,}}
+\fi
+\begin{thebibliography}{xx}
+
+\harvarditem[Aslaksen]{Aslaksen}{2010}{aslaksen2010}
+{\bf Aslaksen, Silje}, ``Oil and Democracy: More than a Cross-Country
+  Correlation?,'' {\it Journal of Peace Research}, 2010, {\it 47} (4),
+  421--431.
+
+\harvarditem[Bazzi and Blattman]{Bazzi and Blattman}{2014}{bazziBlattman2014}
+{\bf Bazzi, Samuel and Christopher Blattman}, ``Economic Shocks and Conflict:
+  Evidence from Commodity Prices,'' {\it American Economic Journal:
+  Macroeconomics}, 2014, {\it 6} (4), 1--38.
+
+\harvarditem[Bermeo]{Bermeo}{2016}{bermeo2016}
+{\bf Bermeo, Nancy}, ``On Democratic Backsliding,'' {\it Journal of Democracy},
+  2016, {\it 27} (1), 5--19.
+
+\harvarditem[Br{\"u}ckner and Ciccone]{Br{\"u}ckner and
+  Ciccone}{2010}{bruckner2010}
+{\bf Br{\"u}ckner, Markus and Antonio Ciccone}, ``International Commodity
+  Prices, Growth and the Outbreak of Civil War in {Sub-Saharan Africa},'' {\it
+  Economic Journal}, 2010, {\it 120} (544), 519--534.
+
+\harvarditem[Coppedge et al.]{Coppedge, Gerring, Knutsen
+  et~al.}{2023}{coppedge2023}
+{\bf Coppedge, Michael, John Gerring, Carl~Henrik Knutsen et~al.}, ``V-Dem
+  Codebook v13,'' {\it Varieties of Democracy (V-Dem) Project}, 2023.
+
+\harvarditem[Dube and Vargas]{Dube and Vargas}{2013}{dubeVargas2013}
+{\bf Dube, Oeindrila and Juan~F. Vargas}, ``Commodity Price Shocks and Civil
+  Conflict: Evidence from {Colombia},'' {\it Review of Economic Studies}, 2013,
+  {\it 80} (4), 1384--1421.
+
+\harvarditem[Goodman-Bacon]{Goodman-Bacon}{2021}{goodmanBacon2021}
+{\bf Goodman-Bacon, Andrew}, ``Difference-in-Differences with Variation in
+  Treatment Timing,'' {\it Journal of Econometrics}, 2021, {\it 225} (2),
+  254--277.
+
+\harvarditem[Gruss and Kebhaj]{Gruss and Kebhaj}{2019}{grussKebhaj2019}
+{\bf Gruss, Bertrand and Suhaib Kebhaj}, ``Commodity Terms of Trade: A New
+  Database,'' {\it IMF Working Paper}, 2019, (WP/19/21).
+
+\harvarditem[Levitsky and Way]{Levitsky and Way}{2010}{levitskyWay2010}
+{\bf Levitsky, Steven and Lucan~A. Way}, ``Competitive Authoritarianism: Hybrid
+  Regimes After the Cold War,'' {\it Cambridge University Press}, 2010.
+
+\harvarditem[Ross]{Ross}{2015}{ross2015}
+{\bf Ross, Michael~L.}, ``What Have We Learned about the Resource Curse?,''
+  {\it Annual Review of Political Science}, 2015, {\it 18}, 239--259.
+
+\harvarditem[Tsui]{Tsui}{2011}{tsui2011}
+{\bf Tsui, Kevin~K.}, ``More Oil, Less Democracy: Evidence from Worldwide Crude
+  Oil Discoveries,'' {\it Economic Journal}, 2011, {\it 121} (551), 89--115.
+
+\end{thebibliography}

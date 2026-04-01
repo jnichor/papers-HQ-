@@ -1,0 +1,40 @@
+\section{Empirical Strategy}
+\label{sec:strategy}
+
+\subsection{Identification}
+
+We exploit the differential exposure of occupations to COVID-19 mobility restrictions using the \citet{dingel2020} teleworkability index as treatment intensity. The identifying assumption is that, absent the pandemic, informality trends would have evolved similarly for contact-intensive and teleworkable workers (parallel trends). Workers in low-teleworkability occupations could not shift to remote work during lockdowns and therefore faced greater disruption to their formal employment relationships.
+
+The teleworkability index is pre-determined: it is constructed from O*NET task descriptions measured before the pandemic and reflects the physical characteristics of occupations, not workers' choices during COVID-19. This mitigates concerns about endogenous treatment assignment.
+
+\subsection{Main Specification}
+
+Our primary specification uses the \textit{continuous} teleworkability score as treatment intensity, avoiding the arbitrary binary classification that places 74.6\% of workers in the ``treated'' group:
+\begin{equation}
+    \text{Informal}_{it} = \alpha + \sum_{k \neq 2020} \beta_k \cdot D_k + \sum_{k \neq 2020} \gamma_k \cdot (D_k \times \text{TW}_i) + \delta \cdot \text{TW}_i + \varepsilon_{it}
+    \label{eq:did}
+\end{equation}
+where $D_k = \mathbf{1}[t = k]$ are year dummies with 2020 as the reference, $\text{TW}_i \in [0, 1]$ is the continuous teleworkability score, and $\gamma_k$ are the coefficients of interest---the marginal effect of a one-unit increase in teleworkability on informality in year $k$. Negative $\gamma_k$ indicates that more teleworkable workers experienced smaller informality increases. As a robustness check, we also report a binary specification using $\text{TW}^{\text{low}}_i = \mathbf{1}[\text{TW}_i < 0.20]$.
+
+Observations are weighted by ENAHO survey weights (\texttt{facpob07}), winsorized at the 1st and 99th percentiles to reduce the influence of extreme weights. Standard errors are clustered at the ISCO-08 2-digit occupation level (40 clusters), the level at which treatment is assigned.
+
+\subsection{Within-Estimator}
+
+As a secondary specification, we employ a within-estimator (equivalent to individual fixed effects) by de-meaning all variables at the individual level:
+\begin{equation}
+    \widetilde{\text{Informal}}_{it} = \sum_{k \neq 2020} \beta_k \cdot \widetilde{D}_k + \sum_{k \neq 2020} \gamma_k \cdot (\widetilde{D_k \times \text{TW}^{\text{low}}_i}) + \widetilde{\varepsilon}_{it}
+    \label{eq:fe}
+\end{equation}
+This absorbs all time-invariant individual heterogeneity but requires within-individual variation, which is limited by ENAHO's rotating panel design (most individuals observed for only 2 consecutive years).
+
+\subsection{Scarring Test}
+
+We test for time-constancy of the DiD effect using a Wald test of $H_0: \gamma_{2024} = \gamma_{2021}$. Non-rejection indicates that the differential has not attenuated, consistent with persistence of the informality gap. We note that ``permanent scarring'' in the strict sense---permanent within-individual informality---cannot be established with ENAHO's rotating panel, where most individuals are observed for only two consecutive years. The Wald test speaks to the stability of the \textit{population-level} differential, not to individual-level permanence.
+
+\subsection{2020 Baseline Contamination}
+
+A limitation of our design is that the 2020 baseline is partially treated: ENAHO fieldwork continued throughout 2020, with some observations collected after the March lockdown. This means the 2020 reference year already incorporates some pandemic effects, attenuating our DiD estimates. The true pre-COVID differential is unobserved, and our estimates are conservative (biased toward zero).
+
+\subsection{Heterogeneity}
+
+We estimate the within-estimator separately by: (i) gender (male vs. female), (ii) region (Lima vs. rest of Peru), (iii) firm size (large $\geq 20$ workers vs. small), and (iv) age group (youth 15--29, prime 30--44, senior 45--65).

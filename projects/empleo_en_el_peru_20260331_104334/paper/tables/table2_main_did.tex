@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+\centering
+\caption{DiD Event Study: COVID-19 and Informality by Teleworkability}
+\label{tab:main_did}
+\begin{tabular}{lcccc}
+\toprule
+Year & Year Effect & SE & Interaction (TW$_{low}$) & SE \\
+\midrule
+2020 (ref) & 0.000 & --- & 0.000 & --- \\
+2021 & 0.1733 & (0.0620) & -0.2021* & (0.1201) \\
+2022 & 0.1871 & (0.0564) & -0.2200** & (0.1115) \\
+2023 & 0.1662 & (0.0553) & -0.1885* & (0.1078) \\
+2024 & 0.1643 & (0.0482) & -0.1899** & (0.0951) \\
+\midrule
+Survey weights & \checkmark & & & \\
+SE type & HC1 & & & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\small
+\item Notes: Pooled WLS DiD. Interaction = differential effect for contact-intensive workers (teleworkability $<$ 0.20) relative to teleworkable workers. *** p$<$0.01, ** p$<$0.05, * p$<$0.10.
+\end{tablenotes}
+\end{table}

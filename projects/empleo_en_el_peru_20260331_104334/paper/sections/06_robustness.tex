@@ -1,0 +1,25 @@
+\section{Robustness}
+\label{sec:robustness}
+
+\subsection{Alternative Informality Definitions}
+
+We replicate the main DiD using three informality measures: (i) no social security (primary), (ii) no written contract, and (iii) small firm ($< 5$ workers). The social security definition yields the largest binary interaction coefficient (0.090 in 2021), while the contract definition yields a near-zero coefficient (0.002). The small-firm measure falls between (0.044).
+
+This cross-definition divergence is a substantive finding, not a robustness failure. It indicates that the pandemic's informality shock operated primarily through the \textit{loss of employer-provided social security}---workers remained in similar-sized firms and may have retained informal verbal arrangements, but lost formal health insurance coverage. This pattern is consistent with employers shedding social security obligations to reduce costs during the crisis, rather than workers shifting to entirely different (smaller, informal) firms. The near-zero contract coefficient suggests that the formal/informal employment boundary, as defined by written contracts, was largely unaffected by the teleworkability differential---plausibly because contract status is stickier than insurance enrollment.
+
+\subsection{Balanced Versus Unbalanced Panel}
+
+Only 0.5\% of individuals (1,154 out of 214,413) are observed in all five ENAHO waves. We compare the main specification on the full unbalanced panel with the balanced sub-panel. Given the extremely small balanced sample, coefficient comparisons should be interpreted cautiously. The full-panel results are more reliable for population-level inference but cannot distinguish within-individual scarring from compositional effects.
+
+\subsection{Attrition Analysis}
+
+Panel attrition is severe (78.7\% by 2021, 96.9\% by 2024) but crucially \textit{not differential by treatment}. A regression of the attrition indicator on baseline characteristics shows that teleworkability does not predict attrition ($\beta = -0.003$, $p = 0.163$). Rural workers are slightly less likely to attrit ($\beta = -0.006$, $p < 0.001$) and women slightly more ($\beta = 0.004$, $p = 0.013$), but these patterns are orthogonal to the treatment variable. The non-differential attrition strengthens the causal interpretation of the DiD.
+
+\subsection{Limitations}
+
+\begin{enumerate}
+    \item \textbf{No pre-2020 data}: Our panel begins in 2020, the year of the shock. We cannot test parallel trends in the pre-period, which is the standard validation for DiD designs. The identifying assumption rests on the plausibility of common trends absent the pandemic, not on statistical pre-trend tests.
+    \item \textbf{Teleworkability index validity}: The \citet{dingel2020} index was constructed for U.S. occupations. While the ISCO-08 crosswalk preserves the broad occupational structure, task content may differ between U.S. and Peruvian workers in the same occupation code. \citet{saltiel2020} provide a developing-country adaptation that we do not implement but recommend for future validation.
+    \item \textbf{Rotating panel}: ENAHO's design limits within-individual tracking to approximately two consecutive years. The five-year event window relies on cross-cohort comparisons for most of its identifying variation, making it a hybrid between a true panel DiD and a repeated cross-section DiD.
+    \item \textbf{2020 baseline contamination}: ENAHO 2020 was conducted throughout the calendar year, with fieldwork occurring both before and after the March 2020 lockdown. Our baseline year is partially treated, which attenuates the measured DiD effect.
+\end{enumerate}

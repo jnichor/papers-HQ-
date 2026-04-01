@@ -1,0 +1,48 @@
+RESEARCH IDEA SUBMISSION
+========================
+
+IDEA TITLE:
+The Ratchet Effect: Commodity Booms Don't Undo What Busts Destroy
+
+PAPER TYPE: Empirical
+
+RESEARCH QUESTION:
+When commodity prices recover after a bust, do civil liberties restore symmetrically, or does repression exhibit a ratchet — easily installed during crises but resistant to reversal during recoveries?
+
+HYPOTHESIS / MECHANISM:
+The ratchet hypothesis — that repression is easy to install but hard to remove — is widely theorized but never causally tested on disaggregated civil liberty data. Using ~50-80 bust-recovery pairs across 200 countries, this paper formally rejects or confirms symmetry for each civil liberty, with the finding that specific freedoms (likely assembly, expression) are permanently lost while others partially recover constituting a landmark result for democratic backsliding theory.
+
+IDENTIFICATION STRATEGY:
+Asymmetric Event Study (TWFE) with bust and recovery episodes; joint symmetry test — Week 1: Using CTOT data, identify all bust episodes (>1.5 SD decline, ≥2 years) and their recovery dates (price returning above pre-bust level) within the 51-year panel; plot raw V-Dem liberty time series for a sample of 10-15 countries around bust-recovery pairs to visually inspect asymmetry before estimating the formal event study.
+
+DATA SOURCES:
+- V-Dem (all 5 liberties + judicial independence v2juncind)
+- Gruss-Kebhaj CTOT dataset
+
+DATA STRUCTURE: panel
+TIME COVERAGE: [1975, 1976, 1977, 1978, 1979, 1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994]
+
+
+*** IDENTIFICATION ASSESSMENT (MANDATORY) ***
+You MUST explicitly evaluate the following in your assessment:
+
+1. SOURCE OF EXOGENOUS VARIATION: What is the specific source of identifying
+   variation? (e.g., "policy reform in year X", "geographic discontinuity at
+   threshold Y", "instrument Z correlated with treatment but not outcome").
+   Is it clearly stated? Is it plausible?
+
+2. IDENTIFICATION THREATS: What are the main threats to identification?
+   (e.g., selection bias, reverse causality, omitted variables, violation of
+   exclusion restriction, non-parallel trends).
+
+3. PRE-TRENDS: Can parallel trends be tested with the available data?
+   If not, how does this affect credibility?
+
+4. IDENTIFICATION TIER: Classify the identification strategy:
+   - Tier 1 (STRONG): RCT, natural experiment, sharp RDD, DiD with pre-trends
+   - Tier 2 (GOOD): IV with strong first stage, fuzzy RDD, DiD without pre-trends
+   - Tier 3 (MODERATE): Panel FE exploiting within-variation, CRE
+   - Tier 4 (WEAK): Cross-sectional matching, OLS with controls, decompositions
+
+Include these assessments in your evaluation and factor them into your score.
+A Tier 4 identification strategy should not score above 6/10 regardless of novelty.

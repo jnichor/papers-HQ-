@@ -313,6 +313,31 @@ def run(project_dir: Path, state: dict) -> dict:
             files.append(str(checklist))
         files.append(str(scripts_dir))
 
+        # Extract MUST requirements from referee checklist to embed in the prompt
+        checklist_musts = ""
+        if checklist.exists():
+            cl_text = checklist.read_text(encoding="utf-8")
+            musts = [line.strip("- ").strip()
+                     for line in cl_text.splitlines()
+                     if line.strip().startswith("- [") and "MUST" in line.split("]")[0].upper()]
+            if not musts:
+                # Fallback: grab lines under "## MUST-HAVE"
+                in_must = False
+                for line in cl_text.splitlines():
+                    if "MUST-HAVE" in line:
+                        in_must = True
+                        continue
+                    if in_must and line.startswith("## "):
+                        break
+                    if in_must and line.strip().startswith("- "):
+                        musts.append(line.strip("- ").strip())
+            if musts:
+                checklist_musts = (
+                    "\n\nREFEREE CHECKLIST — MUST-IMPLEMENT requirements "
+                    f"({len(musts)} items). Each script MUST address the relevant items:\n"
+                    + "\n".join(f"  {i+1}. {m[:200]}" for i, m in enumerate(musts))
+                )
+
         request_manual_intervention(
             stage="stage4_full",
             issue=(
@@ -328,7 +353,10 @@ def run(project_dir: Path, state: dict) -> dict:
                 "(c) justify the chosen strategy (listwise deletion, imputation, or bounds), "
                 "(d) log how many obs are dropped at each step. "
                 "02_robustness.py MUST include a robustness check comparing results "
-                "with and without imputed observations."
+                "with and without imputed observations. "
+                "03_output.py MUST generate LaTeX tables (.tex files) in paper/tables/ "
+                "in addition to figures."
+                + checklist_musts
             ),
             files=files,
             project_dir=project_dir,

@@ -81,10 +81,15 @@ def _print_idea(idx: int, idea: dict):
     classification = _classify_method(method)
     tag = _method_tag(classification)
 
+    id_level = idea.get("identification_level", "")
+    id_score = idea.get("identification", "")
+    id_tag = f"[ID: {id_level}]" if id_level else ""
+
     print(f"\n  [{idx}] {idea.get('title', 'Untitled')}")
     print(f"      Score: {idea.get('total_score', '?')}  "
-          f"(N={idea.get('novelty','?')} F={idea.get('feasibility','?')} I={idea.get('impact','?')})")
-    print(f"      Method: {method}  {tag}")
+          f"(N={idea.get('novelty','?')} F={idea.get('feasibility','?')} "
+          f"I={idea.get('impact','?')} ID={id_score if id_score else '?'})")
+    print(f"      Method: {method}  {tag} {id_tag}")
     print(f"      RQ: {idea.get('research_question', 'N/A')}")
     data = idea.get("data_sources", [])
     if data:
@@ -128,45 +133,46 @@ def idea_selection(top_ideas: list[dict]) -> dict:
     for i, idea in enumerate(top_ideas[:3], 1):
         _print_idea(i, idea)
 
-    # ── Causal method audit ──────────────────────────────────────────────
+    # ── Identification quality audit ──────────────────────────────────────
     top3 = top_ideas[:3]
     classifications = [_classify_method(idea.get("method", "")) for idea in top3]
     n_causal = sum(1 for c in classifications if c == "CAUSAL")
     n_panel = sum(1 for c in classifications if c == "PANEL")
     n_descriptive = sum(1 for c in classifications if c in ("DESCRIPTIVE", "UNKNOWN"))
 
+    # New: check identification levels
+    id_levels = [idea.get("identification_level", "C") for idea in top3]
+    # id_scores used for future weighted audit
+    n_level_a = sum(1 for l in id_levels if l == "A")
+    n_level_b = sum(1 for l in id_levels if l == "B")
+    n_level_c = sum(1 for l in id_levels if l == "C")
+
     print()
     _hr("-")
-    print("CAUSAL DESIGN AUDIT")
+    print("IDENTIFICATION QUALITY AUDIT")
     _hr("-")
-    print(f"  Causal methods (DiD, IV, RDD, event study, etc.): {n_causal} of 3")
-    print(f"  Panel methods (FE, TWFE, dynamic panel, CRE):     {n_panel} of 3")
-    print(f"  Descriptive methods (OLS, matching, decomp.):     {n_descriptive} of 3")
+    print(f"  Level A (strong - control group):     {n_level_a} of 3")
+    print(f"  Level B (moderate - dose variation):   {n_level_b} of 3")
+    print(f"  Level C (weak - before/after only):    {n_level_c} of 3")
+    print(f"  Causal methods: {n_causal} | Panel: {n_panel} | Descriptive: {n_descriptive}")
 
-    if n_causal >= 2:
-        print(f"\n  [ok] {n_causal} of 3 ideas use causal identification.")
+    if n_level_a + n_level_b >= 2:
+        print(f"\n  [ok] {n_level_a + n_level_b} of 3 ideas have credible identification (A or B).")
         print(f"       These designs are competitive for top field journals.")
-    elif n_causal == 1:
-        print(f"\n  [!] WARNING: Only 1 of 3 ideas uses a causal design.")
-        print(f"      Papers without causal identification face a score ceiling")
-        print(f"      of ~70/100 and are limited to regional/applied journals.")
-        print(f"      Consider REJECT ALL to regenerate with more causal designs,")
-        print(f"      or select the causal idea (marked [CAUSAL]).")
+    elif n_level_a + n_level_b == 1:
+        print(f"\n  [!] WARNING: Only 1 of 3 ideas has credible identification.")
+        print(f"      Select the Level A/B idea for the strongest paper.")
+        print(f"      Level C ideas face a score ceiling of ~75/100.")
     else:
-        if n_panel >= 1:
-            print(f"\n  [!!] WARNING: No ideas use a causal design.")
-            print(f"       {n_panel} idea(s) use panel methods, which exploit within-individual")
-            print(f"       variation but do NOT provide causal identification without")
-            print(f"       a pre-treatment baseline or exogenous variation.")
-            print(f"\n       To reach 80+/100, you need causal designs (DiD, IV, RDD).")
-            print(f"       This typically requires pre-treatment data or a natural experiment.")
-            print(f"       Consider REJECT ALL if you have data that supports causal designs.")
-        else:
-            print(f"\n  [!!] WARNING: No ideas use causal or panel methods.")
-            print(f"       All 3 ideas are purely descriptive/correlational.")
-            print(f"       Score ceiling: ~65/100 (regional journals only).")
-            print(f"\n       Strongly consider REJECT ALL to regenerate, or provide")
-            print(f"       additional data that enables causal identification.")
+        print(f"\n  [!!] WARNING: ALL ideas are Level C (weak identification).")
+        print(f"       No idea has a credible control group or dose variation.")
+        print(f"       Score ceiling: ~75/100 regardless of execution quality.")
+        print(f"\n       Options:")
+        print(f"       - REJECT ALL and provide data with cross-sectional treatment variation")
+        print(f"       - Proceed knowing the paper will be descriptive, not causal")
+
+        print(f"\n       To improve: find data where some units are MORE treated than others")
+        print(f"       (geographic variation, policy bans, infrastructure differences)")
 
     print()
     _hr()

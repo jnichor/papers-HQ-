@@ -1,1 +1,0 @@
-(Could not extract section 'referee_objections' — see strategist_output.md)

@@ -22,6 +22,7 @@ def validate(
     _check_output_files(vr, scripts_dir, project_dir)
     _check_results_summary_content(vr, scripts_dir, project_dir)
     _check_code_patterns(vr, scripts_dir)
+    _check_referee_checklist_coverage(vr, scripts_dir, project_dir)
     return vr
 
 
@@ -259,6 +260,105 @@ def _check_code_patterns(vr: ValidationResult, scripts_dir: Path):
                         "het_robust_estimator", CheckLevel.SOFT, True,
                         "Heterogeneity-robust estimator found"
                     )
+
+
+# ── Referee checklist coverage ────────────────────────────────────────────────
+
+# Keywords that indicate a MUST requirement is addressed in the code.
+# Each tuple: (checklist keyword pattern, code keyword patterns)
+_CHECKLIST_CODE_MAP = [
+    # Estimation
+    (r"event.study|distributed.lag", [r"event.?time|event.?study|distributed.?lag"]),
+    (r"cluster.*standard.*error", [r"cluster|cov_type.*cluster"]),
+    (r"wild.*cluster.*bootstrap", [r"wildboot|wild.*cluster.*bootstrap|boottest|rademacher"]),
+    (r"pre.?trend.*test|joint.*f.?test", [r"pre.?trend|f.?test|wald.*test|joint.*test"]),
+    (r"heterogeneity.*interact", [r"interact|_x_|epi.*post|treatment.*var"]),
+    (r"placebo.*test", [r"placebo|fake.*treat|false.*treatment"]),
+    (r"country.*specific.*trend", [r"country.*trend|t_trend|linear.*trend"]),
+    (r"balanced.*panel", [r"balanced|balance"]),
+    (r"winsoriz", [r"winsoriz|clip|percentile.*trim"]),
+    (r"composition.*effect|language.*entry", [r"composition|n_language|balanced.*lang"]),
+    (r"hhi.*shannon|both.*outcome", [r"hhi.*entropy|entropy.*hhi|for.*outcome"]),
+    (r"summary.*statistic", [r"summary.*stat|describe|mean.*sd"]),
+    (r"normalized.*hhi", [r"hhi_norm|normalized"]),
+    (r"data.*provenance", [r"provenance|source.*log"]),
+    (r"missingness|missing.*data", [r"miss|isnull|dropna|MCAR|MAR"]),
+]
+
+
+def _check_referee_checklist_coverage(
+    vr: ValidationResult, scripts_dir: Path, project_dir: Path
+):
+    """Cross-check referee MUST requirements against generated code."""
+    checklist_path = project_dir / "strategy" / "referee_checklist.md"
+    if not checklist_path.exists():
+        return
+
+    cl_text = checklist_path.read_text(encoding="utf-8")
+
+    # Extract MUST requirements
+    musts = []
+    in_must = False
+    for line in cl_text.splitlines():
+        if "MUST-HAVE" in line or "MUST" in line and "##" in line:
+            in_must = True
+            continue
+        if in_must and line.startswith("## "):
+            break
+        if in_must and line.strip().startswith("- "):
+            musts.append(line.strip("- ").strip())
+
+    if not musts:
+        return
+
+    # Read all script code
+    all_code = ""
+    for name in EXPECTED_SCRIPTS:
+        path = scripts_dir / name
+        if path.exists():
+            all_code += path.read_text(encoding="utf-8") + "\n"
+
+    if not all_code:
+        return
+
+    all_code_lower = all_code.lower()
+
+    # Check each MUST against code
+    implemented = 0
+    not_implemented = []
+    for must in musts:
+        must_lower = must.lower()
+        found = False
+        for checklist_pat, code_pats in _CHECKLIST_CODE_MAP:
+            if re.search(checklist_pat, must_lower):
+                if any(re.search(cp, all_code_lower) for cp in code_pats):
+                    found = True
+                    break
+        if found:
+            implemented += 1
+        else:
+            not_implemented.append(must[:80])
+
+    total = len(musts)
+    coverage_pct = (implemented / total * 100) if total > 0 else 0
+
+    vr.add(
+        "referee_checklist_coverage", CheckLevel.SOFT,
+        coverage_pct >= 60,
+        f"Referee checklist: {implemented}/{total} MUST requirements detected in code "
+        f"({coverage_pct:.0f}%)"
+    )
+
+    if not_implemented:
+        # Log first few missing for the report
+        missing_preview = "; ".join(not_implemented[:5])
+        if len(not_implemented) > 5:
+            missing_preview += f" ... and {len(not_implemented) - 5} more"
+        vr.add(
+            "referee_checklist_missing", CheckLevel.SOFT,
+            len(not_implemented) <= total * 0.4,
+            f"Possibly unimplemented: {missing_preview}"
+        )
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────

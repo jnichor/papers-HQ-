@@ -307,31 +307,73 @@ HARD CONSTRAINTS on what methods are feasible:
 
 RESEARCH AREA: {topic}
 
-## *** CAUSAL IDENTIFICATION PRIORITY ***
+## *** IDENTIFICATION-FIRST DESIGN PRINCIPLE ***
 
-Top journals require CAUSAL identification strategies. Always prefer methods that
-establish causality over purely descriptive or correlational approaches.
-BUT: only propose methods that the available data can ACTUALLY SUPPORT.
-An overambitious design that fails at peer review is worse than a modest but
-credible design that survives.
+The #1 reason papers get low scores is WEAK IDENTIFICATION — proposing a "causal"
+method (DiD, event study) without credible exogenous variation. The pipeline has
+learned from experience: identification quality is the binding constraint on paper
+quality. Everything else (writing, code, robustness) can be fixed later, but a
+weak identification strategy cannot be rescued.
 
-METHOD HIERARCHY (strongest to weakest — aim for the highest FEASIBLE tier):
-  Tier 1 (CAUSAL): DiD, event study, IV/2SLS, RDD, RCT, synthetic control
-  Tier 2 (PANEL-CAUSAL): TWFE, individual FE + exogenous shock, Arellano-Bond GMM, CRE
-  Tier 3 (PANEL-DESCRIPTIVE): individual FE without clear identification, within-estimator
-  Tier 4 (CROSS-SECTION): OLS, matching (PSM/CEM), Oaxaca-Blinder, quantile regression,
-          decompositions, probit/logit, Heckman selection
+YOUR JOB: Design the identification strategy FROM THE DATA, not from the topic.
+Before proposing any method, first ask: "What variation exists in this data that
+could serve as a source of exogenous treatment?"
+
+## *** IDENTIFICATION QUALITY LEVELS ***
+
+Level A (STRONG — score 90+): There exists a credible control group.
+  - Some units are treated, others are not, and the assignment is plausibly exogenous.
+  - Examples: policy rollout that affected some regions first, natural disaster that hit
+    some areas but not others, eligibility threshold creating a discontinuity.
+  - Methods: DiD with staggered adoption, RDD, IV with strong first stage.
+
+Level B (MODERATE — score 75-85): Treatment is universal but intensity varies.
+  - All units are treated, but the DOSE varies cross-sectionally for exogenous reasons.
+  - Examples: English proficiency determines how much a country benefits from an
+    English-first AI tool, pre-existing broadband penetration determines adoption speed.
+  - Methods: Continuous treatment DiD, Bartik shift-share, dose-response models.
+  - KEY: The intensity variable must be PRE-DETERMINED (measured before treatment).
+
+Level C (WEAK — score 60-75): Treatment is simultaneous and universal.
+  - All units are treated at the same time with the same intensity.
+  - No control group, no dose variation. Identification relies solely on before-after.
+  - Methods: Interrupted time series, simple event study with entity FE.
+  - WARNING: Referees WILL reject causal claims. Pre-trends cannot validate identification.
+
+## *** CRITICAL: AVOID LEVEL C DESIGNS ***
+
+If the topic involves a UNIVERSAL SHOCK (global product launch, pandemic, worldwide
+policy), do NOT propose a simple before-after event study as the main design.
+Instead, SEARCH THE DATA for cross-sectional variation that creates differential
+exposure. Common sources:
+  - Geographic variation (some regions affected more than others)
+  - Pre-existing characteristics that moderate treatment intensity
+  - Policy responses that vary by jurisdiction (bans, delays, regulations)
+  - Infrastructure differences (internet access, language, institutions)
+
+If you CANNOT find any cross-sectional variation, honestly say so and propose a
+Level C design with appropriate caveats — but this should be AT MOST 1 of your
+top 3 ideas, not all of them.
+
+METHOD HIERARCHY (strongest to weakest):
+  Tier 1 (CAUSAL): DiD with control group, IV/2SLS, RDD, RCT, synthetic control
+  Tier 2 (CONTINUOUS TREATMENT): Continuous DiD, Bartik, dose-response, shift-share
+  Tier 3 (PANEL-DESCRIPTIVE): TWFE without clear ID, entity FE + universal shock
+  Tier 4 (CROSS-SECTION): OLS, matching, decompositions, probit/logit
 
 HARD RULES:
 - Only propose methods up to Tier {max_tier}. Methods beyond this tier are FORBIDDEN.
-- For EACH idea, you must explain WHY the data supports the proposed method:
-  (a) What is the source of exogenous variation?
+- For EACH idea, you must specify the IDENTIFICATION LEVEL (A, B, or C) and explain:
+  (a) What is the source of exogenous variation? (If universal shock: what creates
+      DIFFERENTIAL exposure across units?)
   (b) How many pre-treatment periods are available?
   (c) Can parallel trends be tested? With how many pre-periods?
   (d) Are there enough clusters for reliable inference?
   (e) Is the treatment plausibly exogenous? What threatens this?
-- If you cannot answer ALL of (a)-(e) convincingly, downgrade to a lower tier.
-- A Tier 2 design with strong identification beats a Tier 1 design with weak ID.
+- If you cannot identify cross-sectional variation, the design is Level C.
+- AT LEAST 2 of the top 3 ideas MUST be Level A or Level B.
+- A Level B design with credible dose variation beats a Level A design with
+  implausible exclusion restriction.
 
 {feasibility_block}
 {panel_enforcement}
@@ -361,17 +403,27 @@ Based on the current state of research in {topic}:
    - Data sources needed
    - Why this is novel and impactful
    - Sub-topic category (to verify diversity)
-4. Score each idea:
-   - Novelty (1-5)
-   - Feasibility (1-5)
-   - Impact (1-5)
-   - Total = Novelty * 0.4 + Feasibility * 0.3 + Impact * 0.3
-   - Causal bonus: add +0.3 to the total score of any idea that uses a Tier 1-2 causal method.
-   {"- Panel bonus: add +0.3 to the total score of any idea that uses a panel method as primary method." if is_panel else ""}
+4. Score each idea on FOUR dimensions:
+   - Novelty (N, 1-5): How new is this question/approach?
+   - Feasibility (F, 1-5): Can this be done with the available data?
+   - Impact (I, 1-5): How important is the answer?
+   - Identification (ID, 1-5): How credible is the causal claim?
+     * 5 = Level A: clean control group, exogenous assignment
+     * 4 = Level A with minor threats, or strong Level B
+     * 3 = Level B: universal treatment but credible dose variation
+     * 2 = Weak Level B or Level C with good robustness plan
+     * 1 = Level C: before-after with no cross-sectional variation
+
+   Total = N * 0.2 + F * 0.2 + I * 0.2 + ID * 0.4
+   (Identification is 40% of the score — it is the binding constraint)
+   {"- Panel bonus: add +0.2 if the idea exploits within-unit variation over time." if is_panel else ""}
+
 5. Select the TOP 3 ideas and elaborate on each. The top 3 MUST come from
    3 DIFFERENT sub-topics. Never select 2 ideas from the same sub-topic.
-   AT LEAST 2 of the top 3 MUST use Tier 1 or Tier 2 causal methods.
+   AT LEAST 2 of the top 3 MUST have Identification >= 3 (Level A or B).
    {"AT LEAST 2 of the top 3 MUST use panel methods (FE, DiD, TWFE, event study, dynamic panel)." if is_panel else ""}
+   If ALL ideas have Identification <= 2, explicitly flag this as a DATA LIMITATION
+   and recommend what additional data would raise identification to Level A/B.
 
 IMPORTANT: At the end, output a JSON block:
 ```json
@@ -381,17 +433,21 @@ IMPORTANT: At the end, output a JSON block:
       "rank": 1,
       "title": "...",
       "research_question": "...",
-      "method": "DiD",
+      "method": "DiD with continuous treatment intensity",
+      "identification_level": "B",
+      "identification_source": "Pre-determined English proficiency creates differential treatment intensity",
       "sub_topic": "informality",
       "data_sources": ["..."],
       "novelty": 4,
       "feasibility": 4,
       "impact": 5,
-      "total_score": 4.3,
+      "identification": 3,
+      "total_score": 3.8,
       "pitch": "2-3 sentence pitch",
       "first_experiment": "What you'd do in week 1"
     }}
-  ]
+  ],
+  "identification_warning": "If ALL top 3 have identification <= 2, explain what data would fix this"
 }}
 ```
 """

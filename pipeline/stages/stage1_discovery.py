@@ -994,14 +994,19 @@ def _run_path_c(project_dir: Path, state: dict) -> dict:
     # ── Also search Dataverse API live for fresh datasets ─────────
     print("  [search] Also searching Dataverse API for fresh datasets...")
     live_queries = [
-        "RCT randomized education test scores",
+        # Natural experiments and policy discontinuities
+        "regression discontinuity threshold eligibility",
+        "staggered rollout policy reform panel",
+        "natural experiment ban restriction access",
+        "randomized controlled trial RCT replication",
+        # Standard high-quality panels
         "panel health expenditure insurance household",
         "minimum wage employment county quarterly",
         "trade shock employment manufacturing",
         "cash transfer poverty consumption",
-        "teacher effectiveness student achievement",
-        "pollution health mortality panel",
-        "immigration wages labor market",
+        # Designs with built-in variation
+        "difference in differences policy change state",
+        "instrumental variable geographic distance exposure",
     ]
     for q in live_queries:
         results = _search_dataverse(q, max_results=2)
@@ -1199,25 +1204,36 @@ def _run_path_c(project_dir: Path, state: dict) -> dict:
             f"  Data summary: {p.get('data_summary', 'N/A')[:500]}\n"
         )
 
-    topic_prompt = f"""You are a research advisor. Below are datasets that have been
-downloaded and profiled. Each can support a high-quality causal empirical paper
-(score ceiling >= 85/100).
+    topic_prompt = f"""You are a research advisor specializing in CAUSAL IDENTIFICATION.
+Below are datasets that have been downloaded and profiled.
 
-For each dataset, suggest 2 specific research topics that:
-1. Are feasible with the ACTUAL VARIABLES in the dataset
-2. Use ONLY methods the data structure supports (see allowed methods)
-3. Have a clear source of exogenous variation or natural experiment
-4. Address a question that is novel and relevant to top field journals
-5. Can realistically achieve a referee score of 85+
+YOUR #1 PRIORITY: Find the EXOGENOUS VARIATION in each dataset.
+Before suggesting any topic, ask: "What in this data creates a situation where
+some units are treated and others are not, for reasons outside their control?"
+
+IDENTIFICATION-FIRST APPROACH:
+1. Look at the variables. Is there a POLICY CHANGE that affected some units first?
+   (staggered rollout, regional reform, age threshold, income cutoff)
+2. Is there a GEOGRAPHIC BOUNDARY that creates a discontinuity?
+   (state borders, district lines, distance to something)
+3. Is there a THRESHOLD that creates a sharp cutoff?
+   (eligibility criteria, test scores, age limits, income limits)
+4. Is there a NATURAL EXPERIMENT embedded in the data?
+   (weather shock, unexpected policy, legal change, natural disaster)
+5. Is there CROSS-SECTIONAL VARIATION in treatment intensity?
+   (some regions more exposed than others for pre-determined reasons)
+
+If you CANNOT find exogenous variation in a dataset, say so explicitly.
+Do NOT propose a before-after design with universal treatment — these always
+score below 80 and are rejected by referees.
 
 DATASETS:
 {"".join(data_summaries)}
 
-For each topic, specify:
-- Research question (one sentence)
-- Method (must be in allowed methods)
-- Source of identification (what exogenous variation?)
-- Why this can score 90+ (what makes it credible?)
+For each dataset, suggest 2 specific research topics. Each MUST have:
+- A source of exogenous variation that creates a credible comparison group
+- Identification level A (control group) or B (dose variation) — NEVER level C
+- A method that is compatible with the data structure
 
 Return a JSON block:
 ```json
@@ -1227,9 +1243,11 @@ Return a JSON block:
       "dataset_index": 1,
       "topic": "Short topic name",
       "research_question": "...",
-      "method": "DiD",
-      "identification": "What exogenous variation...",
-      "score_potential": "Why 85+..."
+      "method": "DiD with staggered adoption",
+      "identification_level": "A",
+      "identification": "Policy X was adopted by states at different times (2010-2015), creating staggered treatment variation",
+      "control_group": "States that adopted later serve as controls for early adopters",
+      "score_potential": "Level A identification + panel data + 5 pre-treatment years = 90+ potential"
     }}
   ]
 }}
@@ -1253,12 +1271,16 @@ Return a JSON block:
         for i, s in enumerate(topic_list, 1):
             ds_idx = s.get("dataset_index", 1)
             ds_name = qualified[ds_idx - 1]["candidate"].get("name", "?")[:40] if ds_idx <= len(qualified) else "?"
+            id_level = s.get("identification_level", "?")
             print(f"\n  [{i}] {s.get('topic', '?')}")
             print(f"      Dataset:  {ds_name}")
             print(f"      RQ:       {s.get('research_question', '?')}")
-            print(f"      Method:   {s.get('method', '?')}")
-            print(f"      ID:       {s.get('identification', '?')[:100]}")
-            print(f"      Score:    {s.get('score_potential', '?')[:100]}")
+            print(f"      Method:   {s.get('method', '?')}  [ID Level: {id_level}]")
+            print(f"      ID:       {s.get('identification', '?')[:120]}")
+            control = s.get("control_group", "")
+            if control:
+                print(f"      Control:  {control[:120]}")
+            print(f"      Score:    {s.get('score_potential', '?')[:120]}")
     else:
         print("  [warn] Could not generate topic suggestions")
 
@@ -1570,22 +1592,40 @@ Output a JSON block:
         print(f"\n  [search] Launching 3 parallel searches...")
         t0 = _time.time()
 
-        # ── Subagent 1: Claude web search (conventional sources) ──────
+        # ── Subagent 1: Claude web search (identification-first) ──────
         web_prompt = (
-            'Search for 1 publicly available dataset from ANYWHERE IN THE WORLD'
-            f' for causal empirical research on "{topic}".'
-            ' Search government microdata portals (IPUMS, DHS, LSMS, EU-SILC, CFPS),'
-            ' international orgs (World Bank, OECD, UNESCO, ILO), or any national'
-            ' statistics office worldwide.'
-            ' Prefer panel data with pre/post treatment periods.'
-            ' Do NOT default to any specific country.'
-            ' Return ONLY a JSON object:'
-            ' {"name": "...", "provider": "...", "url": "https://...",'
-            ' "data_structure": "panel|cross-section|repeated-cross-sections",'
-            ' "time_span": "...", "n_years": 0, "natural_experiment": "...",'
-            ' "causal_methods_enabled": ["DiD"], "causal_score": 0,'
-            ' "format": ".csv", "access": "free_direct|free_registration|restricted",'
-            ' "files_needed": ["file.csv"], "limitations": "..."}'
+            f'You are searching for datasets to study "{topic}" with CAUSAL identification.\n'
+            f'\n'
+            f'IDENTIFICATION-FIRST APPROACH: Do NOT just search for data about {topic}.\n'
+            f'Instead, search for NATURAL EXPERIMENTS related to {topic}:\n'
+            f'  1. Policy reforms that were adopted at different times in different regions\n'
+            f'     (staggered rollout = DiD with clean control group)\n'
+            f'  2. Eligibility thresholds or cutoffs (age, income, score = RDD)\n'
+            f'  3. Bans, restrictions, or access limitations that varied by jurisdiction\n'
+            f'  4. Exogenous shocks that affected some units more than others\n'
+            f'  5. Replication packages from TOP JOURNAL papers that used causal designs\n'
+            f'     on topics related to "{topic}"\n'
+            f'\n'
+            f'Search: government microdata portals (IPUMS, DHS, LSMS, EU-SILC, CFPS),\n'
+            f'international orgs (World Bank, OECD, UNESCO, ILO), Harvard Dataverse,\n'
+            f'or any national statistics office worldwide.\n'
+            f'Prefer panel data with staggered treatment or discontinuities.\n'
+            f'Do NOT default to any specific country.\n'
+            f'\n'
+            f'CRITICAL: If the topic involves a UNIVERSAL SHOCK (e.g., a global product\n'
+            f'launch, a pandemic), search for data where ACCESS or EXPOSURE varied across\n'
+            f'units (country bans, regional restrictions, infrastructure differences).\n'
+            f'A dataset with treatment variation is worth 10x a dataset without it.\n'
+            f'\n'
+            f'Return ONLY a JSON object:\n'
+            f'{{"name": "...", "provider": "...", "url": "https://...",'
+            f' "data_structure": "panel|cross-section|repeated-cross-sections",'
+            f' "time_span": "...", "n_years": 0,'
+            f' "natural_experiment": "SPECIFIC description of what creates treatment variation",'
+            f' "control_group": "WHO is untreated and WHY",'
+            f' "causal_methods_enabled": ["DiD"], "causal_score": 0,'
+            f' "format": ".csv", "access": "free_direct|free_registration|restricted",'
+            f' "files_needed": ["file.csv"], "limitations": "..."}}'
         )
         p = get_profile("stage1")
 
@@ -1604,8 +1644,11 @@ Output a JSON block:
             )
 
         def _run_api_searches():
+            # Search both the topic directly AND natural experiment variants
             api_results["dataverse"] = _search_dataverse(topic)
+            api_results["dataverse"] += _search_dataverse(f"{topic} replication natural experiment")
             api_results["zenodo"] = _search_zenodo(topic)
+            api_results["zenodo"] += _search_zenodo(f"{topic} policy reform panel")
             api_results["github"] = _search_github(topic)
 
         with ThreadPoolExecutor(max_workers=2) as pool:
@@ -1652,56 +1695,47 @@ Output a JSON block:
         }, indent=2, ensure_ascii=False)
 
         consolidator_prompt = f"""You are a dataset evaluator for causal empirical research.
-You apply the same standards that journal referees use when reviewing empirical papers.
+Your #1 job: find datasets where TREATMENT VARIES ACROSS UNITS.
 
 TOPIC: "{topic}"
 
-Below are candidate datasets found from multiple sources (web search, Harvard Dataverse,
-Zenodo, and GitHub). Evaluate ALL candidates and select the TOP 3 best datasets for
-producing a high-quality causal paper that can survive peer review.
+Below are candidate datasets found from multiple sources. Select the TOP 3 datasets
+that can produce a paper scoring 85+/100. The binding constraint is ALWAYS identification
+— a dataset with treatment variation beats a bigger/cleaner dataset without it.
 
-EVALUATION CRITERIA (what referees actually check):
+EVALUATION CRITERIA (RANKED BY IMPORTANCE):
 
-1. DATA STRUCTURE (most important):
+1. EXOGENOUS VARIATION (most important — 50% of evaluation):
+   Does the data contain a situation where some units are treated and others are not?
+   - BEST: Staggered policy rollout (different regions treated at different times)
+   - GOOD: Eligibility threshold creating a discontinuity (RDD)
+   - OK: Universal treatment but intensity varies cross-sectionally (dose-response)
+   - WEAK: Universal simultaneous treatment (before-after only = Level C)
+
+   *** A dataset with clear treatment variation but only 5,000 obs is BETTER than
+   a dataset with 500,000 obs but no treatment variation. ***
+
+2. DATA STRUCTURE:
    - Panel data (same units tracked over time) >> repeated cross-sections >> cross-section
-   - A referee will always ask: "why didn't you use FE/DiD?" if panel data exists
+   - Pre-treatment periods: at least 3 years before treatment for credible pre-trends
 
-2. IDENTIFICATION STRATEGY:
-   - Is there a natural experiment, policy reform, or exogenous shock?
-   - Can you test parallel trends with pre-treatment data?
-   - At least 2-3 pre-treatment years are needed for credible pre-trends
-   - Is the treatment plausibly exogenous? (referees will challenge this)
+3. STATISTICAL POWER:
+   - Enough clusters for cluster-robust inference (30+ clusters)
+   - Treatment/control groups large enough to detect meaningful effects
 
-3. EXTERNAL VALIDITY:
-   - Is the sample nationally representative or only a specific region/group?
-   - Can findings generalize beyond the sample? Referees penalize narrow samples
-     unless the research question is specifically about that subgroup
+4. DATA QUALITY & ACCESS:
+   - Publicly accessible, well-documented
+   - Low attrition, consistent variable definitions
 
-4. STATISTICAL POWER:
-   - Sample size sufficient for subgroup/heterogeneity analysis
-   - Enough clusters for cluster-robust inference (rule of thumb: 30+ clusters)
-   - Treatment/control groups large enough to detect economically meaningful effects
+CAUSAL SCORE (1-5):
+  5 = Staggered treatment + panel + 3+ pre-years + clear control group + accessible
+  4 = Cross-sectional treatment variation + panel + plausible ID
+  3 = Dose variation (continuous treatment) + panel + some pre-periods
+  2 = Panel but universal treatment, or cross-section with strong IV/RDD
+  1 = Universal simultaneous treatment with no control group
 
-5. DATA QUALITY & ATTRITION:
-   - Panel attrition rate — if >30%, referees will demand robustness checks
-   - Missingness in key variables — high missingness limits what you can estimate
-   - Consistent variable definitions across waves (coding changes break panels)
-
-6. REPLICABILITY & ACCESS:
-   - Is the data publicly accessible? Referees and editors increasingly require this
-   - Free > free with registration > restricted > paid
-   - Well-documented codebooks and variable definitions
-
-7. TEMPORAL RELEVANCE:
-   - Recent data (last 10 years) preferred unless studying historical questions
-   - Outdated data requires justification ("why is this still relevant?")
-
-CAUSAL SCORE (1-5) — combining all criteria above:
-  5 = Panel + 3+ pre-treatment years + clear natural experiment + representative + accessible
-  4 = Panel + some pre-treatment + plausible identification + good sample
-  3 = Repeated cross-sections + natural experiment OR panel without pre-treatment
-  2 = Panel but post-shock only, or cross-section with strong IV/RDD
-  1 = Cross-section with weak identification
+*** REJECT any dataset that can only support Level C identification (causal_score=1)
+unless no better option exists. ***
 
 CANDIDATE DATASETS:
 {all_candidates}

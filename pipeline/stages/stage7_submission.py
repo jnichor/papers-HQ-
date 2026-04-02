@@ -1,10 +1,11 @@
 """Stage 7 — Submission (integration test).
 
-Three phases:
+Five phases:
   7a: Replication audit — re-run all scripts, compare outputs.
   7b: Integration validation — cross-stage consistency checks.
   7c: Final quality gate — validators + component scores must all pass.
   7d: Journal targeting (only if gate passes).
+  7e: Feedback PDF — detailed diagnostics and improvement recommendations.
 """
 
 import hashlib
@@ -398,6 +399,19 @@ def run(project_dir: Path, state: dict) -> dict:
         print("\n  [7d] Skipping journal targeting — gate not passed.")
 
     # ══════════════════════════════════════════════════════════════════════
+    # 7e: FEEDBACK PDF
+    # ══════════════════════════════════════════════════════════════════════
+    print("\n  [7e] Generating feedback.pdf...")
+    try:
+        _generate_feedback_pdf(
+            project_dir, state, components, aggregate, gate_passed,
+            all_hard_failures, replication_ok, changed_outputs,
+            code_val, paper_val, integration_val,
+        )
+    except Exception as e:
+        print(f"  [7e] WARNING: feedback.pdf generation failed: {e}")
+
+    # ══════════════════════════════════════════════════════════════════════
     # SAVE STATE
     # ══════════════════════════════════════════════════════════════════════
     state["stages"]["stage7"] = {
@@ -435,3 +449,309 @@ def run(project_dir: Path, state: dict) -> dict:
         print(f"  Review: {report_path}")
 
     return state
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# FEEDBACK PDF GENERATOR
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _generate_feedback_pdf(
+    project_dir, state, components, aggregate, gate_passed,
+    hard_failures, replication_ok, changed_outputs,
+    code_val, paper_val, integration_val,
+):
+    """Generate feedback.pdf with detailed diagnostics and recommendations."""
+    from fpdf import FPDF
+
+    class FeedbackPDF(FPDF):
+        def header(self):
+            self.set_font("Helvetica", "B", 10)
+            self.set_text_color(100, 100, 100)
+            self.cell(0, 8, "Papers-HQ Feedback Report", align="R", new_x="LMARGIN", new_y="NEXT")
+            self.line(10, self.get_y(), 200, self.get_y())
+            self.ln(4)
+
+        def footer(self):
+            self.set_y(-15)
+            self.set_font("Helvetica", "I", 8)
+            self.set_text_color(128, 128, 128)
+            self.cell(0, 10, f"Page {self.page_no()}/{{nb}}", align="C")
+
+        def section_title(self, title):
+            self.set_font("Helvetica", "B", 14)
+            self.set_text_color(0, 51, 102)
+            self.ln(6)
+            self.cell(0, 10, title, new_x="LMARGIN", new_y="NEXT")
+            self.set_draw_color(0, 51, 102)
+            self.line(10, self.get_y(), 200, self.get_y())
+            self.ln(4)
+
+        def sub_title(self, title):
+            self.set_font("Helvetica", "B", 11)
+            self.set_text_color(51, 51, 51)
+            self.ln(3)
+            self.cell(0, 8, title, new_x="LMARGIN", new_y="NEXT")
+            self.ln(1)
+
+        def body_text(self, text):
+            self.set_font("Helvetica", "", 10)
+            self.set_text_color(0, 0, 0)
+            safe = text.encode("latin-1", errors="replace").decode("latin-1")
+            self.multi_cell(0, 5, safe)
+            self.ln(2)
+
+        def score_bar(self, label, score, weight=None):
+            x = self.get_x()
+            y = self.get_y()
+            self.set_font("Helvetica", "", 10)
+            label_text = f"{label}"
+            if weight:
+                label_text += f" ({int(weight*100)}%)"
+            self.cell(55, 6, label_text)
+            bar_x = x + 55
+            bar_w = 100
+            self.set_fill_color(230, 230, 230)
+            self.rect(bar_x, y, bar_w, 6, "F")
+            fill_w = max(0, min(bar_w, bar_w * score / 100))
+            if score >= 80:
+                self.set_fill_color(76, 175, 80)
+            elif score >= 70:
+                self.set_fill_color(255, 193, 7)
+            else:
+                self.set_fill_color(244, 67, 54)
+            self.rect(bar_x, y, fill_w, 6, "F")
+            self.set_xy(bar_x + bar_w + 2, y)
+            self.set_font("Helvetica", "B", 10)
+            self.cell(20, 6, f"{score:.0f}/100")
+            self.ln(8)
+
+    pdf = FeedbackPDF()
+    pdf.alias_nb_pages()
+    pdf.set_auto_page_break(auto=True, margin=20)
+    pdf.add_page()
+
+    # Title
+    pdf.set_font("Helvetica", "B", 20)
+    pdf.set_text_color(0, 51, 102)
+    title = state["stages"].get("stage3", {}).get("result", {}).get("title", "Untitled")
+    safe_title = title.encode("latin-1", errors="replace").decode("latin-1")
+    pdf.multi_cell(0, 10, safe_title, align="C")
+    pdf.ln(3)
+    pdf.set_font("Helvetica", "", 12)
+    pdf.set_text_color(100, 100, 100)
+    pdf.cell(0, 8, "Feedback & Improvement Report", align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 6, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}", align="C", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(8)
+
+    # ── 1. SCORE BREAKDOWN ──
+    pdf.section_title("1. Score Breakdown")
+    pdf.body_text(
+        f"Aggregate score: {aggregate:.1f}/100  |  "
+        f"Gate: {'PASSED' if gate_passed else 'FAILED'}  |  "
+        f"Threshold: {SUBMISSION_GATE}/100"
+    )
+    for comp_name, comp_score in components.items():
+        weight = QUALITY_WEIGHTS.get(comp_name, 0)
+        pdf.score_bar(comp_name.title(), comp_score, weight)
+
+    pdf.ln(4)
+    pdf.sub_title("What each score means")
+    explanations = {
+        "identification": (
+            "Measures the credibility of the causal design. Depends on: valid control group, "
+            "flat pre-trends, exogenous treatment, and addressed confounders. "
+            "Simultaneous/universal treatments (no control group) cap this at ~85."
+        ),
+        "code": (
+            "Code quality: scripts run without errors, outputs exist, SE clustering present, "
+            "pre-trend tests implemented, and referee checklist requirements addressed."
+        ),
+        "paper": (
+            "Paper completeness: all sections present, references resolve, tables and figures "
+            "exist, word count in range, key numbers in abstract match results."
+        ),
+        "polish": (
+            "Average referee score from peer review. Reflects identification credibility, "
+            "result presentation, and robustness. Hardest to improve without better data."
+        ),
+        "replication": (
+            "Whether all scripts reproduce identical outputs when re-run. "
+            "100 = perfect replication."
+        ),
+    }
+    for comp_name in components:
+        exp = explanations.get(comp_name, "")
+        if exp:
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.cell(0, 5, f"{comp_name.title()} ({components[comp_name]:.0f}/100):", new_x="LMARGIN", new_y="NEXT")
+            pdf.body_text(exp)
+
+    # ── 2. RESULTS DIAGNOSTICS ──
+    pdf.section_title("2. Why the Results Look Like This")
+
+    robustness_path = project_dir / "data" / "clean" / "robustness_results.csv"
+    if robustness_path.exists():
+        import csv
+        with open(robustness_path, encoding="utf-8") as f:
+            rob_rows = list(csv.DictReader(f))
+
+        baseline = [r for r in rob_rows if "Baseline" in r.get("label", "") and "hhi" in r.get("outcome", "")]
+        trends = [r for r in rob_rows if "Country trends" in r.get("label", "") and "hhi" in r.get("outcome", "")]
+        placebos = [r for r in rob_rows if "Placebo" in r.get("label", "")]
+        comp_adj = [r for r in rob_rows if "Composition" in r.get("label", "")]
+
+        if baseline:
+            b = baseline[0]
+            pdf.sub_title("Baseline result")
+            pdf.body_text(
+                f"The baseline ATT for HHI is {float(b.get('att', 0)):+.4f} "
+                f"(p={float(b.get('pval', 1)):.4f}), suggesting ecosystem diversification."
+            )
+
+        if trends:
+            t = trends[0]
+            pdf.sub_title("Why country trends eliminate the effect")
+            pdf.body_text(
+                f"Adding country-specific linear trends yields ATT = {float(t.get('att', 0)):+.4f} "
+                f"(p={float(t.get('pval', 1)):.3f}). The diversification was a pre-existing trend, "
+                f"not caused by AI tools. Each country was already on its own trajectory toward "
+                f"more language diversity before Q4 2022."
+            )
+
+        if placebos:
+            pdf.sub_title("Why placebos are significant")
+            pdf.body_text(
+                "Placebo tests assign a fake treatment date before ChatGPT existed. "
+                "Significant placebos mean the 'treatment effect' is not specific to "
+                "the actual date -- the same pattern exists at arbitrary dates."
+            )
+            for p in placebos[:4]:
+                pdf.body_text(
+                    f"  {p.get('label', '?')}: ATT={float(p.get('att', 0)):+.4f}, "
+                    f"p={float(p.get('pval', 1)):.4f}"
+                )
+
+        if comp_adj:
+            c = comp_adj[0]
+            pdf.sub_title("Why the composition-adjusted effect reverses sign")
+            pdf.body_text(
+                f"Composition-adjusted ATT = {float(c.get('att', 0)):+.4f} "
+                f"(p={float(c.get('pval', 1)):.3f}). The sign reversal reveals the apparent "
+                f"diversification was driven by new languages entering the platform "
+                f"(extensive margin), not by developers redistributing activity (intensive "
+                f"margin). Among a fixed set of languages, concentration increased slightly."
+            )
+
+    # ── 3. DATA LIMITATIONS ──
+    pdf.section_title("3. Data Limitations")
+
+    stage1 = state["stages"].get("stage1", {})
+    data_profile = stage1.get("data_profile", {})
+    pdf.sub_title("Current data")
+    pdf.body_text(
+        f"Rows: {data_profile.get('rows', '?'):,}  |  "
+        f"Columns: {data_profile.get('cols', '?')}  |  "
+        f"Structure: {data_profile.get('structure', '?')}"
+    )
+
+    limitations = [
+        ("No pre-COVID data",
+         "Earliest data is 2020. Without 2015-2019, cannot establish a stable "
+         "pre-pandemic baseline or distinguish AI effects from pandemic recovery."),
+        ("Simultaneous treatment (no control group)",
+         "ChatGPT launched globally on the same date. No untreated countries exist, "
+         "so we cannot separate the AI effect from other global shocks in late 2022."),
+        ("Single platform (GitHub)",
+         "Data captures only public GitHub activity, not the global developer population. "
+         "Small countries produce noisy HHI estimates."),
+        ("Country-level aggregation",
+         "Cannot track individual developers. All findings are ecological -- "
+         "country patterns may not reflect individual behavior."),
+    ]
+    for lim_title, lim_text in limitations:
+        pdf.sub_title(lim_title)
+        pdf.body_text(lim_text)
+
+    # ── 4. VALIDATOR RESULTS ──
+    pdf.section_title("4. Validator Results")
+    for val_name, val_obj in [("Code", code_val), ("Paper", paper_val), ("Integration", integration_val)]:
+        counts = val_obj.summary_counts
+        pdf.sub_title(
+            f"{val_name}: hard {counts.get('hard_pass', 0)}/{counts.get('hard_total', 0)}, "
+            f"soft {counts.get('soft_pass', 0)}/{counts.get('soft_total', 0)}"
+        )
+        for check in val_obj.checks:
+            if not check.passed:
+                pdf.body_text(f"  [FAIL] {check.name}: {check.detail}")
+
+    # ── 5. RECOMMENDATIONS ──
+    pdf.section_title("5. Recommendations to Improve Score")
+
+    recs = []
+    if components.get("identification", 0) < 90:
+        recs.append((
+            "HIGH IMPACT", "Improve identification strategy",
+            "The biggest bottleneck. To reach 90+, add exogenous variation:\n"
+            "  (a) Exploit Italy's ChatGPT ban (March-April 2023) for synthetic control\n"
+            "  (b) Exploit country-level API access rollout for staggered DiD\n"
+            "  (c) Add pre-COVID data (2015-2019) for clean pre-trends"
+        ))
+    if components.get("code", 0) < 90:
+        recs.append((
+            "MEDIUM IMPACT", "Implement missing robustness checks",
+            "Common gaps: wild cluster bootstrap, Roth (2022) HonestDiD sensitivity, "
+            "fractional logit for bounded HHI, Benjamini-Hochberg correction."
+        ))
+    if components.get("paper", 0) < 90:
+        recs.append((
+            "MEDIUM IMPACT", "Expand paper content",
+            "Target 8,000-12,000 words. Add full event-time coefficient table. "
+            "Add data appendix with variable definitions and provenance."
+        ))
+    if components.get("polish", 0) < 80:
+        recs.append((
+            "LOW IMPACT (depends on above)", "Address referee feedback",
+            "Polish improves automatically when identification and code improve. "
+            "Focus on must-address issues from the editorial decision."
+        ))
+    recs.append((
+        "HIGHEST IMPACT", "Add new data sources",
+        "The single most effective improvement:\n"
+        "  - Country-level ChatGPT access restrictions (bans, API delays)\n"
+        "  - Pre-2020 GitHub data for clean pre-trends\n"
+        "  - Google Trends 'ChatGPT' by country as treatment intensity proxy\n"
+        "  - GitHub Copilot adoption rates by country as confound control"
+    ))
+
+    for priority, rec_title, detail in recs:
+        pdf.sub_title(f"[{priority}] {rec_title}")
+        pdf.body_text(detail)
+
+    # ── 6. SCORE IMPROVEMENT ESTIMATES ──
+    pdf.section_title("6. Estimated Score Impact")
+
+    improvements = [
+        ("Add pre-2020 data (2015-2019)", "+5 to +10 identification, +3 polish"),
+        ("Exploit Italy ban (natural experiment)", "+10 to +15 identification, +5 polish"),
+        ("Implement wild cluster bootstrap", "+3 code"),
+        ("Implement HonestDiD sensitivity", "+3 code, +2 polish"),
+        ("Generate .tex tables in paper/tables/", "+2 paper, +2 code"),
+        ("Expand paper to 10,000+ words", "+3 paper"),
+        ("Address all SHOULD-address issues", "+5 polish"),
+        ("Full event-time coefficient table", "+2 paper, +1 polish"),
+    ]
+    for improvement, impact in improvements:
+        pdf.body_text(f"  {improvement}:  {impact}")
+
+    pdf.ln(4)
+    pdf.body_text(
+        f"Current aggregate: {aggregate:.1f}/100. "
+        f"Ceiling with current data: ~88. "
+        f"Ceiling with Italy ban: ~95. "
+        f"Ceiling with pre-2020 + Italy ban: ~98."
+    )
+
+    # Save
+    output_path = project_dir / "feedback.pdf"
+    pdf.output(str(output_path))
+    print(f"  [7e] Saved: {output_path}")

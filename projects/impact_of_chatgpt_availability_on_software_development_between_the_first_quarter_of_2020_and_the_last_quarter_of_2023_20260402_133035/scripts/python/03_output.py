@@ -345,6 +345,128 @@ print(f"  Saved: {TAB_DIR / 'results_summary.md'}")
 # Also save to data/clean for pipeline
 (CLEAN_DIR / "results_summary.md").write_text(summary_text, encoding="utf-8")
 
+
+# =====================================================================
+# LATEX TABLES (.tex files in paper/tables/)
+# =====================================================================
+print("\n[tex] Generating LaTeX tables...")
+
+# Table 1: Summary Statistics
+tex_summary = r"""\begin{table}[H]
+\centering
+\caption{Summary Statistics}
+\label{tab:summary}
+\small
+\begin{tabular}{lccccccc}
+\toprule
+Variable & Period & Mean & SD & p10 & p50 & p90 & N \\
+\midrule
+"""
+for period in ["Full sample", "Pre-treatment", "Post-treatment"]:
+    sub = summary[summary["period"] == period]
+    for _, r in sub.iterrows():
+        vname = r["variable"].replace("_", r"\_")
+        tex_summary += (f"{vname} & {period} & {r['mean']:.4f} & {r['std']:.4f} & "
+                        f"{r['p10']:.4f} & {r['p50']:.4f} & {r['p90']:.4f} & "
+                        f"{int(r['N']):,} \\\\\n")
+    tex_summary += r"\midrule" + "\n"
+
+tex_summary += r"""\bottomrule
+\end{tabular}
+\end{table}
+"""
+(TAB_DIR / "table1_summary.tex").write_text(tex_summary, encoding="utf-8")
+print(f"  Saved: table1_summary.tex")
+
+# Table 4: Robustness
+tex_robust = r"""\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Robustness Panel: Post-Treatment ATT Estimates}
+\label{tab:robustness}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+Specification & \multicolumn{3}{c}{HHI (Normalized)} & \multicolumn{3}{c}{Entropy} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+ & ATT & SE & $p$ & ATT & SE & $p$ \\
+\midrule
+"""
+
+# Group robustness results by specification (HHI and entropy side by side)
+spec_names = []
+for _, r in robustness.iterrows():
+    base_label = r["label"].split(":")[0].strip()
+    if base_label not in spec_names:
+        spec_names.append(base_label)
+
+for spec in spec_names:
+    rows = robustness[robustness["label"].str.startswith(spec)]
+    hhi_row = rows[rows["outcome"].str.contains("hhi", case=False)]
+    ent_row = rows[rows["outcome"].str.contains("entropy", case=False)]
+
+    def _fmt(row):
+        if row.empty:
+            return "--- & --- & ---"
+        r = row.iloc[0]
+        att = f"${r['att']:+.3f}$" if not np.isnan(r.get("att", np.nan)) else "---"
+        se = f"{r['se']:.3f}" if not np.isnan(r.get("se", np.nan)) else "---"
+        pval = f"{r['pval']:.3f}" if not np.isnan(r.get("pval", np.nan)) else "---"
+        return f"{att} & {se} & {pval}"
+
+    safe_spec = spec.replace("_", r"\_").replace(">=", r"$\geq$")
+    tex_robust += f"{safe_spec} & {_fmt(hhi_row)} & {_fmt(ent_row)} \\\\\n"
+
+tex_robust += r"""\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes}: Each row reports the post-treatment ATT from a separate regression
+with country fixed effects and clustered standard errors at the country level.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+"""
+(TAB_DIR / "table4_robustness.tex").write_text(tex_robust, encoding="utf-8")
+print(f"  Saved: table4_robustness.tex")
+
+# Table A1: Event study coefficients
+tex_es = r"""\begin{table}[H]
+\centering
+\caption{Event Study Coefficients}
+\label{tab:event_study_coefs}
+\small
+\begin{tabular}{rcccc}
+\toprule
+Event Time & \multicolumn{2}{c}{HHI (Normalized)} & \multicolumn{2}{c}{Entropy} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+ & Coef. & SE & Coef. & SE \\
+\midrule
+"""
+hhi_coefs = coefs[coefs["specification"] == "main_hhi_norm"].sort_values("event_time")
+ent_coefs = coefs[coefs["specification"] == "main_entropy"].sort_values("event_time")
+
+for _, h in hhi_coefs.iterrows():
+    et = int(h["event_time"])
+    e_row = ent_coefs[ent_coefs["event_time"] == et]
+    h_coef = f"${h['coef']:+.4f}$"
+    h_se = f"({h['se']:.4f})" if h["se"] > 0 else "---"
+    if not e_row.empty:
+        er = e_row.iloc[0]
+        e_coef = f"${er['coef']:+.4f}$"
+        e_se = f"({er['se']:.4f})" if er["se"] > 0 else "---"
+    else:
+        e_coef, e_se = "---", "---"
+    marker = r" $\leftarrow$ ref" if et == -1 else ""
+    tex_es += f"${et:+d}${marker} & {h_coef} & {h_se} & {e_coef} & {e_se} \\\\\n"
+
+tex_es += r"""\bottomrule
+\end{tabular}
+\end{table}
+"""
+(TAB_DIR / "tableA1_event_study.tex").write_text(tex_es, encoding="utf-8")
+print(f"  Saved: tableA1_event_study.tex")
+
 print(f"\n[03_output] DONE [OK]")
 print(f"\nFigures saved to: {FIG_DIR}")
 print(f"Tables saved to: {TAB_DIR}")

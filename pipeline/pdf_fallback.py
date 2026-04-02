@@ -330,7 +330,9 @@ def compile_pdf(paper_dir: Path) -> bool:
             section_files.append(f)
 
     if not section_files:
-        section_files = sorted((paper_dir / "sections").glob("*.tex"))
+        # No \input{sections/...} found — main.tex contains all content
+        # Use main.tex itself as the single section file
+        section_files = [main_tex]
 
     # -- Build PDF ----------------------------------------------------------
     pdf = AcademicPDF()

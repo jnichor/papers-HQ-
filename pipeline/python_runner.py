@@ -45,6 +45,12 @@ def run_python_script(
 
     print(f"  [python] Running {script_path.name} (timeout={timeout}s)...")
 
+    # Force UTF-8 for subprocess stdout/stderr to avoid Windows cp1252 crashes
+    # when scripts print Unicode characters (checkmarks, Greek letters, etc.)
+    run_env = dict(env) if env else dict(__import__("os").environ)
+    run_env["PYTHONIOENCODING"] = "utf-8"
+    run_env["PYTHONUTF8"] = "1"
+
     try:
         result = subprocess.run(
             [sys.executable, str(script_path)],
@@ -52,7 +58,9 @@ def run_python_script(
             text=True,
             cwd=str(cwd),
             timeout=timeout,
-            env=env,
+            env=run_env,
+            encoding="utf-8",
+            errors="replace",
         )
     except subprocess.TimeoutExpired:
         return {

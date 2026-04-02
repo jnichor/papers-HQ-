@@ -30,6 +30,18 @@ def _identify_external_sources(data_sources: list[str], main_data_path: str) -> 
     # Extract key identifiers from main filename (e.g. "enaho01a-2020-2024-500-panel")
     main_stem = Path(main_data_path).stem.lower()
 
+    # Extract column names from main dataset for self-reference detection
+    main_cols_set: set[str] = set()
+    try:
+        import pandas as pd
+        ext = Path(main_data_path).suffix.lower()
+        if ext == ".parquet":
+            main_cols_set = set(c.lower() for c in pd.read_parquet(main_data_path, columns=None).columns)
+        else:
+            main_cols_set = set(c.lower() for c in pd.read_csv(main_data_path, nrows=0, encoding="latin-1").columns)
+    except Exception:
+        pass
+
     external = []
     for src in data_sources:
         src_lower = src.lower()
@@ -40,20 +52,32 @@ def _identify_external_sources(data_sources: list[str], main_data_path: str) -> 
         # Skip generic references to the user's data
         if "user dataset" in src_lower or "available dataset" in src_lower:
             continue
+        # Skip references that say "existing dataset" or "current dataset"
+        if "existing dataset" in src_lower or "current dataset" in src_lower:
+            continue
+        # Skip sources described as "no external" or "self-contained"
+        if "no external" in src_lower or "self-contained" in src_lower:
+            continue
+        # Skip if source is just listing main dataset columns (e.g. "num_pushers, language, iso2_code")
+        if main_cols_set:
+            # Extract parenthesised column lists like "(num_pushers, language, iso2_code, quarter)"
+            import re
+            paren_match = re.search(r'\(([^)]+)\)', src_lower)
+            if paren_match:
+                mentioned_cols = {c.strip() for c in paren_match.group(1).split(",")}
+                if mentioned_cols and mentioned_cols.issubset(main_cols_set):
+                    continue
         # Skip if it's a reference to the same ENAHO panel the user already has
-        # Detect by checking if it mentions the same module + year range
         if "enaho" in src_lower and "(primary)" in src_lower:
             continue
         if "enaho" in src_lower and "current dataset" in src_lower:
             continue
         # Check if it mentions the same module number from the filename
-        # e.g., main file is "enaho01a-2020-2024-500-panel" → skip "ENAHO module 500 2020-2024"
         import re
         mod_match = re.search(r'(\d{3})', main_stem)
         if mod_match:
             main_module = mod_match.group(1)
             if f"module {main_module}" in src_lower or f"modulo {main_module}" in src_lower:
-                # Same module — check if same year range
                 years_in_main = re.findall(r'20\d{2}', main_stem)
                 if years_in_main and all(y in src_lower for y in years_in_main[:2]):
                     continue
@@ -103,9 +127,9 @@ Output a JSON array:
 ]
 ```
 """
-    p = get_profile("stage3_eval")
+    p = get_profile("stage3_5_justify")
     resp = run_claude(
-        prompt, model=p["model"], effort="low",
+        prompt, model=p["model"], effort=p["effort"],
         label="justify external sources",
     )
     result = extract_json(resp)
@@ -215,9 +239,9 @@ Output a JSON array:
 If a source CANNOT be merged (no common key exists in the main dataset), set
 merge_feasible to false and explain why.
 """
-    p = get_profile("stage3_eval")
+    p = get_profile("stage3_5_merge")
     resp = run_claude(
-        prompt, model=p["model"], effort="low",
+        prompt, model=p["model"], effort=p["effort"],
         label="assess merge feasibility",
     )
     result = extract_json(resp)
@@ -386,6 +410,28 @@ def _request_external_data_manually(
     """
     import shutil
 
+    # Filter out sources that are actually the main dataset in disguise
+    main_name_lower = Path(main_data_path).name.lower() if main_data_path else ""
+    def _is_main_dataset(a: dict) -> bool:
+        src = a.get("source", "").lower()
+        merge_key = a.get("merge_key", "").lower()
+        instructions = a.get("download_instructions", "").lower()
+        url = a.get("download_url", "").lower()
+        # Matches: "existing dataset", "no external merge", "no download needed",
+        # references to the main filename, or empty/N/A download URLs
+        if any(kw in src for kw in ("existing dataset", "current dataset", "main dataset")):
+            return True
+        if any(kw in merge_key for kw in ("no external", "no merge", "self-contained", "computed internally")):
+            return True
+        if "no download" in instructions or "already in hand" in instructions:
+            return True
+        if main_name_lower and main_name_lower in src:
+            return True
+        if not url or url in ("n/a", "none", ""):
+            return True
+        return False
+
+    assessments = [a for a in assessments if not _is_main_dataset(a)]
     feasible = [a for a in assessments if a.get("merge_feasible", False)]
     not_feasible = [a for a in assessments if not a.get("merge_feasible", False)]
 
@@ -616,7 +662,7 @@ If not found or not freely downloadable:
 """
         p = get_profile("stage1")
         resp = run_claude(
-            search_prompt, model=p["model"], effort="low",
+            search_prompt, model=p["model"], effort=p["effort"],
             allowed_tools=["WebSearch", "WebFetch"],
             label=f"search external: {src[:40]}",
         )

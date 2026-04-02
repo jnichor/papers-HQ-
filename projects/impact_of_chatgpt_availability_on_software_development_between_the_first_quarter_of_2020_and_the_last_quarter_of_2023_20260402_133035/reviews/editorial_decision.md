@@ -1,0 +1,22 @@
+```json
+{
+  "avg_referee_score": 66.0,
+  "must_address": [
+    "ITS vs. DiD misidentification: With simultaneous universal treatment and no control group, event-time dummies are collinear with quarter fixed effects. The ATT framing and DiD language are methodologically unjustified throughout. Authors must reframe the entire empirical strategy as an Interrupted Time Series (ITS) design, revise all claims about identification accordingly, and remove causal language that presupposes a valid counterfactual.",
+    "Numerically impossible entropy event-study coefficients: Reported post-treatment deviations of +2.53 to +2.79 exceed the reported mean entropy of 2.49, which is impossible for deviation-from-reference estimates. This indicates a likely computational error (levels reported instead of deviations). Authors must rerun the analysis, correct the output, and verify all coefficient estimates are internally consistent.",
+    "HHI sign inconsistency: Post-treatment event-study coefficients are positive (+0.039 to +0.079) yet the paper claims declining HHI (diversification). The ATT of -0.027 is irreconcilable with positive level estimates unless computed as a non-standard difference of averages. Authors must correct or explicitly justify the estimation method, and revise all narrative descriptions to match the actual estimates.",
+    "Pre-treatment trend violation: Pre-treatment event-study coefficients are reported as uniformly significant with magnitudes comparable to post-treatment effects, directly violating the parallel-trends (or flat pre-trend) assumption. Authors must acknowledge this, formally test and report pre-trend statistics, and present results as descriptive/associational rather than causal. This substantially limits the paper's identification claims.",
+    "Understatement of composition-adjusted HHI sign reversal: The sign flip from baseline ATT = -0.027 to composition-adjusted ATT = +0.002 (and 'Min 3 languages' ATT = +0.007) implies behavioral concentration once mechanical language-entry is removed. This is the paper's most substantively important and policy-relevant finding; it must be featured prominently rather than buried, and its implications for the diversification narrative must be addressed directly.",
+    "COVID-19 confound in pre-treatment window: The entire pre-treatment period (Q1 2020–Q3 2022) coincides with documented COVID-driven shifts in digital work patterns. Authors must add a robustness check restricting the pre-period to Q3 2021 or Q1 2022 onward to test whether results are contaminated by pandemic-era secular trends.",
+    "Differential ChatGPT access restrictions ignored: Country-level variation in ChatGPT availability (Italy's March–April 2023 ban, China's effective block) constitutes quasi-experimental variation directly relevant to identification. Authors must either exploit this variation to sharpen identification of a ChatGPT-specific effect, or provide an explicit and well-reasoned justification for why it is insufficient or inappropriate to use."
+  ],
+  "should_address": [
+    "Engagement with existing language-tracking literature: The paper claims to be the first ecosystem-level analysis of programming language concentration dynamics while omitting direct engagement with GitHub Octoverse reports, Stack Overflow Developer Surveys, TIOBE Index, and RedMonk rankings. Authors should situate their findings relative to these sources to strengthen positioning and calibrate the magnitude of reported effects.",
+    "Theoretically grounded heterogeneity moderators: The English proficiency (EF EPI) heterogeneity analysis is weakly motivated given that code generation is largely natural-language-agnostic. Authors should replace or supplement it with moderators grounded in plausible economic mechanisms, such as pre-treatment share of Python/JavaScript activity, developer community size, or internet infrastructure quality."
+  ],
+  "may_address": [
+    "English proficiency analysis: If retained, the EF EPI analysis should include a more explicit theoretical motivation for why natural-language proficiency would moderate an effect operating primarily through code generation. The null result is not surprising without such a mechanism, and its inclusion risks appearing atheoretical."
+  ],
+  "fatal_issues": []
+}
+```

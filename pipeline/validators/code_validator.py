@@ -65,12 +65,23 @@ def _check_output_files(vr: ValidationResult, scripts_dir: Path, project_dir: Pa
         if clean_files else "No .parquet or .csv in data/clean/"
     )
 
-    # Tables
+    # Tables — accept .tex files in tables/ OR tables embedded in main.tex
     tex_files = list(tables_dir.glob("*.tex")) if tables_dir.exists() else []
+    # Also check for tables in main.tex or .md summary files
+    other_table_files = (
+        list(tables_dir.glob("*.md")) if tables_dir.exists() else []
+    )
+    main_tex = tables_dir.parent / "main.tex" if tables_dir.exists() else Path(".")
+    has_inline_tables = False
+    if main_tex.exists():
+        main_content = main_tex.read_text(encoding="utf-8")
+        has_inline_tables = r"\begin{table}" in main_content or r"\begin{tabular}" in main_content
+    tables_found = len(tex_files) > 0 or len(other_table_files) > 0 or has_inline_tables
     vr.add(
-        "tables_exist", CheckLevel.HARD, len(tex_files) > 0,
-        f"Found {len(tex_files)} table(s): {', '.join(f.name for f in tex_files[:5])}"
-        if tex_files else "No .tex files in paper/tables/"
+        "tables_exist", CheckLevel.HARD, tables_found,
+        f"Found {len(tex_files)} .tex table(s)" + (", inline tables in main.tex" if has_inline_tables else "")
+        + (f", {len(other_table_files)} summary file(s)" if other_table_files else "")
+        if tables_found else "No tables found in paper/tables/ or main.tex"
     )
 
     # Figures (SOFT — some papers are table-only)

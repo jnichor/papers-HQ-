@@ -33,15 +33,35 @@ def _read_agent(name: str) -> str:
 def _sanitize_ascii(text: str) -> str:
     """Replace common Unicode characters with ASCII equivalents."""
     replacements = {
+        # Arrows
         "\u2192": "->", "\u2190": "<-", "\u2194": "<->",
+        # Dashes
         "\u2013": "-", "\u2014": "--", "\u2015": "--",
         "\u2026": "...",
+        # Math operators
         "\u00d7": "x", "\u00f7": "/",
         "\u2264": "<=", "\u2265": ">=", "\u2260": "!=",
         "\u2248": "~=", "\u221e": "inf",
+        # Greek letters (common in stats output)
+        "\u03b1": "alpha", "\u03b2": "beta", "\u03b3": "gamma",
+        "\u03b4": "delta", "\u03b5": "epsilon", "\u03b8": "theta",
+        "\u03bb": "lambda", "\u03bc": "mu", "\u03c3": "sigma",
+        "\u03c4": "tau", "\u03c7": "chi", "\u03c0": "pi",
+        # Superscripts
+        "\u00b2": "2", "\u00b3": "3", "\u00b9": "1",
+        # Symbols
+        "\u2713": "[OK]", "\u2714": "[OK]", "\u2715": "[X]", "\u2716": "[X]",
+        "\u2717": "[X]", "\u2718": "[X]",
+        "\u2611": "[x]", "\u2610": "[ ]",
+        "\u26a0": "[!]",  # warning sign
+        "\u00b1": "+/-",
+        "\u2032": "'", "\u2033": '"',
+        # Quotes
         "\u2018": "'", "\u2019": "'",
         "\u201c": '"', "\u201d": '"',
+        # Bullets
         "\u2022": "*", "\u2023": ">",
+        # Box drawing (common in print formatting)
         "\u2500": "-", "\u2502": "|", "\u2550": "=",
         "\u2501": "-", "\u2503": "|",
         "\u250c": "+", "\u2510": "+", "\u2514": "+", "\u2518": "+",
@@ -53,6 +73,9 @@ def _sanitize_ascii(text: str) -> str:
     }
     for uni, asc in replacements.items():
         text = text.replace(uni, asc)
+    # Final safety: encode to ASCII, replacing any remaining non-ASCII chars
+    # This prevents Windows cp1252 crashes in print() statements
+    text = text.encode("ascii", errors="replace").decode("ascii")
     return text
 
 

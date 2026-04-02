@@ -185,17 +185,16 @@ def _check_results_to_paper(vr: ValidationResult, project_dir: Path):
     # Extract key numbers from results_summary (decimals likely to be effect sizes)
     summary_nums = set(re.findall(r'-?\d+\.\d+', summary_text))
 
-    # Check if these numbers appear in the paper sections
-    sections_dir = paper_dir / "sections"
-    if not sections_dir.exists():
-        vr.add("paper_sections_exist", CheckLevel.HARD, False,
-               "paper/sections/ directory not found")
+    # Check if these numbers appear in the paper (main.tex)
+    main_tex = paper_dir / "main.tex"
+    if not main_tex.exists():
+        vr.add("paper_main_tex_exist", CheckLevel.HARD, False,
+               "paper/main.tex not found")
         return
 
     paper_nums = set()
-    for tex_file in sections_dir.glob("*.tex"):
-        text = tex_file.read_text(encoding="utf-8")
-        paper_nums.update(re.findall(r'-?\d+\.\d+', text))
+    paper_text = main_tex.read_text(encoding="utf-8")
+    paper_nums.update(re.findall(r'-?\d+\.\d+', paper_text))
 
     if not summary_nums:
         vr.add("results_in_paper", CheckLevel.SOFT, False,
@@ -213,14 +212,9 @@ def _check_results_to_paper(vr: ValidationResult, project_dir: Path):
     )
 
     # Check that abstract has at least one result number
-    abstract = sections_dir / "abstract.tex"
     abstract_text = ""
-    if abstract.exists():
-        abstract_text = abstract.read_text(encoding="utf-8")
-    else:
-        # Fall back to extracting abstract from main.tex
-        main_tex = paper_dir / "main.tex"
-        if main_tex.exists():
+    main_tex = paper_dir / "main.tex"
+    if main_tex.exists():
             main_content = main_tex.read_text(encoding="utf-8")
             m = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', main_content, re.DOTALL)
             if m:
@@ -258,29 +252,29 @@ def _check_paper_integrity(vr: ValidationResult, project_dir: Path):
     else:
         vr.add("pdf_exists", CheckLevel.HARD, False, "main.pdf not found")
 
-    # All section files exist
-    sections_dir = paper_dir / "sections"
+    # All sections present in main.tex
     main_tex = paper_dir / "main.tex"
     main_content = main_tex.read_text(encoding="utf-8") if main_tex.exists() else ""
-    expected = [
-        "abstract.tex", "01_introduction.tex", "02_literature.tex",
-        "03_data.tex", "04_empirical_strategy.tex", "05_results.tex",
-        "06_robustness.tex", "07_conclusion.tex",
-    ]
-    missing = []
-    for s in expected:
-        if (sections_dir / s).exists():
-            continue
-        # abstract.tex: accept if abstract is inside main.tex
-        if s == "abstract.tex" and r"\begin{abstract}" in main_content:
-            continue
-        missing.append(s)
+    section_markers = {
+        "abstract": [r"\begin{abstract}"],
+        "introduction": [r"\section{Introduction"],
+        "literature": [r"\section{Literature", r"\section{Related",
+                       r"\section{Background", r"\section{Prior"],
+        "data": [r"\section{Data"],
+        "empirical_strategy": [r"\section{Empirical", r"\section{Method",
+                               r"\section{Identification"],
+        "results": [r"\section{Results", r"\section{Findings"],
+        "robustness": [r"\section{Robustness", r"\section{Sensitivity"],
+        "conclusion": [r"\section{Conclusion", r"\section{Discussion"],
+    }
+    missing = [name for name, markers in section_markers.items()
+               if not any(m in main_content for m in markers)]
     vr.add(
         "all_sections_present", CheckLevel.HARD,
         len(missing) == 0,
-        f"All {len(expected)} sections found"
+        f"All {len(section_markers)} sections found in main.tex"
         if not missing else
-        f"{len(missing)} section(s) MISSING: {', '.join(missing)}"
+        f"{len(missing)} section(s) MISSING in main.tex: {', '.join(missing)}"
     )
 
     # references.bib exists and all citations resolve
@@ -290,8 +284,7 @@ def _check_paper_integrity(vr: ValidationResult, project_dir: Path):
         bib_keys = set(re.findall(r'@\w+\{([^,\s]+)', bib_text))
 
         cited_keys = set()
-        tex_files = list(sections_dir.glob("*.tex")) if sections_dir.exists() else []
-        tex_files.append(paper_dir / "main.tex")
+        tex_files = [paper_dir / "main.tex"]
         for tf in tex_files:
             if not tf.exists():
                 continue
@@ -317,11 +310,8 @@ def _check_paper_integrity(vr: ValidationResult, project_dir: Path):
 
     # Table and figure references point to real files
     all_tex = ""
-    if sections_dir.exists():
-        for tf in sections_dir.glob("*.tex"):
-            all_tex += tf.read_text(encoding="utf-8") + "\n"
     if (paper_dir / "main.tex").exists():
-        all_tex += (paper_dir / "main.tex").read_text(encoding="utf-8")
+        all_tex = (paper_dir / "main.tex").read_text(encoding="utf-8")
 
     tables_dir = paper_dir / "tables"
     table_refs = re.findall(r'\\input\{tables/([^}]+)\}', all_tex)

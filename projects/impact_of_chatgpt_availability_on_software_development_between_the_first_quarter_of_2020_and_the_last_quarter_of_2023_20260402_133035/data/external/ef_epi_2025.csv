@@ -1,0 +1,124 @@
+iso2_code,country,epi_score,epi_rank,proficiency_band
+NL,Netherlands,624,1,Very High
+HR,Croatia,617,2,Very High
+AT,Austria,616,3,Very High
+DE,Germany,615,4,Very High
+NO,Norway,613,5,Very High
+PT,Portugal,612,6,Very High
+DK,Denmark,611,7,Very High
+SE,Sweden,609,8,Very High
+BE,Belgium,608,9,Very High
+SK,Slovakia,606,10,Very High
+RO,Romania,605,11,Very High
+FI,Finland,603,12,Very High
+ZA,South Africa,602,13,High
+ZW,Zimbabwe,602,13,High
+PL,Poland,600,15,High
+LV,Latvia,599,16,High
+MK,North Macedonia,595,17,High
+BG,Bulgaria,594,18,High
+KE,Kenya,593,19,High
+GR,Greece,592,20,High
+BA,Bosnia and Herzegovina,591,21,High
+HU,Hungary,590,22,High
+CZ,Czechia,582,23,High
+MY,Malaysia,581,24,High
+RS,Serbia,579,25,High
+AR,Argentina,575,26,High
+ZM,Zambia,573,27,High
+PH,Philippines,569,28,High
+NG,Nigeria,569,29,High
+CH,Switzerland,564,30,High
+EE,Estonia,561,31,Moderate
+HN,Honduras,553,32,Moderate
+LT,Lithuania,543,33,Moderate
+UY,Uruguay,542,34,Moderate
+GE,Georgia,541,35,Moderate
+GH,Ghana,540,36,Moderate
+ES,Spain,540,37,Moderate
+FR,France,539,38,Moderate
+HK,Hong Kong,538,39,Moderate
+CY,Cyprus,537,40,Moderate
+BY,Belarus,533,41,Moderate
+AL,Albania,532,42,Moderate
+MD,Moldova,531,43,Moderate
+PY,Paraguay,531,44,Moderate
+UA,Ukraine,526,45,Moderate
+IL,Israel,524,46,Moderate
+SV,El Salvador,523,47,Moderate
+KR,South Korea,522,48,Moderate
+BO,Bolivia,521,49,Moderate
+RU,Russia,521,50,Moderate
+VE,Venezuela,520,51,Moderate
+PE,Peru,519,52,Moderate
+UG,Uganda,518,53,Moderate
+CL,Chile,517,54,Moderate
+CR,Costa Rica,516,55,Moderate
+AM,Armenia,515,56,Moderate
+CU,Cuba,515,57,Moderate
+NP,Nepal,514,58,Moderate
+IT,Italy,513,59,Moderate
+NI,Nicaragua,512,60,Moderate
+GT,Guatemala,510,61,Low
+BD,Bangladesh,506,62,Low
+DO,Dominican Republic,503,63,Low
+VN,Vietnam,500,64,Low
+ET,Ethiopia,499,65,Low
+TN,Tunisia,498,66,Low
+PK,Pakistan,493,67,Low
+IR,Iran,492,68,Low
+MA,Morocco,492,69,Low
+PA,Panama,491,70,Low
+TR,Turkey,488,71,Low
+AE,United Arab Emirates,487,72,Low
+LK,Sri Lanka,486,73,Low
+IN,India,484,74,Low
+BR,Brazil,482,75,Low
+CO,Colombia,480,76,Low
+TZ,Tanzania,479,77,Low
+LB,Lebanon,477,78,Low
+BT,Bhutan,473,79,Low
+ID,Indonesia,471,80,Low
+QA,Qatar,469,81,Low
+DZ,Algeria,468,82,Low
+EC,Ecuador,466,83,Low
+MW,Malawi,465,84,Low
+MZ,Mozambique,465,85,Low
+CN,China,464,86,Low
+PS,Palestine,463,87,Low
+LA,Laos,461,88,Low
+EG,Egypt,459,89,Low
+MG,Madagascar,457,90,Low
+SY,Syria,456,91,Very Low
+TM,Turkmenistan,456,92,Very Low
+KW,Kuwait,455,93,Very Low
+AZ,Azerbaijan,454,94,Very Low
+MN,Mongolia,447,95,Very Low
+AF,Afghanistan,446,96,Very Low
+JP,Japan,446,97,Very Low
+CM,Cameroon,445,98,Very Low
+HT,Haiti,444,99,Very Low
+MM,Myanmar,444,100,Very Low
+KG,Kyrgyzstan,443,101,Very Low
+SN,Senegal,442,102,Very Low
+MX,Mexico,440,103,Very Low
+UZ,Uzbekistan,439,104,Very Low
+JO,Jordan,426,105,Very Low
+SD,Sudan,421,106,Very Low
+KZ,Kazakhstan,417,107,Very Low
+RW,Rwanda,417,108,Very Low
+AO,Angola,413,109,Very Low
+TJ,Tajikistan,409,110,Very Low
+ML,Mali,408,111,Very Low
+OM,Oman,407,112,Very Low
+BJ,Benin,406,113,Very Low
+IQ,Iraq,406,114,Very Low
+SA,Saudi Arabia,404,115,Very Low
+TH,Thailand,402,116,Very Low
+YE,Yemen,402,117,Very Low
+CD,Democratic Republic of the Congo,400,118,Very Low
+SO,Somalia,399,119,Very Low
+TG,Togo,397,120,Very Low
+LY,Libya,395,121,Very Low
+CI,Ivory Coast,393,122,Very Low
+KH,Cambodia,390,123,Very Low

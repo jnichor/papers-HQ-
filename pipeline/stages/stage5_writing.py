@@ -27,6 +27,8 @@ def _compile_latex(paper_dir: Path) -> bool:
     print("  [latex] Compiling (pdflatex x 3 + bibtex)...")
     cwd = str(paper_dir)
 
+    latex_errors = []
+
     for i in range(1, 4):
         label = f"pdflatex pass {i}/3"
         try:
@@ -42,7 +44,12 @@ def _compile_latex(paper_dir: Path) -> bool:
             print(f"  [latex] {label} failed, trying Python fallback...")
             return _compile_pdf_fallback(paper_dir)
 
+        # Collect LaTeX errors from stdout (pdflatex reports errors there)
         if i == 1:
+            for line in (r.stdout or "").splitlines():
+                if line.startswith("! "):
+                    latex_errors.append(line)
+
             try:
                 subprocess.run(
                     ["bibtex", "main"],
@@ -50,6 +57,18 @@ def _compile_latex(paper_dir: Path) -> bool:
                 )
             except FileNotFoundError:
                 print("  [latex] bibtex not found, skipping bibliography.")
+
+    # Check for LaTeX errors that produce broken PDFs
+    if latex_errors:
+        print(f"  [latex] WARNING: {len(latex_errors)} LaTeX error(s) detected:")
+        for err in latex_errors[:10]:
+            print(f"    {err}")
+        # Check for undefined environments / missing packages
+        undefined = [e for e in latex_errors if "undefined" in e.lower()]
+        if undefined:
+            print(f"  [latex] FATAL: Undefined environments/commands detected.")
+            print(f"  [latex] PDF may be incomplete -- sections after the error are missing.")
+            return False
 
     pdf = paper_dir / "main.pdf"
     if pdf.exists():
@@ -73,11 +92,7 @@ def run(project_dir: Path, state: dict) -> dict:
     from ..json_utils import smart_truncate
 
     paper_dir = project_dir / "paper"
-    sections_dir = paper_dir / "sections"
-    sections_dir.mkdir(parents=True, exist_ok=True)
     review_dir = project_dir / "reviews"
-
-    existing_sections = sorted(sections_dir.glob("*.tex"))
     main_tex = paper_dir / "main.tex"
 
     # Detect R&R mode
@@ -85,15 +100,15 @@ def run(project_dir: Path, state: dict) -> dict:
     is_rr = stage6.get("decision") == "MAJOR_REVISIONS"
     rr_round = stage6.get("rr_round", 0)
 
-    if not existing_sections or not main_tex.exists():
-        # First draft — no sections exist yet
+    if not main_tex.exists():
+        # First draft — main.tex does not exist yet
         request_manual_intervention(
             stage="stage5_writing",
             issue=(
                 "Stage 5 needs manual paper writing. "
                 "Tell Claude: 'revisa el pipeline'. Claude will read the strategy memo "
-                "and results, write all LaTeX sections (intro, literature, data, "
-                "empirical strategy, results, robustness, conclusion), create main.tex, "
+                "and results, write a single main.tex with all sections (intro, literature, "
+                "data, empirical strategy, results, robustness, conclusion), create "
                 "references.bib, compile to PDF, and signal completion."
             ),
             files=[
@@ -104,7 +119,7 @@ def run(project_dir: Path, state: dict) -> dict:
             project_dir=project_dir,
         )
     elif is_rr:
-        # R&R mode — referees requested changes, must rewrite sections
+        # R&R mode — referees requested changes, must rewrite main.tex
         latest_decision = ""
         decision_files = sorted(review_dir.glob("editorial_decision*.md"), reverse=True)
         if decision_files:
@@ -116,12 +131,12 @@ def run(project_dir: Path, state: dict) -> dict:
                 f"Stage 5 R&R revision (round {rr_round + 1}). "
                 f"Referees requested MAJOR_REVISIONS (avg score: {stage6.get('avg_score', '?')}). "
                 "Tell Claude: 'revisa el pipeline'. Claude will read the referee feedback, "
-                "rewrite the affected sections, recompile PDF, and signal completion. "
-                "IMPORTANT: Claude must actually modify the .tex files, not just signal done."
+                "rewrite the affected parts of main.tex, recompile PDF, and signal completion. "
+                "IMPORTANT: Claude must actually modify main.tex, not just signal done."
             ),
             files=[
                 str(decision_files[0]) if decision_files else str(review_dir),
-                str(sections_dir),
+                str(main_tex),
             ],
             project_dir=project_dir,
             script_results={"referee_feedback": smart_truncate(latest_decision, 3000)},
@@ -135,7 +150,7 @@ def run(project_dir: Path, state: dict) -> dict:
     print(f"  [5] {validation.format_for_log()}")
 
     # Save state
-    saved_files = [str(f) for f in sorted(sections_dir.glob("*.tex"))]
+    saved_files = []
     if main_tex.exists():
         saved_files.append(str(main_tex))
 

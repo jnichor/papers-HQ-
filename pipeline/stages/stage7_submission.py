@@ -15,10 +15,8 @@ from pathlib import Path
 
 from ..config import (
     CLO_AUTHOR, SUBMISSION_GATE, COMPONENT_MIN, QUALITY_WEIGHTS,
-    MAX_STAGE7_IMPROVE, get_profile,
+    MAX_STAGE7_IMPROVE,
 )
-from ..claude_runner import run_claude
-from ..json_utils import extract_json
 from ..python_runner import run_python_script
 from ..state import save_state
 from ..validators.code_validator import validate as validate_code
@@ -326,7 +324,7 @@ def run(project_dir: Path, state: dict) -> dict:
             files=[
                 str(project_dir / "quality_reports" / "integration_test_report.md"),
                 str(project_dir / "quality_reports"),
-                str(project_dir / "paper" / "sections"),
+                str(project_dir / "paper" / "main.tex"),
                 str(project_dir / "scripts" / "python"),
             ],
             project_dir=project_dir,
@@ -354,45 +352,48 @@ def run(project_dir: Path, state: dict) -> dict:
     targeting_result = {}
     if gate_passed:
         print("\n  [7d] Journal targeting...")
-        stage3 = state["stages"].get("stage3", {})
-        idea_result = stage3.get("result", {})
 
-        targeting_prompt = f"""You are an academic journal targeting advisor.
+        # Deterministic journal targeting based on score tiers
+        # No Claude call needed — this is a simple lookup
+        if aggregate >= 85:
+            primary = {"name": "Journal of Political Economy", "fit_reason": "Top-5 general interest, strong empirical work", "turnaround_months": 6}
+            backup = {"name": "Review of Economics and Statistics", "fit_reason": "Top field journal for empirical methods", "turnaround_months": 5}
+            conferences = ["NBER Summer Institute", "AEA Annual Meeting", "ASSA"]
+        elif aggregate >= 75:
+            primary = {"name": "Journal of Economic Behavior & Organization", "fit_reason": "Strong fit for empirical tech/labor papers", "turnaround_months": 4}
+            backup = {"name": "Information Economics and Policy", "fit_reason": "Specialized in technology and economics", "turnaround_months": 3}
+            conferences = ["AEA Annual Meeting", "WEAI", "European Economic Association"]
+        elif aggregate >= 70:
+            primary = {"name": "Economics Letters", "fit_reason": "Fast turnaround, accepts concise empirical contributions", "turnaround_months": 2}
+            backup = {"name": "Applied Economics Letters", "fit_reason": "Regional/applied journal, good for null results", "turnaround_months": 2}
+            conferences = ["WEAI", "Southern Economic Association", "Midwest Economics Association"]
+        else:
+            primary = {"name": "Working Paper Series", "fit_reason": "Paper needs more work before journal submission", "turnaround_months": 0}
+            backup = {"name": "SSRN / arXiv", "fit_reason": "Preprint to establish priority while revising", "turnaround_months": 0}
+            conferences = ["Departmental seminar", "Brown bag lunch series"]
 
-Paper title: {idea_result.get('title', 'Untitled')}
-Method: {idea_result.get('method', 'N/A')}
-Field: Economics (empirical)
+        targeting_result = {
+            "primary_journal": primary,
+            "backup_journal": backup,
+            "conferences": conferences,
+        }
 
-Referee scores:
-- Domain referee: {stage6.get('domain_score', '?')}/100
-- Methods referee: {stage6.get('methods_score', '?')}/100
-- Editorial decision: {stage6.get('decision', '?')}
-
-Quality gate: PASSED (aggregate {aggregate:.1f}/100)
-
-Recommend:
-1. Primary target journal (name, why it fits, typical turnaround)
-2. Backup journal (name, why it's a realistic fallback)
-3. Conference presentation targets (2-3 conferences)
-
-Output a JSON block:
-```json
-{{
-  "primary_journal": {{"name": "...", "fit_reason": "...", "turnaround_months": 6}},
-  "backup_journal": {{"name": "...", "fit_reason": "..."}},
-  "conferences": ["..."]
-}}
-```
-"""
-        p = get_profile("stage7_targeting")
-        resp = run_claude(
-            targeting_prompt, model=p["model"], effort=p["effort"],
-            output_file=project_dir / "quality_reports" / "journal_targeting.md",
-            allowed_tools=[],
+        # Save to file
+        targeting_file = project_dir / "quality_reports" / "journal_targeting.md"
+        targeting_text = (
+            f"# Journal Targeting\n\n"
+            f"Aggregate score: {aggregate:.1f}/100\n\n"
+            f"## Primary Target\n"
+            f"**{primary['name']}** — {primary['fit_reason']} "
+            f"(~{primary['turnaround_months']} months turnaround)\n\n"
+            f"## Backup Target\n"
+            f"**{backup['name']}** — {backup['fit_reason']}\n\n"
+            f"## Conference Targets\n"
+            + "\n".join(f"- {c}" for c in conferences)
         )
-        targeting_result = extract_json(resp) or {}
-        journal = targeting_result.get("primary_journal", {}).get("name", "?")
-        print(f"  [7d] Target journal: {journal}")
+        targeting_file.write_text(targeting_text, encoding="utf-8")
+
+        print(f"  [7d] Target journal: {primary['name']}")
     else:
         print("\n  [7d] Skipping journal targeting — gate not passed.")
 

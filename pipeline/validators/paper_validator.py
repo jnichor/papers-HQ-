@@ -48,24 +48,44 @@ def _check_section_files(vr: ValidationResult, paper_dir: Path):
         "main.tex found" if main_exists else "main.tex MISSING"
     )
 
-    # Section files
-    sections_dir = paper_dir / "sections"
+    # Section content — accept either separate files in sections/ or
+    # all content in a single main.tex (preferred)
     main_tex_content = ""
     if main_exists:
         main_tex_content = (paper_dir / "main.tex").read_text(encoding="utf-8")
 
+    sections_dir = paper_dir / "sections"
+
+    # Map section filenames to LaTeX markers that indicate presence in main.tex.
+    # Each entry can have multiple alternative markers (OR logic) to handle
+    # different naming conventions (e.g. "Literature" vs "Related Work").
+    section_markers = {
+        "abstract.tex": [r"\begin{abstract}"],
+        "01_introduction.tex": [r"\section{Introduction"],
+        "02_literature.tex": [r"\section{Literature", r"\section{Related",
+                              r"\section{Background", r"\section{Prior"],
+        "03_data.tex": [r"\section{Data"],
+        "04_empirical_strategy.tex": [r"\section{Empirical", r"\section{Method",
+                                      r"\section{Identification"],
+        "05_results.tex": [r"\section{Results", r"\section{Findings"],
+        "06_robustness.tex": [r"\section{Robustness", r"\section{Sensitivity"],
+        "07_conclusion.tex": [r"\section{Conclusion", r"\section{Discussion"],
+    }
+
     missing = []
     for name in EXPECTED_SECTIONS:
-        if (sections_dir / name).exists():
+        # Accept if separate file exists
+        if sections_dir.exists() and (sections_dir / name).exists():
             continue
-        # abstract.tex: accept if abstract is inside main.tex
-        if name == "abstract.tex" and r"\begin{abstract}" in main_tex_content:
+        # Accept if any marker for this section is found in main.tex
+        markers = section_markers.get(name, [])
+        if any(m in main_tex_content for m in markers):
             continue
         missing.append(name)
 
     vr.add(
         "all_sections_exist", CheckLevel.HARD, len(missing) == 0,
-        f"All {len(EXPECTED_SECTIONS)} section files found"
+        f"All {len(EXPECTED_SECTIONS)} sections found"
         if not missing else
         f"{len(missing)} section(s) MISSING: {', '.join(missing)}"
     )
@@ -107,8 +127,7 @@ def _check_citation_keys(vr: ValidationResult, paper_dir: Path):
 
     # Collect all cite keys from .tex files
     cited_keys = set()
-    tex_files = list((paper_dir / "sections").glob("*.tex"))
-    tex_files.append(paper_dir / "main.tex")
+    tex_files = [paper_dir / "main.tex"]
 
     for tf in tex_files:
         if not tf.exists():
@@ -207,22 +226,18 @@ def _check_compilation(vr: ValidationResult, compiled: bool):
 
 
 def _check_word_count(vr: ValidationResult, paper_dir: Path):
-    sections_dir = paper_dir / "sections"
-    total_words = 0
-
-    for tf in sorted(sections_dir.glob("*.tex")):
-        text = tf.read_text(encoding="utf-8")
-        # Strip comments
-        text = re.sub(r'%.*', '', text)
-        # Strip LaTeX commands
-        text = re.sub(r'\\[a-zA-Z]+\*?', '', text)
-        # Strip braces, brackets
-        text = re.sub(r'[{}\[\]]', ' ', text)
-        # Strip math
-        text = re.sub(r'\$[^$]*\$', ' ', text)
-        # Strip begin/end environments
-        text = re.sub(r'\\begin\{[^}]*\}|\\end\{[^}]*\}', '', text)
-        total_words += len(text.split())
+    text = _gather_tex_text(paper_dir)
+    # Strip comments
+    text = re.sub(r'%.*', '', text)
+    # Strip LaTeX commands
+    text = re.sub(r'\\[a-zA-Z]+\*?', '', text)
+    # Strip braces, brackets
+    text = re.sub(r'[{}\[\]]', ' ', text)
+    # Strip math
+    text = re.sub(r'\$[^$]*\$', ' ', text)
+    # Strip begin/end environments
+    text = re.sub(r'\\begin\{[^}]*\}|\\end\{[^}]*\}', '', text)
+    total_words = len(text.split())
 
     in_range = 5000 <= total_words <= 15000
     vr.add(
@@ -237,16 +252,12 @@ def _check_number_consistency(
     vr: ValidationResult, paper_dir: Path, project_dir: Path
 ):
     """Check that key numbers in abstract appear in results_summary."""
-    abstract_path = paper_dir / "sections" / "abstract.tex"
     summary_path = _find_results_summary(project_dir)
 
-    # Try abstract.tex first, fall back to extracting abstract from main.tex
+    # Extract abstract from main.tex
     abstract_text = ""
-    if abstract_path.exists():
-        abstract_text = abstract_path.read_text(encoding="utf-8")
-    else:
-        main_tex = paper_dir / "main.tex"
-        if main_tex.exists():
+    main_tex = paper_dir / "main.tex"
+    if main_tex.exists():
             import re as _re
             main_content = main_tex.read_text(encoding="utf-8")
             m = _re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', main_content, _re.DOTALL)
@@ -286,16 +297,11 @@ def _check_number_consistency(
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def _gather_tex_text(paper_dir: Path) -> str:
-    """Read and concatenate all .tex files in paper_dir and sections/."""
-    parts = []
+    """Read all paper LaTeX content from main.tex."""
     main = paper_dir / "main.tex"
     if main.exists():
-        parts.append(main.read_text(encoding="utf-8"))
-    sections_dir = paper_dir / "sections"
-    if sections_dir.exists():
-        for tf in sorted(sections_dir.glob("*.tex")):
-            parts.append(tf.read_text(encoding="utf-8"))
-    return "\n".join(parts)
+        return main.read_text(encoding="utf-8")
+    return ""
 
 
 def _find_results_summary(project_dir: Path):

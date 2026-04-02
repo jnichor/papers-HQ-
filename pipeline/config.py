@@ -39,23 +39,26 @@ MAX_PARALLEL_AGENTS = int(os.environ.get("PIPELINE_MAX_PARALLEL", 2))
 # model: "sonnet" (fast+good), "haiku" (fastest), "opus" (best, slow)
 # effort: advisory hint only — Claude Code CLI manages its own reasoning depth
 STAGE_PROFILES = {
+    # ── Active profiles (used in run_claude calls) ──
     "stage1":           {"model": "sonnet", "effort": "medium"},   # Discovery — dataset search (Path A)
-    "stage1_b":         {"model": "haiku", "effort": "medium"},    # Discovery — data profiling (Path B)
+    "stage1_b":         {"model": "haiku",  "effort": "medium"},   # Discovery — data profiling (Path B)
     "stage2":           {"model": "sonnet", "effort": "medium"},   # Ideation
-    "stage3_eval":      {"model": "sonnet", "effort": "medium"},   # Steps 1, 3, 4
-    "stage3_review":    {"model": "sonnet", "effort": "low"},      # Steps 2, 8 (lightweight review)
-    "stage3_lit":       {"model": "sonnet", "effort": "medium"},   # Steps 5, 6 (web search)
-    "stage3_verdict":   {"model": "sonnet", "effort": "high"},     # Step 7 (final verdict)
-    "stage4_strategy":  {"model": "sonnet", "effort": "medium"},   # Strategy memo
-    "stage4_critic":    {"model": "sonnet", "effort": "medium"},   # Critic reviews
-    "stage4_code":      {"model": "sonnet", "effort": "medium"},   # Code generation
-    "stage4_fix":       {"model": "sonnet", "effort": "medium"},   # Error fixes
-    "stage5_write":     {"model": "sonnet", "effort": "high"},     # Paper drafting
-    "stage5_critic":    {"model": "sonnet", "effort": "high"},     # Writer-critic
+    "stage3_eval":      {"model": "sonnet", "effort": "medium"},   # Validation steps 1-4
+    "stage3_lit":       {"model": "sonnet", "effort": "medium"},   # Validation steps 5-6 (web search)
+    "stage3_verdict":   {"model": "sonnet", "effort": "high"},     # Validation step 7 (final verdict)
+    "stage3_5_justify": {"model": "sonnet", "effort": "medium"},   # External source justification
+    "stage3_5_merge":   {"model": "sonnet", "effort": "medium"},   # Merge feasibility assessment
+    "stage4_critic":    {"model": "sonnet", "effort": "medium"},   # Critic reviews + consistency checks
     "stage6_editor":    {"model": "sonnet", "effort": "medium"},   # Editor desk review
-    "stage6_referee":   {"model": "sonnet", "effort": "high"},     # Referee reports
+    "stage6_referee":   {"model": "sonnet", "effort": "high"},     # Referee reports (domain + methods)
     "stage6_decision":  {"model": "sonnet", "effort": "medium"},   # Editorial decision
     "stage7_targeting": {"model": "sonnet", "effort": "low"},      # Journal targeting
+    # ── Manual intervention stages (profile used by claude agents) ──
+    "stage4_strategy":  {"model": "sonnet", "effort": "medium"},   # Strategy memo (agent)
+    "stage4_code":      {"model": "sonnet", "effort": "medium"},   # Code generation (agent)
+    "stage4_fix":       {"model": "sonnet", "effort": "medium"},   # Error fixes (agent)
+    "stage5_write":     {"model": "sonnet", "effort": "high"},     # Paper drafting (agent)
+    "stage5_critic":    {"model": "sonnet", "effort": "high"},     # Writer-critic (agent)
 }
 
 def get_profile(key: str) -> dict:

@@ -37,13 +37,8 @@ def _consistency_check(project_dir: Path) -> bool:
     paper_dir = project_dir / "paper"
     clean_dir = project_dir / "data" / "clean"
 
-    # Gather all paper content
+    # Gather paper content from main.tex
     sections = {}
-    sections_dir = paper_dir / "sections"
-    if sections_dir.exists():
-        for f in sorted(sections_dir.glob("*.tex")):
-            sections[f.name] = f.read_text(encoding="utf-8")
-
     main_tex = paper_dir / "main.tex"
     if main_tex.exists():
         sections["main.tex"] = main_tex.read_text(encoding="utf-8")
@@ -163,12 +158,10 @@ If the paper is fully consistent, output:
         if not fname or not old_text or not new_text or old_text == new_text:
             continue
 
-        # Find the file
+        # Find the file — all paper content lives in main.tex
         fpath = None
-        if fname == "main.tex":
+        if fname == "main.tex" or (fname.endswith(".tex") and not fname.startswith("table")):
             fpath = paper_dir / "main.tex"
-        elif fname.endswith(".tex") and not fname.startswith("table"):
-            fpath = sections_dir / fname
         elif fname.endswith(".tex"):
             fpath = tables_dir / fname
 
@@ -201,12 +194,6 @@ def _gather_paper(paper_dir: Path) -> str:
     if main_tex.exists():
         full_text = main_tex.read_text(encoding="utf-8")
         parts.append(f"## main.tex\n```latex\n{smart_truncate(full_text, 50000)}\n```\n")
-
-    sections_dir = paper_dir / "sections"
-    if sections_dir.exists():
-        for f in sorted(sections_dir.glob("*.tex")):
-            content = f.read_text(encoding="utf-8")
-            parts.append(f"## {f.name}\n```latex\n{smart_truncate(content, 8000)}\n```\n")
 
     return "\n".join(parts) or "(no paper content found)"
 
@@ -798,7 +785,7 @@ Output a JSON block:
             f"round(s). Avg referee score: {avg_score:.0f}. "
             f"Must-address issues: {len(must_address)}."
         )
-        paper_files = [str(f) for f in sorted((paper_dir / "sections").glob("*.tex"))]
+        paper_files = [str(paper_dir / "main.tex")] if (paper_dir / "main.tex").exists() else []
         review_files = [str(f) for f in sorted(review_dir.glob("*.md"))]
 
         request_manual_intervention(

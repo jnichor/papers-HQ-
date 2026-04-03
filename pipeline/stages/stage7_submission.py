@@ -157,32 +157,57 @@ def run(project_dir: Path, state: dict) -> dict:
     stage5 = state["stages"].get("stage5", {})
     stage6 = state["stages"].get("stage6", {})
 
-    code_score = stage4bc.get("critic_score", 0)
-    if code_score == 0 and replication_ok:
-        code_score = 75
+    # RECALCULATE code and paper scores from current validator results
+    # instead of using frozen values from earlier stages
+    # Note: frozen scores from earlier stages are ignored — we recalculate
+    # from current validator results to reflect the actual state of code/paper
 
-    # Identification score: use stage4a critic_score if available,
-    # otherwise derive from the method's causal design tier
+    # Recalculate code score from current validation
+    code_counts = code_val.summary_counts
+    code_hard = code_counts.get("hard_passed", code_counts.get("hard_pass", 0))
+    code_hard_total = code_counts.get("hard_total", 1)
+    code_soft = code_counts.get("soft_passed", code_counts.get("soft_pass", 0))
+    code_soft_total = code_counts.get("soft_total", 1)
+    if code_hard == code_hard_total:
+        code_score = 60 + int((code_soft / max(code_soft_total, 1)) * 40)
+    else:
+        code_score = 40 + int((code_soft / max(code_soft_total, 1)) * 20)
+    if replication_ok:
+        code_score = min(100, code_score + 5)
+    # Always use the recalculated score — it reflects the CURRENT state of the code
+    # The frozen score may be stale from earlier stages with different scripts
+
+    # Recalculate paper score from current validation
+    paper_counts = paper_val.summary_counts
+    paper_hard = paper_counts.get("hard_passed", paper_counts.get("hard_pass", 0))
+    paper_hard_total = paper_counts.get("hard_total", 1)
+    paper_soft = paper_counts.get("soft_passed", paper_counts.get("soft_pass", 0))
+    paper_soft_total = paper_counts.get("soft_total", 1)
+    compiled = stage5.get("compiled", False)
+    if paper_hard == paper_hard_total:
+        paper_score = 60 + int((paper_soft / max(paper_soft_total, 1)) * 40)
+    else:
+        paper_score = 40 + int((paper_soft / max(paper_soft_total, 1)) * 20)
+    if compiled:
+        paper_score = min(100, paper_score + 5)
+    # Always use recalculated — frozen may be stale
+
+    # Identification score
+    from .stage4_strategy import _score_identification
     ident_score = stage4a.get("critic_score", 0)
     if ident_score == 0:
-        # Fallback: score based on method keywords in strategy
-        from .stage4_strategy import _score_identification
         ident_score = _score_identification(state)
 
-    # Adjust identification score based on peer review feedback:
-    # If referees gave a very different assessment, blend the scores
+    # Adjust identification based on peer review
     polish_score = stage6.get("avg_score", 0)
     if polish_score > 0 and ident_score > 0:
-        # If referees score is much lower than identification score,
-        # they likely disagree with the identification credibility.
-        # Blend: 80% identification + 20% peer review signal
         if polish_score < ident_score - 15:
             ident_score = int(ident_score * 0.8 + polish_score * 0.2)
 
     components = {
         "identification": ident_score,
         "code": code_score,
-        "paper": stage5.get("critic_score", 0),
+        "paper": paper_score,
         "polish": stage6.get("avg_score", 0),
         "replication": 100 if (replication_ok and not changed_outputs) else
                        50 if replication_ok else 0,

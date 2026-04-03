@@ -144,6 +144,56 @@ If the method claims causal identification, the following are ALWAYS MUST priori
 - PLACEBO TEST: Require at least one placebo test (false treatment timing or
   false treatment group).
 
+*** DESIGN-SPECIFIC ASSUMPTION AUDIT (add ALL relevant items as MUST): ***
+
+For DiD / Event Study:
+  - Parallel trends assumption: joint F-test on pre-treatment coefficients
+  - No-anticipation assumption: test leads (t-2, t-3) for significance
+  - Stable treatment composition: document entry/exit of units
+  - Common support across treatment/control groups
+  - Sensitivity: Rambachan-Roth (2023) HonestDiD breakdown point
+
+For IV / 2SLS:
+  - First-stage F-statistic (>10 rule of thumb, Montiel Olea-Pflueger preferred)
+  - Exclusion restriction: justify why instrument affects outcome ONLY through treatment
+  - Monotonicity assumption for LATE interpretation
+  - Anderson-Rubin confidence intervals if weak instrument concern
+  - Over-identification test if multiple instruments (Hansen J-test)
+
+For RDD:
+  - McCrary (2008) density test: no manipulation of running variable
+  - Bandwidth sensitivity: IK-optimal, CER-optimal, and manual bandwidths
+  - Donut-hole specification: exclude observations very close to cutoff
+  - Continuity of baseline covariates at cutoff
+  - Local polynomial order: linear preferred, quadratic as robustness
+
+For RCT / Experiment:
+  - Covariate balance table with SMD and joint F-test
+  - Permutation/randomization inference (2000+ reshuffles)
+  - Differential attrition check by treatment arm
+  - Lee (2009) attrition bounds
+  - CONSORT-style flow diagram or sample accounting
+  - Effect sizes (Cohen's d) alongside p-values
+
+For Synthetic Control:
+  - Pre-treatment fit quality (RMSPE ratio)
+  - Predictor balance between treated and synthetic unit
+  - Donor pool justification (no spillovers)
+  - Permutation inference (in-space placebo)
+  - Leave-one-out sensitivity of donor pool
+
+*** SANITY CHECK REQUIREMENTS (add as MUST for all designs): ***
+  - Report expected sign based on theory BEFORE running regressions
+  - If result contradicts expected sign, require explicit discussion
+  - Report effect magnitude in interpretable units (SD, percentage, dollar)
+  - Compare magnitude to prior literature estimates
+  - Flag any result that implies implausibly large effects (>1 SD shift)
+
+*** FALSIFICATION PLANNING (add as MUST for all causal designs): ***
+  - At least ONE placebo outcome (variable that should NOT be affected)
+  - At least ONE placebo treatment timing or group
+  - Pre-commit to these tests in the strategy memo BEFORE seeing results
+
 Be calibrated: for a descriptive quantile regression, do NOT require
 causal identification tests. DO require proper handling of:
 - Mass points at zero

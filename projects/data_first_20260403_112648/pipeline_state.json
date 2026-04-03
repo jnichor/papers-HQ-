@@ -1,7 +1,7 @@
 {
   "project": "data_first_20260403_112648",
   "created_at": "2026-04-03T11:26:48.242550",
-  "current_stage": 3.3,
+  "current_stage": 7,
   "stages": {
     "stage1": {
       "status": "completed",
@@ -1874,8 +1874,622 @@
         "pyfixest feols failed: zero-size array to reduction operation maximum which has no identity"
       ],
       "completed_at": "2026-04-03T11:41:53.184464"
+    },
+    "stage3_5": {
+      "status": "completed",
+      "action": "APPROVE",
+      "data_selection": {
+        "choice": 1,
+        "use_external": false
+      },
+      "completed_at": "2026-04-03T11:49:44.841891",
+      "approved_strategy": {
+        "title": "Program Complementarity: Is Voucher + Training Superadditive?",
+        "method": "Factorial RCT with interaction term (Voucher × Training)",
+        "design": "Does simultaneous access to both a wage voucher and vocational training produce employment gains larger than the sum of each program in isolation, and does this complementarity vary by gender or SES?",
+        "data_sources": [
+          "JN_FinalSubmission.tab"
+        ],
+        "pre_analysis_plan": "",
+        "user_notes": "Use ONLY the main dataset (JN_FinalSubmission.tab). Do NOT reference or require any external datasets."
+      }
+    },
+    "stage3_7": {
+      "status": "completed",
+      "n_must": 31,
+      "n_should": 13,
+      "n_nice": 2,
+      "n_fatal_pitfalls": 0,
+      "fatal_pitfalls": [],
+      "domain_result": {
+        "code_requirements": [
+          {
+            "category": "estimation",
+            "requirement": "Primary specification: OLS/LPM with the 2x2 factorial interaction — Y = α + β₁V + β₂T + β₃(V×T) + Xγ + ε. β₃ is the superadditivity test. Report all four arms' means alongside coefficients.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "ITT estimates as the headline. If compliance < 1, also report LATE via 2SLS using assignment dummies as instruments for actual take-up. Must clearly distinguish ITT from LATE throughout.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "ANCOVA specification: include baseline value of the outcome (or closest pre-treatment proxy) as a covariate. This is the efficiency-maximizing estimator for RCTs and referees will expect it.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Heterogeneity analysis via triple interactions: Y = ... + δ₁(V×T×Female) + δ₂(V×T×LowSES) + all lower-order terms. Run as a single saturated model, not separate subgroup regressions.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Cluster standard errors at the unit of randomization. If randomization was individual, use HC2 (not HC1) heteroskedasticity-robust SEs. Document this choice explicitly in code comments.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Multiple-outcomes correction: implement Benjamini-Hochberg FDR adjustment across all primary outcome variables. Report both raw p-values and adjusted q-values in every results table.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Randomization inference (permutation test) for the key β₃ interaction coefficient. Permute treatment assignment 1,000+ times within strata. Required because β₃ may be estimated imprecisely with N=2,322.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Wave/period fixed effects for pooled cross-sections. Verify whether the same individuals appear in multiple waves; if so, include individual FE or note explicitly this is a pure cross-section pool.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Power calculation for the interaction term β₃ ex-post. With N≈2,322 split into 4 arms (~580/arm), compute minimum detectable effect for the interaction and report it. Referees will ask.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Lee (2009) trimming bounds for any outcome affected by attrition or sample selection (e.g., wages conditional on employment). Report point estimate alongside upper/lower bounds.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Probit/logit marginal effects as robustness to LPM for binary outcomes. If LPM predicts outside [0,1] for any observation, flag and report the share affected.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Specification curve: vary the control variable set (none, demographics only, full baseline controls) and show β₃ is stable. At minimum show 3 nested specifications in a single table.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Spillover/SUTVA test: if treatment was assigned at individual level within shared labor markets, test for spillovers using Baird et al. (2018) style partial-population experiment logic or geographic distance-based analysis.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Placebo test on pre-treatment outcomes: regress baseline variables on treatment assignment. If data structure allows a pre-period, verify β₃ ≈ 0 on pre-treatment employment.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Winsorize continuous outcomes (wages, hours) at 1st/99th percentile. Run both winsorized and log-transformed versions. Report which is preferred and why.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Stacked regression by cohort/wave if pooling across multiple experimental waves — do not pool naively if treatment timing differs across waves.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "With 1,420 columns, implement explicit variable selection logic before running regressions. Document which variables are outcomes, which are controls, and which are neither. Use a data dictionary or codebook-driven column classifier.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Verify 2×2 factorial balance: each of the 4 cells (V=0/T=0, V=1/T=0, V=0/T=1, V=1/T=1) must have sufficient n. If any cell has < 100 observations, flag a power warning.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Construct a binary 'complier' indicator: individuals who received the assigned treatment. Report compliance rates by arm. If compliance is endogenous (e.g., training take-up depends on voucher), document this clearly.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Attrition analysis: regress an attrition indicator on treatment arms and baseline covariates. Test for differential attrition by treatment arm using F-test across all arms jointly.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "SES index construction: if SES is derived from multiple columns, document the aggregation method (PCA, sum score, terciles). Verify the index is constructed using only pre-treatment data.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Verify no post-randomization conditioning: controls added to regressions must be pre-treatment. Flag any variable that could be a mediator (post-treatment) and exclude from main controls.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "data_construction",
+            "requirement": "Pooled cross-section: add survey wave dummies and document whether outcomes are measured at the same point post-treatment across waves. Heterogeneous follow-up timing is a major confound.",
+            "priority": "MUST",
+            "source": "domain"
+          }
+        ],
+        "data_warnings": [
+          "1,420 columns for 2,322 rows creates extreme multiple-testing risk. Any unrestricted search across columns will produce spurious findings. Pre-register or explicitly separate confirmatory from exploratory outcomes.",
+          "Pooled cross-sections ≠ panel data. If the same individuals are tracked across waves, the correct estimator is panel FE or first-differences, NOT pooled OLS. Verify individual identifiers and test for duplicates.",
+          "Factorial RCTs with unequal cell sizes (due to attrition or partial compliance) break the orthogonality assumption. Recheck balance after attrition and re-weight if necessary.",
+          "With ~580 obs per arm, the interaction term β₃ is estimated from only ~580 'complements-arm' observations. The MDE for β₃ is roughly 2× larger than for main effects — low power is a real threat.",
+          "Gender and SES heterogeneity via triple interactions further halves cell sizes (~290/subgroup). Report these with appropriate caveats about exploratory status and multiple testing.",
+          "If training take-up was voluntary after assignment, there is a strong risk of compliance selection bias — participants who take up training when also holding a voucher may differ systematically. Model compliance explicitly.",
+          "Wage/earnings outcomes are only observed for employed individuals (selected sample). Any wage analysis without Lee bounds or Heckman correction will be invalid for peer review.",
+          "1,420 columns likely contain many highly correlated variables (e.g., asset indices, consumption sub-components). Avoid including collinear blocks of controls — use VIF checks or PCA-reduced control sets."
+        ],
+        "tables_required": [
+          "Table 1: Balance table — means and SDs of baseline covariates by treatment arm (all 4 cells), with F-test p-value for joint balance. Include both individual arm tests and the interaction cell.",
+          "Table 2: Attrition analysis — attrition rate by arm, regression of attrition indicator on treatment dummies with p-value for differential attrition.",
+          "Table 3: Compliance table — take-up rates by assigned arm for voucher and training separately, and for the joint arm.",
+          "Table 4: Main ITT results — primary employment outcomes across 3 specifications (no controls, demographics, full controls). Rows: V, T, V×T (β₃). Include arm means in panel below.",
+          "Table 5: LATE estimates — 2SLS for actual take-up if compliance < 100%, with first-stage F-statistics.",
+          "Table 6: Heterogeneity by gender — triple interaction estimates (V×T×Female) with all lower-order terms. Report subgroup means.",
+          "Table 7: Heterogeneity by SES — triple interaction estimates (V×T×LowSES). Include SES index construction details in footnote.",
+          "Table 8: Multiple outcomes — all pre-registered outcomes with raw p-values and BH-adjusted q-values. Must include employment, earnings, hours, job quality (if available).",
+          "Table A1 (Appendix): Robustness — probit marginal effects, winsorized outcomes, and randomization inference p-values for β₃.",
+          "Table A2 (Appendix): Lee bounds for wage/earnings outcomes showing point estimate, lower bound, and upper bound."
+        ],
+        "figures_required": [
+          "Figure 1: CONSORT-style flow diagram — randomization → assignment → compliance → analysis sample for each of the 4 arms.",
+          "Figure 2: Treatment arm means plot — bar chart with 95% CIs for the primary employment outcome across all 4 arms, with the predicted additive benchmark overlaid to visually demonstrate (or refute) superadditivity.",
+          "Figure 3: Coefficient plot — β₁ (V), β₂ (T), β₃ (V×T) with 90% and 95% CIs from the main specification. Include a horizontal reference line at zero.",
+          "Figure 4: Heterogeneity forest plot — β₃ estimated separately for gender × SES subgroups (4 cells), showing point estimates and CIs to visualize effect modification.",
+          "Figure 5: Permutation distribution — histogram of β₃ under 1,000 random permutations with the observed β₃ marked, showing the randomization inference p-value.",
+          "Figure A1 (Appendix): Specification curve for β₃ — ordered point estimates across all robustness specifications (control sets, functional forms, sample restrictions)."
+        ]
+      },
+      "methods_result": {
+        "code_requirements": [
+          {
+            "category": "specification",
+            "requirement": "SUPERADDITIVITY TEST CORRECTLY SPECIFIED: The test for superadditivity is H0: β_interaction = 0 (one-sided: β_interaction > 0). The combined effect is β_voucher + β_training + β_interaction. Report these separately. Do NOT conflate 'significant combined effect' with 'significant superadditivity' — they answer different questions.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "BALANCE TABLE ACROSS ALL FOUR ARMS: Report balance for Control / Voucher-only / Training-only / Both arms. A two-group balance table is insufficient for a 2×2 factorial. Run a joint F-test for each covariate across all arms, not just pairwise t-tests.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "inference",
+            "requirement": "ESTABLISH RANDOMIZATION UNIT: Determine whether randomization was individual-level or cluster-level (village, firm, school). If cluster-randomized: use cluster-robust SEs at the randomization cluster level. If fewer than 50 clusters, wild cluster bootstrap (Rademacher weights, ≥999 replications) is the PRIMARY inference method — asymptotic cluster SEs are unreliable. Use 'wildboottest' Python package.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "MULTIPLE TESTING CORRECTION: With 1420 columns against 2322 rows, the dataset is severely underdetermined and presents extreme specification-search risk. Code must pre-declare a primary outcome variable and a finite list of secondary outcomes. Apply Benjamini-Hochberg FDR correction across all tested outcomes. Flag any outcome explored post-hoc as exploratory.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "ITT AS PRIMARY SPECIFICATION: Report Intent-to-Treat as the primary estimate. If non-compliance exists in either program, report compliance rates by arm and instrument with treatment assignment for a LATE/IV estimate. Non-compliance in one arm that is not modeled produces attenuated interaction estimates and misleads on complementarity.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "ATTRITION / MISSING OUTCOME ANALYSIS: For pooled cross-sections, differential attrition across arms can masquerade as treatment effects. Compute differential attrition rates by arm (joint F-test). Compute Lee (2009) trimming bounds for the primary outcome if attrition exceeds 5% in any arm.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "HETEROGENEITY SUBGROUP REGRESSIONS: For gender and SES heterogeneity, estimate triple interactions Voucher × Training × Gender and Voucher × Training × SES in a single saturated model. Do NOT run separate regressions for each subgroup and compare p-values informally — that is not a test of differential effects.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "inference",
+            "requirement": "INTERACTION TERM POWER: The precision of β_interaction is roughly 4× lower than the precision of main effects in balanced 2×2 designs. Report an ex-post MDE (minimum detectable effect) for the interaction term. If the MDE exceeds plausible effect sizes from the literature, explicitly caveat that the study may be underpowered to detect complementarity even if it exists.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "RANDOMIZATION INFERENCE / PERMUTATION TEST: Compute a permutation p-value for β_interaction by reshuffling treatment assignment within strata (≥1000 permutations). This provides exact finite-sample inference for the key quantity of interest and is especially valuable when cluster count is uncertain.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "COVARIATE ADJUSTMENT SENSITIVITY: Report (a) raw difference-in-means across 4 arms, (b) regression-adjusted estimate with pre-specified covariates, (c) LASSO-selected covariates (post-double-selection, Belloni et al.). If β_interaction is significant only under one specification, flag instability.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "SUTVA / SPILLOVER CHECK: In factorial RCTs, individuals assigned to Voucher-only may learn about or interact with Training-arm individuals, creating cross-arm contamination. If geographic or social proximity data exist, test for spillovers using a distance-to-treated-arm variable or Rosenbaum (2007) interference bounds.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "SATURATED vs. ADDITIVE MODEL COMPARISON: Estimate both (a) fully saturated model with 3 dummies (V, T, V×T) and (b) a model imposing β_interaction=0. Report an F-test for the restriction. If the saturated model is not significantly better, be cautious about claiming evidence of complementarity.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "POOLED CROSS-SECTION TIMING CONTROLS: Since data are pooled cross-sections (not a panel), include survey-wave fixed effects or time-period dummies to absorb secular trends. Check whether the composition of treatment arms is stable across waves; compositional change confounds the interaction estimate.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "TABLE REQUIREMENTS: Every regression table must include: (1) β estimates for V, T, and V×T separately, (2) SEs and 95% CIs (not just stars), (3) p-value for H0: β_V + β_T + β_VT = combined effect, (4) p-value for H0: β_VT = 0 (superadditivity test), (5) N per arm, (6) R², (7) specification of SE type (HC2/HC3/cluster/wild bootstrap). Report effect sizes in standardized units (Cohen's d) alongside raw coefficients.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "MEANS TABLE: Include a table of raw means and SDs by arm (2×2 grid: Control, V-only, T-only, Both) for the primary outcome. This is the most transparent presentation of a factorial design and should precede any regression.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "HETEROGENEITY FOREST PLOT: For gender and SES subgroup results, present a coefficient plot showing β_interaction with 95% CIs by subgroup. Include a formal interaction p-value (triple interaction term) alongside subgroup-specific estimates.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "DO NOT INTERPRET INSIGNIFICANT INTERACTION AS EVIDENCE OF ADDITIVITY: p > 0.05 for β_VT does not confirm additivity — the study may simply be underpowered. Frame null results as 'no detected superadditivity' not 'programs are additive.'",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "DO NOT OVER-CONTROL WITH 1420 COLUMNS: With N=2322 and 1420 variables, adding many covariates risks collinearity and post-treatment bias if any covariate is affected by treatment. Limit covariate adjustment to pre-specified baseline variables. Flag and exclude any variable measured after randomization.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "DO NOT POOL SES GROUPS WITHOUT TESTING POOLABILITY: If SES is ordinal or continuous, a single interaction V×T×SES imposes linearity. Test whether the interaction effect is monotone in SES or has a non-linear pattern (e.g., J-shape). Consider tertile splits with a joint test across groups.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "AVOID MULTIPLE INFERENCE ON SUBGROUPS WITHOUT CORRECTION: Gender × SES subgroup cells in a 2×2×K design multiply fast. With, e.g., 3 SES groups × 2 genders = 6 subgroup interaction tests on the same outcome, apply Bonferroni or Holm correction. Report uncorrected and corrected p-values side by side.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "inference",
+            "requirement": "HC2 HETEROSKEDASTICITY-ROBUST SEs AS MINIMUM: If randomization is individual-level, use HC2 (not HC1/default OLS) robust SEs. HC2 is unbiased under heteroskedasticity and preferred over HC3 at N=2322. Standard OLS SEs are invalid by default in treatment-effect regressions.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "QUANTILE TREATMENT EFFECTS FOR EMPLOYMENT OUTCOME: If the employment outcome has a mass point at zero (binary or censored), also estimate QTE at the 50th, 75th, and 90th percentiles. An average effect of zero can mask positive effects at upper quantiles (program raises ceiling not floor). Use Firpo (2007) unconditional QTE or interquantile regression.",
+            "priority": "NICE",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "CAUSAL FOREST / CATE ESTIMATION FOR HETEROGENEITY: Use a causal forest (grf package) or T-learner with cross-fitting to estimate conditional average treatment effects of the interaction. Report variable importance for which baseline characteristics moderate complementarity. This is exploratory but guards against cherry-picked subgroups.",
+            "priority": "NICE",
+            "source": "methods"
+          }
+        ],
+        "method_warnings": [
+          "COLUMN/ROW RATIO WARNING: 1420 columns vs. 2322 rows (ratio ≈ 0.61) creates extreme risk of specification fishing. Without a pre-analysis plan, any significant β_VT result is suspect. Code must hard-code the outcome variable and covariate list at the top of the script — no dynamic selection.",
+          "POOLED CROSS-SECTIONS ≠ PANEL: Cannot estimate within-person learning trajectories or use individual fixed effects. Heterogeneity in pre-treatment outcomes across waves can confound treatment effects if wave composition differs by arm.",
+          "INTERACTION POWER IS LOW: A properly powered study to detect a meaningful interaction (e.g., 0.2 SD) at 80% power typically requires ~4× the sample needed for a main effect of the same size. With N=2322 split across 4 arms (~580 per arm), MDE for β_VT is likely ≥0.15–0.20 SD — document this explicitly.",
+          "COMPLIANCE ASYMMETRY: Take-up rates for vocational training programs are typically lower and more endogenous than voucher take-up. If non-compliance is differential (e.g., more motivated workers take up both programs), the interaction estimate conflates program complementarity with selection complementarity.",
+          "POOLED CROSS-SECTION WAVE EFFECTS: If survey waves post-date treatment assignment by different durations, the 'combined' arm may have higher or lower follow-up time than the single-program arms, confounding the interaction.",
+          "BINARY EMPLOYMENT OUTCOMES: If the outcome is binary (employed/not), OLS linear probability model produces valid ATEs but the interaction term interpretation requires care — margins are not guaranteed additive on the probability scale. Consider logit margins as a robustness check, but prefer LPM as primary for interpretability of β_VT."
+        ],
+        "must_not_claim": [
+          "Must NOT claim 'programs are complementary' based solely on a significant combined effect (β_V + β_T + β_VT > 0) — complementarity requires β_VT > 0 specifically.",
+          "Must NOT claim 'no complementarity' based on a non-significant β_VT without reporting the MDE and acknowledging possible underpowering.",
+          "Must NOT use the pooled cross-section structure to make within-person causal claims about learning trajectories or skill accumulation over time.",
+          "Must NOT treat the 1420 columns as a covariate menu to try different specifications and report the most significant — this invalidates standard p-values entirely.",
+          "Must NOT interpret subgroup heterogeneity (gender, SES) without a formal triple-interaction test — differences in subgroup-specific estimates are not statistically meaningful without an interaction test.",
+          "Must NOT report only aggregate employment effects without checking for mass-at-zero in the outcome distribution — average effects on a censored outcome mask distributional shifts.",
+          "Must NOT claim the RCT design eliminates all identification concerns without addressing non-compliance, attrition, and SUTVA violations specific to this factorial structure."
+        ]
+      },
+      "checklist_path": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260403_112648\\strategy\\referee_checklist.md",
+      "completed_at": "2026-04-03T11:51:19.356101"
+    },
+    "stage4a": {
+      "status": "completed",
+      "strategy_dir": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260403_112648\\strategy",
+      "completed_at": "2026-04-03T12:03:49.389315"
+    },
+    "stage4bc": {
+      "status": "completed",
+      "scripts_dir": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260403_112648\\scripts\\python",
+      "scripts": [
+        "00_clean.py",
+        "01_main.py",
+        "02_robustness.py",
+        "03_output.py"
+      ],
+      "all_scripts_ok": true,
+      "critic_score": 45,
+      "critic_result": {
+        "score": 45,
+        "summary": "Computed from validation: hard 0/12, soft 0/9"
+      },
+      "validation": {
+        "hard_passed": 12,
+        "hard_failed": 0,
+        "hard_total": 12,
+        "soft_passed": 5,
+        "soft_failed": 4,
+        "soft_total": 9
+      },
+      "validation_hard_pass": true,
+      "completed_at": "2026-04-03T12:03:56.934326"
+    },
+    "stage4_5": {
+      "status": "completed",
+      "audit_report": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260403_112648\\quality_reports\\data_audit.md",
+      "n_critical": 0,
+      "n_warnings": 3,
+      "flags": [
+        {
+          "severity": "WARNING",
+          "category": "variable_construction",
+          "detail": "No 'insurance_cat' column found in clean data."
+        },
+        {
+          "severity": "WARNING",
+          "category": "sample_size",
+          "detail": "Total sample N = 1,347. Consider power limitations."
+        },
+        {
+          "severity": "WARNING",
+          "category": "survey_weights",
+          "detail": "No survey weight column found. Results may not be population-representative."
+        }
+      ],
+      "completed_at": "2026-04-03T12:03:57.089198"
+    },
+    "stage5": {
+      "status": "completed",
+      "paper_dir": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260403_112648\\paper",
+      "saved_files": [
+        "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260403_112648\\paper\\main.tex"
+      ],
+      "compiled": true,
+      "critic_score": 45,
+      "critic_result": {
+        "score": 45,
+        "summary": "Computed from validation: hard 0/4, soft 0/5"
+      },
+      "validation": {
+        "hard_passed": 3,
+        "hard_failed": 1,
+        "hard_total": 4,
+        "soft_passed": 4,
+        "soft_failed": 1,
+        "soft_total": 5
+      },
+      "validation_hard_pass": false,
+      "completed_at": "2026-04-03T13:19:14.365661"
+    },
+    "stage6": {
+      "status": "completed",
+      "decision": "MINOR_REVISIONS",
+      "rr_round": 3,
+      "domain_score": 73,
+      "methods_score": 74,
+      "avg_score": 73.5,
+      "editor_result": {
+        "desk_decision": "PROCEED",
+        "reason": "The paper presents a well-executed 2×2 factorial RCT with a clearly defined research question, adequate sample size (N=1,347), and clean identification via random assignment. The factorial design is appropriate for the stated goal of estimating complementarity between demand- and supply-side ALMPs—a first-order policy question with limited experimental evidence. The findings are internally coherent: large midline voucher effects that fade by endline, null training effects, and a precisely estimated zero interaction. The abstract and introduction demonstrate familiarity with the relevant literature (Card et al., Muralidharan, Lee bounds, permutation inference), and the robustness battery is credible. No fundamental methodological flaws are apparent from the desk review. Key open questions—mechanism behind fade-out, external validity given the all-male sample, absence of cost data, and the interpretation of the LFP persistence—are appropriate for referee scrutiny rather than grounds for rejection.",
+        "referee_1_type": "CREDIBILITY",
+        "referee_2_type": "POLICY"
+      },
+      "domain_result": {
+        "score": 73,
+        "decision": "MAJOR_REVISIONS",
+        "dimension_scores": {
+          "contribution_novelty": 80,
+          "literature_positioning": 74,
+          "substantive_arguments": 69,
+          "external_validity": 66,
+          "journal_fit": 74
+        },
+        "major_comments": [
+          "LATE/2SLS estimates are entirely absent despite being a Round 2 must-address requirement. Take-up rates are not reported, making ITT-based effect sizes uninterpretable for cost-effectiveness and policy-budget claims. Authors must report compliance rates by arm and estimate LATE via 2SLS.",
+          "The midline-to-endline sample size increase (N=1,207 → N=1,255) is acknowledged but not explained. The mechanism — re-contact, refreshment sample, administrative additions — has direct implications for the validity of the fade-out result and must be disclosed and assessed.",
+          "The 29 pp decline in control-group LFP from midline (77.1%) to endline (48.0%) is never explained. This anomaly is larger than the persistent treatment effect itself and could reflect survey seasonality, compositional change from unexplained sample additions, or differential attrition. The LFP persistence headline result is uninterpretable until this is ruled out as an artifact.",
+          "The 975 excluded individuals (42% of the 2,322-person baseline) are described only as 'likely' excluded due to eligibility screening or logistical constraints. Authors must characterize who these individuals are relative to the randomized sample on observable baseline characteristics."
+        ],
+        "minor_comments": [
+          "Mid-salary interaction coefficient is -3.217 in paper vs -3.216 in data output — trivial but should be consistent.",
+          "Social security registration is highest in training-only arm (15.9%) and lowest in combined arm (11.2%). This pattern cuts against the null-training narrative and deserves at least a sentence of discussion.",
+          "The 95% CI on the midline employment interaction [-0.117, +0.087] is stated to rule out 'meaningful complementarity'; the upper bound of +8.7 pp on a 17.8% control mean is non-negligible and the threshold for 'meaningful' should be stated explicitly.",
+          "Figure 3 caption reports the no-controls endline voucher employment effect as +0.034 while Table 3 (with controls) reports +0.030. These should be reconciled or distinguished.",
+          "SUTVA and general-equilibrium displacement effects are not discussed anywhere in the paper despite being raised in the Round 2 should-address comments. With ~600 treated individuals concentrated in local labor markets, the welfare interpretation of the headline result requires at least a qualitative treatment of this concern."
+        ],
+        "missing_literature": [
+          "Blundell et al. (2004) on evaluating ALMPs with equilibrium effects — directly relevant to SUTVA gap.",
+          "Bandiera et al. (2017, QJE) 'Labor Markets and Poverty in Village Economies' — relevant to low SSC registration and informal employment finding.",
+          "Darity & Goldsmith (1996) on scarring effects of unemployment on LFP — relevant to interpreting persistent LFP effect after employment fade-out."
+        ]
+      },
+      "methods_result": {
+        "score": 74,
+        "decision": "MAJOR_REVISIONS",
+        "dimension_scores": {
+          "identification_strategy": 76,
+          "estimation_implementation": 74,
+          "statistical_inference": 69,
+          "robustness_sensitivity": 73,
+          "replication_readiness": 77
+        },
+        "sanity_checks": {
+          "sign": "PASS",
+          "magnitude": "PASS",
+          "dynamics": "FAIL",
+          "consistency": "PASS"
+        },
+        "major_comments": [
+          "Sample size rises from N=1,207 at midline to N=1,255 at endline with no explanation of mechanism; the midline-to-endline fade-out comparison is therefore between potentially different populations. Authors must document the source of re-appearing observations, test arm balance among them, and provide sensitivity estimates restricted to balanced attritors.",
+          "LATE/compliance estimates are absent despite being pre-specified in the research strategy. Take-up rates, first-stage statistics, and IV/2SLS LATE estimates are required for at minimum employment and LFP; linearmodels is confirmed working in the pipeline. All welfare and fade-out mechanism discussion is uninterpretable without per-complier scaling.",
+          "Control-group LFP collapses 29.1 pp from midline (77.1%) to endline (48.0%), nearly three times the persistent treatment effect (10.1 pp). The revision never explains this. The headline persistence result is not credibly interpretable until: (a) survey instrument changes are ruled out, (b) seasonal/macroeconomic confounds are documented, (c) differential attrition by arm is examined, and (d) balanced-attritor sensitivity is reported.",
+          "975 excluded observations (42% of the full baseline sample) are characterized only as 'likely due to eligibility screening.' This signals uncertainty incompatible with the authors' direct access to implementation records. Baseline comparisons and exogeneity tests for the excluded group are required."
+        ],
+        "minor_comments": [
+          "Variable b_communitycollege is labeled 'Education (1-8 scale)' in the balance table; a data appendix should clarify whether this is a college identifier code or a constructed attainment index, as the distinction affects interpretation of balance and covariate adjustment.",
+          "No multiple testing correction applied across 8+ primary outcomes; the key endline LFP result (p=0.008) should be evaluated against Benjamini-Hochberg q-values as pre-specified in the research strategy.",
+          "Figure 3 caption reports endline employment effect as +0.034 and salary as +7.713, inconsistent with Table 3 values of 0.030 and 6.954; if the figure uses the no-controls specification, this must be stated explicitly.",
+          "Placebo test uses only age from a seven-variable balance table; an omnibus joint F-test or randomization-based balance statistic would be more credible than a single selectively chosen variable.",
+          "SUTVA and potential displacement effects are unaddressed despite the concentration of ~600 treated individuals in local Jordanian labor markets; a brief scope-condition acknowledgment in Section 7 is warranted.",
+          "The 95% CI on the interaction term β₃ is described as 'approximately' [-0.117, +0.087]; this is the paper's key null result and should be stated precisely."
+        ]
+      },
+      "decision_result": {
+        "avg_referee_score": 73.5,
+        "must_address": [
+          "Report take-up/compliance rates by arm and estimate LATE via 2SLS (IV) for at minimum employment and LFP outcomes; first-stage statistics required.",
+          "Explain the mechanism behind the midline-to-endline sample size increase (N=1,207 → N=1,255): re-contact, refreshment, or administrative additions. Test arm balance among re-appearing observations and provide sensitivity estimates restricted to the balanced attritor sample.",
+          "Explain the 29 percentage point collapse in control-group LFP from midline (77.1%) to endline (48.0%): rule out survey instrument changes, document seasonal/macroeconomic confounds, examine differential attrition by arm, and report balanced-attritor sensitivity. The headline persistence result is uninterpretable without this.",
+          "Characterize the 975 excluded individuals (42% of baseline) on observable baseline characteristics relative to the randomized sample; provide baseline balance tests and exogeneity assessment for the excluded group."
+        ],
+        "should_address": [
+          "Reframe all ITT-based effect size, cost-effectiveness, and policy-budget claims conditional on compliance rates, or scale explicitly to per-complier effects once LATE is estimated.",
+          "Clarify whether the fade-out comparison between midline and endline is between equivalent populations given the unexplained sample change; if not, the fade-out narrative requires qualification.",
+          "Replace 'likely due to eligibility screening' language regarding exclusions with precise implementation records; uncertainty about who was excluded is incompatible with causal identification claims."
+        ],
+        "may_address": [
+          "Discuss whether seasonal or macroeconomic factors affecting the control group's LFP trajectory have broader implications for external validity of the persistence result.",
+          "Consider reporting heterogeneous treatment effects by compliance intensity if data permit, to further illuminate mechanism behind persistence."
+        ],
+        "fatal_issues": [],
+        "decision": "MINOR_REVISIONS"
+      },
+      "completed_at": "2026-04-03T13:22:11.037234"
+    },
+    "stage7": {
+      "status": "completed",
+      "replication_ok": true,
+      "replication_results": {
+        "00_clean.py": {
+          "ok": true,
+          "returncode": 0
+        },
+        "01_main.py": {
+          "ok": true,
+          "returncode": 0
+        },
+        "02_robustness.py": {
+          "ok": true,
+          "returncode": 0
+        },
+        "03_output.py": {
+          "ok": true,
+          "returncode": 0
+        }
+      },
+      "outputs_reproducible": true,
+      "changed_outputs": [],
+      "validation": {
+        "code": {
+          "hard_passed": 12,
+          "hard_failed": 0,
+          "hard_total": 12,
+          "soft_passed": 5,
+          "soft_failed": 4,
+          "soft_total": 9
+        },
+        "paper": {
+          "hard_passed": 4,
+          "hard_failed": 0,
+          "hard_total": 4,
+          "soft_passed": 4,
+          "soft_failed": 1,
+          "soft_total": 5
+        },
+        "integration": {
+          "hard_passed": 6,
+          "hard_failed": 0,
+          "hard_total": 6,
+          "soft_passed": 11,
+          "soft_failed": 0,
+          "soft_total": 11
+        },
+        "all_hard_pass": true,
+        "total_hard_failures": 0
+      },
+      "components": {
+        "identification": 86,
+        "code": 87,
+        "paper": 97,
+        "polish": 73.5,
+        "replication": 100
+      },
+      "aggregate_score": 88.5,
+      "gate_passed": true,
+      "below_minimum": {},
+      "targeting": {
+        "primary_journal": {
+          "name": "Journal of Political Economy",
+          "fit_reason": "Top-5 general interest, strong empirical work",
+          "turnaround_months": 6
+        },
+        "backup_journal": {
+          "name": "Review of Economics and Statistics",
+          "fit_reason": "Top field journal for empirical methods",
+          "turnaround_months": 5
+        },
+        "conferences": [
+          "NBER Summer Institute",
+          "AEA Annual Meeting",
+          "ASSA"
+        ]
+      },
+      "user_choice": "accept",
+      "completed_at": "2026-04-03T14:07:49.128348"
     }
   },
   "path_c": true,
-  "updated_at": "2026-04-03T11:41:53.189788"
+  "updated_at": "2026-04-03T14:07:49.128360"
 }

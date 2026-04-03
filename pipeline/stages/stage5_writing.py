@@ -117,6 +117,60 @@ def run(project_dir: Path, state: dict) -> dict:
                 "If a CSV is missing or contains NaN, do NOT report that result."
             )
 
+        # CRITICAL: Embed actual CSV content in the prompt so Claude uses
+        # exact numbers instead of hallucinating them
+        results_content = ""
+        key_files = ["main_results.csv", "robustness_results.csv",
+                     "summary_stats.csv", "arm_means.csv", "balance_table.csv"]
+        for fname in key_files:
+            fpath = clean_dir / fname if clean_dir.exists() else None
+            if fpath and fpath.exists():
+                try:
+                    content = fpath.read_text(encoding="utf-8")
+                    # Truncate large files
+                    if len(content) > 3000:
+                        content = content[:3000] + "\n... (truncated)"
+                    results_content += (
+                        "\n\n--- %s ---\n%s" % (fname, content)
+                    )
+                except Exception:
+                    pass
+
+        if results_content:
+            output_note += (
+                "\n\n*** EXACT RESULTS FROM SCRIPTS (use ONLY these numbers) ***"
+                "\nEvery number in the paper MUST come from the data below."
+                "\nDo NOT round differently, do NOT use different decimal places,"
+                "\ndo NOT invent numbers that are not in these files."
+                + results_content
+            )
+
+        # Check what information is NOT available in the dataset
+        data_profile = state["stages"].get("stage1", {}).get("data_profile", {})
+        columns = data_profile.get("columns", [])
+        data_disclaimer = ""
+        missing_info = []
+        # Check for common referee requests that may not be in the data
+        col_lower = [c.lower() for c in columns]
+        if not any("comply" in c or "takeup" in c or "take_up" in c for c in col_lower):
+            missing_info.append("compliance/take-up rates")
+        if not any("attrit" in c for c in col_lower):
+            missing_info.append("attrition tracking variables")
+        if not any("cost" in c for c in col_lower):
+            missing_info.append("program cost data")
+        if not any("follow" in c or "wave" in c or "round" in c for c in col_lower):
+            missing_info.append("follow-up wave identifiers")
+
+        if missing_info:
+            data_disclaimer = (
+                "\n\n*** DATA AVAILABILITY DISCLAIMER ***\n"
+                "The following information is NOT available in this dataset:\n"
+                + "\n".join("  - %s" % m for m in missing_info)
+                + "\nDo NOT claim these exist. If referees ask for them, state "
+                "explicitly: 'This information is not available in the dataset.'\n"
+            )
+        output_note += data_disclaimer
+
         # Check estimator constraints
         stage3_3 = state["stages"].get("stage3_3", {})
         avail_est = stage3_3.get("available_estimators", {})
@@ -141,7 +195,22 @@ def run(project_dir: Path, state: dict) -> dict:
                 "Papers under 5,000 words fail validation. Expand the introduction, "
                 "literature review, and discussion sections to reach this target. "
                 "NUMBERS: The abstract MUST contain the exact key results (coefficients, "
-                "p-values) matching the numbers in results_summary.md."
+                "p-values) matching the numbers in results_summary.md. "
+                "\n\n*** WRITING STANDARDS (from clo-author best practices) ***\n"
+                "1. NO HEDGING: Avoid 'might', 'could potentially', 'seems to suggest'. "
+                "State findings directly: 'We find X' not 'Our results seem to indicate X'.\n"
+                "2. CONTRIBUTION in first 2 pages: The reader must know what is new by page 2.\n"
+                "3. CONSISTENT NOTATION: Define every variable in every equation. "
+                "Use the same symbol throughout (do not switch between beta and b).\n"
+                "4. EFFECT SIZES: Report Cohen's d or percentage change alongside p-values. "
+                "Editors increasingly require standardized effect sizes.\n"
+                "5. IDENTIFICATION section must state assumptions FORMALLY and in plain language. "
+                "List each assumption, its testable implications, and how you test them.\n"
+                "6. TABLES: Three-line booktabs format. No vertical lines. "
+                "SEs in parentheses, 95% CIs in brackets. N, R2, FE indicators in footer.\n"
+                "7. LIMITATIONS: Honest subsection. State what the data CANNOT answer.\n"
+                "8. REPLICATION: Note that all code and data are available. "
+                "Include a data availability statement.\n"
                 + output_note
             ),
             files=[
@@ -209,9 +278,9 @@ def run(project_dir: Path, state: dict) -> dict:
 
     # Compute paper score from validation results
     counts = validation.summary_counts
-    hard_pass = counts.get("hard_pass", 0)
+    hard_pass = counts.get("hard_passed", counts.get("hard_pass", 0))
     hard_total = counts.get("hard_total", 1)
-    soft_pass = counts.get("soft_pass", 0)
+    soft_pass = counts.get("soft_passed", counts.get("soft_pass", 0))
     soft_total = counts.get("soft_total", 1)
 
     if hard_pass == hard_total:

@@ -66,7 +66,8 @@ def _check_section_files(vr: ValidationResult, paper_dir: Path):
                               r"\section{Background", r"\section{Prior"],
         "03_data.tex": [r"\section{Data", r"\section{Experimental Design",
                        r"\section{Research Design", r"\section{Sample",
-                       r"\section{Study Design", r"\section{Experiment"],
+                       r"\section{Study Design", r"\section{Experiment",
+                       r"\section{Context"],
         "04_empirical_strategy.tex": [r"\section{Empirical", r"\section{Method",
                                       r"\section{Identification", r"\section{Estimation",
                                       r"\subsection{Estimation"],
@@ -303,7 +304,7 @@ def _check_number_consistency(
     vr.add(
         "numbers_consistent", CheckLevel.SOFT, len(overlap) >= 1,
         f"{len(overlap)} number(s) in abstract match results_summary: "
-        f"{', '.join(sorted(overlap)[:5])}"
+        f"{', '.join(str(x) for x in sorted(overlap)[:5])}"
         if overlap else
         f"No numeric overlap between abstract ({len(abstract_nums)} numbers) "
         f"and results_summary ({len(summary_nums)} numbers)"

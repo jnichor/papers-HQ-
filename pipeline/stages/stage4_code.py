@@ -395,6 +395,36 @@ def run(project_dir: Path, state: dict) -> dict:
                 "with and without imputed observations. "
                 "03_output.py MUST generate LaTeX tables (.tex files) in paper/tables/ "
                 "in addition to figures."
+                "\n\n*** FALSIFICATION PLANNING (from clo-author best practices) ***\n"
+                "BEFORE running the main analysis, 02_robustness.py MUST pre-commit to:\n"
+                "  (a) At least ONE placebo outcome — a variable that should NOT be affected "
+                "by treatment. Run the same specification and verify null result.\n"
+                "  (b) At least ONE placebo treatment — either fake timing or fake group. "
+                "Verify null result.\n"
+                "  (c) Print expected sign and magnitude BEFORE showing actual results. "
+                "This demonstrates the analysis was not data-mined.\n"
+                "\n*** SANITY CHECK (from clo-author best practices) ***\n"
+                "After computing main results, 01_main.py MUST:\n"
+                "  (a) Print the expected sign based on theory/literature\n"
+                "  (b) Compare the actual sign to the expected sign\n"
+                "  (c) Report effect magnitude in interpretable units (SD, percentage points)\n"
+                "  (d) Compare magnitude to prior literature if known\n"
+                "  (e) Flag if the effect implies implausibly large changes (>1 SD shift)\n"
+                "\n*** OUTCOME VARIABLE VALIDATION (CRITICAL — prevents using wrong variables) ***\n"
+                "00_clean.py MUST validate outcome variables BEFORE saving clean_data.csv:\n"
+                "  (a) For EACH proposed outcome variable, compute correlation with treatment.\n"
+                "      If |correlation| < 0.01 for ALL outcomes, the variables are likely WRONG.\n"
+                "  (b) If outcomes show zero correlation with treatment, SEARCH the dataset for\n"
+                "      better outcomes: look for variables with prefixes like 'end_', 'mid_',\n"
+                "      'post_', 'follow_', 'outcome_', 'y_', or any variable that correlates\n"
+                "      meaningfully (|r| > 0.05) with the treatment variable.\n"
+                "  (c) Print a ranked list of the top 10 variables most correlated with treatment.\n"
+                "  (d) If NO variable correlates with treatment (|r| < 0.02 for all), print:\n"
+                "      '[WARNING] No variable in this dataset shows meaningful correlation with\n"
+                "      treatment. This data may not support the proposed research question.\n"
+                "      Consider: (1) wrong outcome variables, (2) null effect, (3) data quality issue.'\n"
+                "  (e) Use the BEST available outcomes (highest treatment correlation) as the\n"
+                "      primary dependent variables, not arbitrarily named columns.\n"
                 + estimator_guidance
                 + checklist_musts
             ),
@@ -442,9 +472,9 @@ def run(project_dir: Path, state: dict) -> dict:
 
     # Compute critic_score from validation results instead of hardcoding
     counts = validation.summary_counts
-    hard_pass = counts.get("hard_pass", 0)
+    hard_pass = counts.get("hard_passed", counts.get("hard_pass", 0))
     hard_total = counts.get("hard_total", 1)
-    soft_pass = counts.get("soft_pass", 0)
+    soft_pass = counts.get("soft_passed", counts.get("soft_pass", 0))
     soft_total = counts.get("soft_total", 1)
 
     # Base score: 60 if all hard pass, 40 if not

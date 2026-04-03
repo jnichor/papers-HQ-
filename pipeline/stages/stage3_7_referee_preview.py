@@ -261,6 +261,54 @@ Output a JSON block:
         for f in figures_req:
             checklist_lines.append(f"- {f}")
 
+    # ── Filter checklist against verified estimators from Stage 3.3 ──────
+    stage3_3 = state["stages"].get("stage3_3", {})
+    avail_est = stage3_3.get("available_estimators", {})
+    est_warnings = stage3_3.get("estimator_warnings", [])
+
+    if avail_est:
+        # Map broken estimators to checklist keywords
+        broken_keywords = []
+        if not avail_est.get("pyfixest_did2s", True):
+            broken_keywords.extend(["did2s", "gardner", "two-step"])
+        if not avail_est.get("pyfixest_sunab", True):
+            broken_keywords.extend(["sun-abraham", "sun abraham", "sunab",
+                                    "interaction-weighted", "interaction weighted"])
+        if not avail_est.get("csdid", True) and not avail_est.get("pyfixest_did2s", True):
+            broken_keywords.extend(["callaway-sant", "callaway sant", "csdid",
+                                    "att(g,t)", "att_gt", "doubly robust"])
+
+        if broken_keywords:
+            # Downgrade MUST to SHOULD for requirements that need broken estimators
+            downgraded = 0
+            for i, line in enumerate(checklist_lines):
+                if not line.startswith("- ["):
+                    continue
+                line_lower = line.lower()
+                if any(kw in line_lower for kw in broken_keywords):
+                    # Add a note that this was downgraded
+                    checklist_lines[i] = line + " [DOWNGRADED: estimator not available in Python]"
+                    downgraded += 1
+
+            if downgraded > 0:
+                checklist_lines.insert(3,
+                    f"\n**NOTE: {downgraded} requirement(s) reference estimators that failed "
+                    f"on the real data in Stage 3.3 testing. These have been marked "
+                    f"[DOWNGRADED]. Do NOT implement them -- use available alternatives.**\n"
+                )
+                print(f"  [3.7] Downgraded {downgraded} requirements (broken estimators)")
+
+        # Add available estimators info to checklist
+        working = [k for k, v in avail_est.items() if v]
+        checklist_lines.append("\n## AVAILABLE PYTHON ESTIMATORS (verified on real data)")
+        checklist_lines.append("These estimators were tested on the actual dataset and work:")
+        for w in working:
+            checklist_lines.append(f"- {w}")
+        if est_warnings:
+            checklist_lines.append("\nThese FAILED and must NOT be used:")
+            for ew in est_warnings:
+                checklist_lines.append(f"- {ew}")
+
     strategy_dir.mkdir(exist_ok=True)
     checklist_path = strategy_dir / "referee_checklist.md"
     checklist_path.write_text("\n".join(checklist_lines), encoding="utf-8")

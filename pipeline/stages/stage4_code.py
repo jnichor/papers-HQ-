@@ -313,6 +313,35 @@ def run(project_dir: Path, state: dict) -> dict:
             files.append(str(checklist))
         files.append(str(scripts_dir))
 
+        # Read estimator availability from Stage 3.3
+        stage3_3 = state["stages"].get("stage3_3", {})
+        avail_est = stage3_3.get("available_estimators", {})
+        est_warnings = stage3_3.get("estimator_warnings", [])
+
+        estimator_guidance = ""
+        if avail_est:
+            working = [k for k, v in avail_est.items() if v]
+            broken = [k for k, v in avail_est.items() if not v]
+            estimator_guidance = (
+                "\n\n*** VERIFIED ESTIMATORS (tested on real data in Stage 3.3) ***\n"
+                "Working: %s\n" % ", ".join(working)
+            )
+            if broken:
+                estimator_guidance += (
+                    "BROKEN (do NOT use): %s\n" % ", ".join(broken)
+                )
+            if est_warnings:
+                estimator_guidance += (
+                    "Warnings:\n" +
+                    "\n".join("  - %s" % w for w in est_warnings) + "\n"
+                )
+            estimator_guidance += (
+                "ONLY use estimators listed as 'Working' above. "
+                "Do NOT promise or attempt to use broken estimators. "
+                "If the referee checklist requires a broken estimator, "
+                "skip it and note in a comment why it was omitted.\n"
+            )
+
         # Extract MUST requirements from referee checklist to embed in the prompt
         checklist_musts = ""
         if checklist.exists():
@@ -347,6 +376,16 @@ def run(project_dir: Path, state: dict) -> dict:
                 "(2) generate 00_clean.py, 01_main.py, 02_robustness.py, 03_output.py, "
                 "(3) execute all scripts, "
                 "(4) signal completion. "
+                "\n\n*** CRITICAL: USE VALIDATED PACKAGES, NEVER MANUAL IMPLEMENTATIONS ***\n"
+                "For staggered DiD: use pyfixest (pf.did.event_study, pf.did.att_gt) or csdid. "
+                "NEVER implement Callaway-Sant'Anna manually with 2x2 DiD loops. "
+                "For Sun-Abraham: use pyfixest (sunab=True option). "
+                "For Goodman-Bacon decomposition: if no validated Python package exists, "
+                "report TWFE vs CS comparison WITHOUT attempting manual decomposition. "
+                "For standard TWFE/event study: use pyfixest or linearmodels PanelOLS. "
+                "For wild cluster bootstrap: use wildboottest package. "
+                "Manual implementations of complex estimators ALWAYS produce bugs that "
+                "referees detect, destroying the paper's credibility. USE PACKAGES.\n\n"
                 "IMPORTANT — Missing data handling (referee standards): "
                 "00_clean.py MUST: (a) print a missingness table (% missing per variable), "
                 "(b) test if missings are MCAR/MAR/MNAR, "
@@ -356,6 +395,7 @@ def run(project_dir: Path, state: dict) -> dict:
                 "with and without imputed observations. "
                 "03_output.py MUST generate LaTeX tables (.tex files) in paper/tables/ "
                 "in addition to figures."
+                + estimator_guidance
                 + checklist_musts
             ),
             files=files,

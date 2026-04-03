@@ -1,0 +1,16 @@
+test,outcome,coef,se,p_value,n,note
+Ordered probit,ICC_referral,-0.072362,0.078455,0.356351,760,
+Logit (binary outcome),ICC_referral_binary,-0.04919,0.15542,0.751624,760,log-odds coefficient
+Logit marginal effect,ICC_referral_binary,-0.010721,0.033866,0.75157,760,
+CATE hawkish Q1,ICC_referral,-0.115572,0.149454,0.439347,192,
+CATE hawkish Q2,ICC_referral,-0.310299,0.143784,0.03092,205,
+CATE hawkish Q3,ICC_referral,-0.137255,0.174543,0.431652,102,
+CATE hawkish Q4,ICC_referral,0.136744,0.157626,0.385654,161,
+CATE hawkish Q5,ICC_referral,0.279388,0.215727,0.195286,100,
+CATE hostile_sexism T1,ICC_referral,-0.069444,0.118635,0.558306,280,
+CATE hostile_sexism T2,ICC_referral,-0.130468,0.109915,0.235231,308,
+CATE hostile_sexism T3,ICC_referral,-0.011382,0.164006,0.944671,172,
+Lee bounds,ICC_referral,,,,760,"[-0.1180, -0.0533]"
+Sensitivity: no controls,ICC_referral,-0.069997,0.074256,0.345857,760,
+Sensitivity: baseline controls,ICC_referral,-0.076848,0.073027,0.292648,759,
+Sensitivity: full controls,ICC_referral,-0.07651,0.071121,0.282029,759,

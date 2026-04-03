@@ -1,0 +1,116 @@
+Missingness Report (analysis sample)
+==================================================
+
+Sample size: 784
+Variables with any missing: 93
+
+Variable                                  Pct Missing
+-------------------------------------------------------
+make_illegal                                  76.53%
+make_illegal_binary                           76.53%
+illegal_treatment                             51.53%
+apart_plus_vs_persec_treatment                50.77%
+apart_plus_vs_apart_treatment                 49.23%
+rank_3                                         5.36%
+rank_4                                         5.36%
+apartheid_ranked_worse_persec                  5.36%
+rank_1                                         5.36%
+rank_2                                         5.36%
+apartheid_ranked_worst                         5.36%
+sanctions_within                               4.46%
+airstrikes_within                              4.46%
+regime_change_within                           4.46%
+regime_change2                                 4.46%
+regime_change2_binary                          4.46%
+immigration2                                   4.46%
+immigration2_binary                            4.46%
+UNSC_condemn2_binary                           4.46%
+pressuring_IOs_within_bin                      4.46%
+top_priority_within_bin                        4.46%
+policy_index_within_bin                        4.46%
+sanctions_within_bin                           4.46%
+UNSC_condemn_within_bin                        4.46%
+ICC_referral_within_bin                        4.46%
+policy_index_within                            4.46%
+top_priority2                                  4.46%
+top_priority2_binary                           4.46%
+policy_index2                                  4.46%
+ICC_referral_within                            4.46%
+top_priority_within                            4.46%
+pressuring_IOs_within                          4.46%
+foreign_aid_within                             4.46%
+immigration_within                             4.46%
+foreign_aid2                                   4.46%
+foreign_aid2_binary                            4.46%
+pressuring_IOs2                                4.46%
+pressuring_IOs2_binary                         4.46%
+UNSC_condemn_within                            4.46%
+airstrikes2                                    4.46%
+sanctions2_binary                              4.46%
+sanctions2                                     4.46%
+airstrikes_within_bin                          4.46%
+regime_change_within_bin                       4.46%
+immigration_within_bin                         4.46%
+foreign_aid_within_bin                         4.46%
+airstrikes2_binary                             4.46%
+UNSC_condemn2                                  4.46%
+ICC_referral2_binary                           4.46%
+ICC_referral2                                  4.46%
+willing_write_letter                           3.19%
+ICC_referral_binary                            3.06%
+UNSC_condemn                                   3.06%
+UNSC_condemn_binary                            3.06%
+ICC_referral                                   3.06%
+immigration_binary                             3.06%
+regime_change_binary                           3.06%
+immigration                                    3.06%
+foreign_aid_binary                             3.06%
+regime_change                                  3.06%
+airstrikes                                     3.06%
+airstrikes_binary                              3.06%
+policy_index_binary                            3.06%
+foreign_aid                                    3.06%
+sanctions                                      3.06%
+sanctions_binary                               3.06%
+top_priority                                   3.06%
+top_priority_binary                            3.06%
+pressuring_IOs_binary                          3.06%
+policy_index                                   3.06%
+pressuring_IOs                                 3.06%
+new_information                                2.81%
+new_information_binary                         2.81%
+chance_success                                 2.81%
+chance_success_binary                          2.81%
+illegal_perception_binary                      2.42%
+as_bad_jim_crow_binary                         2.42%
+as_bad_jim_crow                                2.42%
+moral_obligation_binary                        2.42%
+moral_obligation                               2.42%
+illegal_perception                             2.42%
+threat_perc                                    2.42%
+threat_perc_binary                             2.42%
+reputation_suffer                              2.42%
+reputation_suffer_binary                       2.42%
+illegal_treatment_broad                        2.30%
+knowledge_ir_agg                               0.64%
+knowledge_ir_1                                 0.64%
+hhi                                            0.13%
+education                                      0.13%
+female                                         0.13%
+respondent_age                                 0.13%
+region                                         0.13%
+
+
+MCAR Proxy: Treatment vs. missingness indicators
+-------------------------------------------------------
+  ICC_referral                         chi2=0.923  p=0.3368
+  ICC_referral_binary                  chi2=0.923  p=0.3368
+  pro_israel_score                     no missing values
+  respondent_age                       chi2=0.000  p=1.0000
+  female                               chi2=0.000  p=1.0000
+  education                            chi2=0.000  p=1.0000
+
+
+Joint F-test of balance (treatment ~ covariates)
+  F-stat = 37.4499
+  p-value = 0.0000

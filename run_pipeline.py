@@ -215,6 +215,7 @@ def main():
     from pipeline.stages import stage2_ideation
     from pipeline.stages import stage2_5_selection
     from pipeline.stages import stage3_validation
+    from pipeline.stages import stage3_3_quick_test
     from pipeline.stages import stage3_5_review
     from pipeline.stages import stage3_7_referee_preview
     from pipeline.stages import stage4_strategy
@@ -237,6 +238,7 @@ def main():
         2:   lambda: (_stage_header(2),   stage2_ideation.run(project_dir, state))[-1],
         2.5: lambda: (_stage_header(2.5), stage2_5_selection.run(project_dir, state))[-1],
         3:   lambda: (_stage_header(3),   stage3_validation.run(project_dir, state))[-1],
+        3.3: lambda: (_stage_header(3.3), stage3_3_quick_test.run(project_dir, state))[-1],
         3.5: lambda: (_stage_header(3.5), stage3_5_review.run(project_dir, state))[-1],
         3.7: lambda: (_stage_header(3.7), stage3_7_referee_preview.run(project_dir, state))[-1],
         4:   lambda: (_stage_header(4),   _run_stage_4(project_dir, state))[-1],
@@ -274,6 +276,14 @@ def main():
                 if action == "REJECT":
                     print(f"\n  [loop] User rejected all ideas. Returning to Stage 2.")
                     stage_idx = STAGE_ORDER.index(2)
+                    continue
+
+            # Handle FAIL in Stage 3.3 — loop back to Stage 2.5
+            if stage_num == 3.3:
+                s33 = state["stages"].get("stage3_3", {})
+                if s33.get("action") == "retry_idea":
+                    print(f"\n  [loop] Quick test failed. Returning to Stage 2.5.")
+                    stage_idx = STAGE_ORDER.index(2.5)
                     continue
 
             # Handle REJECT in Stage 3.5 — loop back to Stage 2.5

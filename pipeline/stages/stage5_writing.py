@@ -101,6 +101,33 @@ def run(project_dir: Path, state: dict) -> dict:
     rr_round = stage6.get("rr_round", 0)
 
     if not main_tex.exists():
+        # Inventory what outputs actually exist from Stage 4
+        clean_dir = project_dir / "data" / "clean"
+        existing_outputs = []
+        if clean_dir.exists():
+            existing_outputs = [f.name for f in clean_dir.glob("*.csv")]
+
+        output_note = ""
+        if existing_outputs:
+            output_note = (
+                "\n\nAVAILABLE OUTPUT FILES (from scripts): "
+                + ", ".join(existing_outputs)
+                + "\nONLY reference results that exist in these files. "
+                "Do NOT claim to have run estimators whose outputs are missing. "
+                "If a CSV is missing or contains NaN, do NOT report that result."
+            )
+
+        # Check estimator constraints
+        stage3_3 = state["stages"].get("stage3_3", {})
+        avail_est = stage3_3.get("available_estimators", {})
+        broken = [k for k, v in avail_est.items() if not v] if avail_est else []
+        if broken:
+            output_note += (
+                "\n\nBROKEN ESTIMATORS (do NOT mention in paper): "
+                + ", ".join(broken)
+                + "\nThese were tested and failed. Do not claim they were used."
+            )
+
         # First draft — main.tex does not exist yet
         request_manual_intervention(
             stage="stage5_writing",
@@ -110,6 +137,7 @@ def run(project_dir: Path, state: dict) -> dict:
                 "and results, write a single main.tex with all sections (intro, literature, "
                 "data, empirical strategy, results, robustness, conclusion), create "
                 "references.bib, compile to PDF, and signal completion."
+                + output_note
             ),
             files=[
                 str(project_dir / "strategy" / "strategy_memo.md"),
@@ -119,25 +147,50 @@ def run(project_dir: Path, state: dict) -> dict:
             project_dir=project_dir,
         )
     elif is_rr:
-        # R&R mode — referees requested changes, must rewrite main.tex
+        # R&R mode — referees requested changes
         latest_decision = ""
         decision_files = sorted(review_dir.glob("editorial_decision*.md"), reverse=True)
         if decision_files:
             latest_decision = decision_files[0].read_text(encoding="utf-8")
+
+        # Detect if referees flagged CODE issues (not just paper text)
+        code_issues = any(kw in latest_decision.lower() for kw in [
+            "misimplemented", "bug", "coding error", "reimplement",
+            "data coding", "script", "arithmetically", "impossible",
+            "incorrect implementation", "SE underestimat",
+        ])
+        scripts_dir = project_dir / "scripts" / "python"
+
+        if code_issues:
+            code_instruction = (
+                "CRITICAL: Referees detected CODE/IMPLEMENTATION bugs, not just text issues. "
+                "Claude MUST: (1) Fix the affected Python scripts in scripts/python/, "
+                "(2) Re-execute ALL scripts to regenerate results, "
+                "(3) THEN update main.tex with the corrected numbers. "
+                "Do NOT just edit the paper text — the underlying data must be fixed first."
+            )
+        else:
+            code_instruction = (
+                "Claude will read the referee feedback, "
+                "rewrite the affected parts of main.tex, recompile PDF, and signal completion. "
+                "IMPORTANT: Claude must actually modify main.tex, not just signal done."
+            )
+
+        files = [
+            str(decision_files[0]) if decision_files else str(review_dir),
+            str(main_tex),
+        ]
+        if code_issues:
+            files.append(str(scripts_dir))
 
         request_manual_intervention(
             stage="stage5_rr_revision",
             issue=(
                 f"Stage 5 R&R revision (round {rr_round + 1}). "
                 f"Referees requested MAJOR_REVISIONS (avg score: {stage6.get('avg_score', '?')}). "
-                "Tell Claude: 'revisa el pipeline'. Claude will read the referee feedback, "
-                "rewrite the affected parts of main.tex, recompile PDF, and signal completion. "
-                "IMPORTANT: Claude must actually modify main.tex, not just signal done."
+                f"Tell Claude: 'revisa el pipeline'. {code_instruction}"
             ),
-            files=[
-                str(decision_files[0]) if decision_files else str(review_dir),
-                str(main_tex),
-            ],
+            files=files,
             project_dir=project_dir,
             script_results={"referee_feedback": smart_truncate(latest_decision, 3000)},
         )

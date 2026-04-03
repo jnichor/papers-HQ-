@@ -46,6 +46,7 @@ STAGE_PROFILES = {
     "stage3_eval":      {"model": "sonnet", "effort": "medium"},   # Validation steps 1-4
     "stage3_lit":       {"model": "sonnet", "effort": "medium"},   # Validation steps 5-6 (web search)
     "stage3_verdict":   {"model": "sonnet", "effort": "high"},     # Validation step 7 (final verdict)
+    "stage3_3_test":    {"model": "sonnet", "effort": "medium"},   # Quick empirical validation
     "stage3_5_justify": {"model": "sonnet", "effort": "medium"},   # External source justification
     "stage3_5_merge":   {"model": "sonnet", "effort": "medium"},   # Merge feasibility assessment
     "stage4_critic":    {"model": "sonnet", "effort": "medium"},   # Critic reviews + consistency checks
@@ -75,7 +76,7 @@ QUALITY_WEIGHTS = {
 }
 
 # ── All stages in execution order ────────────────────────────────────────────
-STAGE_ORDER = [1, 1.5, 2, 2.5, 3, 3.5, 3.7, 4, 4.5, 5, 6, 7]
+STAGE_ORDER = [1, 1.5, 2, 2.5, 3, 3.3, 3.5, 3.7, 4, 4.5, 5, 6, 7]
 
 STAGE_NAMES = {
     1:   "Discovery",
@@ -83,6 +84,7 @@ STAGE_NAMES = {
     2:   "Ideation",
     2.5: "Idea Selection (human)",
     3:   "Validation",
+    3.3: "Quick Empirical Test",
     3.5: "Strategy Review (human)",
     3.7: "Referee Preview",
     4:   "Strategy & Code",

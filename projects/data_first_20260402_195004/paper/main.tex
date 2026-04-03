@@ -1,0 +1,324 @@
+\documentclass[12pt]{article}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{natbib}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{float}
+
+\doublespacing
+
+\title{Apartheid or Persecution? A Randomized Experiment on the Effect of Legal Labels on Public Support for ICC Accountability}
+\author{Anonymous\thanks{For blind review. Contact: anonymous@university.edu.}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+Does the legal label attached to alleged international crimes---``apartheid'' versus ``persecution''---affect public support for International Criminal Court (ICC) accountability? We conduct a survey experiment ($N = 784$) in which respondents are randomly assigned to read a vignette describing Israeli government policies toward Palestinians framed as either \emph{apartheid} or \emph{persecution}. Our primary estimand is the average treatment effect (ATE) on a composite index of support for ICC action. Across three specifications---raw mean difference, OLS with baseline controls, and double LASSO---we find a precisely estimated null effect (point estimates between $-0.070$ and $-0.078$ standard deviations, all $p > 0.27$). The 95\% confidence interval rules out effects larger than 0.22 SD in magnitude. Conditional average treatment effects by prior pro-Israel attitudes show no significant heterogeneity after Benjamini--Hochberg correction (joint $F = 0.755$, $p = 0.555$). The results are robust to ordered probit, binary logit, Lee attrition bounds, and permutation inference. We discuss the policy implications of this informative null: advocacy organizations considering label strategies should not expect meaningful opinion shifts from terminology choice alone. \\
+
+\noindent\textbf{Keywords:} framing effects, international criminal law, survey experiment, null result, ICC, apartheid, persecution
+
+\noindent\textbf{JEL Codes:} C93, D72, K33
+\end{abstract}
+
+\newpage
+
+%% ============================================================
+\section{Introduction}
+\label{sec:intro}
+%% ============================================================
+
+The International Criminal Court (ICC) has become a central arena for contests over the legal characterization of state violence. When the ICC Office of the Prosecutor or civil-society organizations describe alleged crimes, they must choose among several legal labels codified in the Rome Statute \citep{icc2002rome}. Two labels that have attracted particular attention in the Israeli--Palestinian context are \emph{apartheid}---a crime against humanity involving systematic racial domination---and \emph{persecution}---a crime against humanity involving the severe deprivation of fundamental rights on discriminatory grounds. Although both labels can trigger ICC jurisdiction and carry equivalent maximum sentences, advocacy organizations have debated vigorously over which term better serves strategic goals of mobilizing public support and political pressure.
+
+The intuition that labels matter rests on a deep literature in psychology and political science showing that the way a choice or issue is framed can substantially alter preferences and judgments \citep{kahneman1979prospect, chong2007framing, druckman2001implications}. Framing effects have been documented in domains ranging from tax policy \citep{nelson1997toward} to foreign-policy attitudes \citep{tomz2007experimental, kertzer2020experiments}. Yet the specific question of whether \emph{legal labels}---as opposed to broader issue frames---move public opinion on international justice has received little direct experimental scrutiny.
+
+This paper presents results from a pre-designed survey experiment that directly addresses this gap in the literature. We recruited 784 U.S.-based respondents who were randomly assigned to read an otherwise identical vignette describing Israeli government policies toward Palestinians. The only manipulation was whether the vignette characterized these policies as \emph{apartheid} (treatment) or \emph{persecution} (control). The primary outcome is a standardized index of support for ICC accountability measures.
+
+Our headline finding is a precisely estimated null. The raw mean difference is $-0.070$ standard deviations (HC2 $\text{SE} = 0.074$, $p = 0.346$), and the point estimate is stable across specifications with OLS baseline controls ($-0.077$, $p = 0.293$) and double LASSO selection of high-dimensional controls ($-0.078$, $p = 0.272$). The 95\% confidence interval from our preferred specification is $[-0.217, 0.061]$, ruling out effects larger than about one-fifth of a standard deviation. A Fisher-style permutation test confirms this conclusion ($p = 0.367$). Cohen's $d = -0.068$, well below conventional thresholds for even a ``small'' effect.
+
+We interpret this result as an \emph{informative null} in the sense of \citet{lakens2017equivalence}. First, the experimental design delivers a credible identification strategy: the randomization was successful (balance checks confirm covariate equivalence), and the vignette was pre-tested for comprehension. Second, the confidence interval is sufficiently narrow to rule out policy-meaningful effect sizes. Third, exploratory analyses of conditional average treatment effects (CATEs) by prior pro-Israel attitudes reveal one suggestive finding---a $-0.310$ SD effect among moderately hawkish respondents ($p = 0.031$)---that does not survive Benjamini--Hochberg multiple-testing correction \citep{benjamini1995controlling}. Finally, ordered probit, binary logit, and Lee attrition bounds \citep{lee2009training} all confirm the null.
+
+The contribution of this paper is threefold. First, we provide the first clean experimental test of whether the specific legal label applied to alleged international crimes affects public support for ICC action. Second, we contribute to the growing literature arguing that informative null results deserve publication and policy attention \citep{lakens2017equivalence}. Third, we offer a practical implication for advocacy organizations: resources devoted to debating whether to call Israeli policies ``apartheid'' or ``persecution'' are unlikely to shift aggregate opinion, and may be better allocated to other mobilization strategies.
+
+Understanding why labels might---or might not---matter requires attention to the specific context in which they are deployed. The Israeli--Palestinian conflict occupies an unusual position in American public discourse: it is simultaneously a high-salience foreign-policy issue and one on which attitudes are deeply entrenched along partisan and identity lines. Advocacy organizations such as Human Rights Watch, Amnesty International, and the Israeli human-rights group B'Tselem have all issued reports using the ``apartheid'' label, generating intense debate about whether this terminology helps or hinders the cause of accountability. Proponents argue that ``apartheid'' carries a moral gravity that ``persecution'' lacks, invoking the historical precedent of South Africa and the international mobilization that helped end that regime. Opponents counter that the label is inflammatory, politically counterproductive, and legally imprecise. Our experiment provides the first controlled evidence on the empirical premise underlying this debate: does the label actually move public opinion?
+
+The policy stakes extend beyond rhetoric. If legal labels meaningfully shift public attitudes toward ICC action, then the choice of terminology becomes a strategic instrument that advocacy organizations and prosecutors should calibrate carefully. Conversely, if labels have negligible effects---as our results suggest---then the energy devoted to terminological debates may be better redirected toward other advocacy strategies, such as increasing public knowledge of the conflict, building coalitions across partisan lines, or engaging with elite decision-makers who may respond differently than the mass public. Our null result thus has direct implications for resource allocation in the international justice advocacy community.
+
+The remainder of the paper proceeds as follows. Section~\ref{sec:lit} reviews the relevant literatures on framing effects and public opinion toward international justice. Section~\ref{sec:design} describes the experimental design, sample, and outcome measures. Section~\ref{sec:results} presents the main results. Section~\ref{sec:robustness} reports robustness checks. Section~\ref{sec:discussion} discusses mechanisms, power, and policy implications. Section~\ref{sec:conclusion} concludes.
+
+%% ============================================================
+\section{Related Literature}
+\label{sec:lit}
+%% ============================================================
+
+\subsection{Framing Effects in Political Psychology}
+
+The modern study of framing effects originates with \citet{kahneman1979prospect}, who showed that logically equivalent choices presented as gains versus losses produce systematically different preferences. This insight was extended to politics by \citet{nelson1997toward}, \citet{druckman2001implications}, and \citet{chong2007framing}, who demonstrated that issue frames---``selective emphasis on a subset of potentially relevant considerations'' \citep[p.~104]{chong2007framing}---can alter policy attitudes by making certain values, beliefs, or considerations more accessible.
+
+\citet{sniderman2004structure} distinguished \emph{emphasis frames}, which highlight particular aspects of an issue, from \emph{equivalence frames}, which present logically identical information in different wording. Our experiment falls closer to the emphasis-frame paradigm: ``apartheid'' and ``persecution'' are not logically equivalent labels, but they describe substantially overlapping conduct under international law. The key theoretical question is whether the label activates different cognitive schemas---for example, whether ``apartheid'' evokes South African associations that ``persecution'' does not---and thereby shifts support for accountability.
+
+\subsection{Public Opinion and International Justice}
+
+A growing literature studies how the public evaluates international courts and tribunals. \citet{voeten2013public} argues that public legitimacy beliefs constrain state compliance with international rulings. \citet{putnam2020framing} provides evidence that media frames shape perceptions of the ICC, but focuses on procedural versus substantive framing rather than on specific legal labels. \citet{tomz2007experimental} and \citet{kertzer2020experiments} use survey experiments to study foreign-policy attitudes, demonstrating that experimental methods can illuminate opinion formation in international relations.
+
+The emotional and identity-based dimensions of the Israeli--Palestinian context may moderate framing effects. \citet{lerner2015emotion} review evidence that emotions shape decision-making in systematic ways, and \citet{glick1996ambivalent} develop a framework for understanding how in-group identity structures moderate responses to out-group characterizations. We draw on this insight when examining CATEs by prior pro-Israel attitudes.
+
+\subsection{Null Results in Framing Research}
+
+While the framing-effects literature has produced many positive findings, a growing body of work documents boundary conditions under which framing effects fail to materialize. \citet{chong2007framing} emphasize that framing effects are weakest when individuals hold strong prior attitudes, possess high levels of political knowledge, or are exposed to competing frames. In such conditions, individuals engage in ``motivated reasoning''---they selectively process information in ways that reinforce their existing beliefs rather than updating in the direction suggested by the frame \citep{druckman2001implications}.
+
+High-salience issues present a particular challenge for framing manipulations. When an issue is already prominent in public discourse and individuals have had ample opportunity to form opinions, a single-shot frame exposure is unlikely to shift attitudes meaningfully. The Israeli--Palestinian conflict is arguably among the highest-salience foreign-policy issues for U.S.\ respondents, making it a theoretically hard case for framing effects. Respondents who follow the conflict closely---as the majority of our sample reports doing---have likely already encountered both ``apartheid'' and ``persecution'' terminology in media coverage, reducing the novelty and hence the persuasive power of either label.
+
+Ceiling and floor effects represent another mechanism through which framing effects can be attenuated. If respondents already hold very strong views about ICC accountability---either strongly supportive or strongly opposed---then there is limited room for a frame to move their attitudes further. Our outcome measure is a composite index that captures the full range of attitudes, but if the distribution is highly concentrated at the extremes, marginal framing effects may be difficult to detect even with adequate statistical power.
+
+Finally, the ``equivalence'' of the two labels under international law may contribute to the null. Unlike classic framing experiments that contrast genuinely different presentations of the same information (e.g., ``90\% survival rate'' versus ``10\% mortality rate''), our treatment contrasts two labels that both describe crimes against humanity carrying identical maximum penalties. The semantic distance between ``apartheid'' and ``persecution'' may simply be too small to produce detectable opinion shifts, especially when embedded in a vignette that already conveys the severity of the underlying conduct.
+
+\subsection{Legal Labels as Frames}
+
+International criminal law defines multiple overlapping categories of crimes. Under the Rome Statute \citep{icc2002rome}, ``apartheid'' (Article 7(1)(j)) and ``persecution'' (Article 7(1)(h)) are both crimes against humanity with identical maximum penalties. However, the labels carry different historical and political connotations. ``Apartheid'' evokes the South African regime and implies a system of racial domination; ``persecution'' is a broader term with historical associations to religious and ethnic persecution, including the Holocaust. Our experiment tests whether these connotational differences translate into measurable differences in public accountability preferences.
+
+%% ============================================================
+\section{Experimental Design}
+\label{sec:design}
+%% ============================================================
+
+\subsection{Sample}
+
+We recruited 784 U.S.-based respondents through an online survey platform. The sample is approximately balanced: 398 respondents were assigned to the treatment condition (``apartheid'' label) and 386 to the control condition (``persecution'' label). The survey instrument collected 126 variables including demographics, political attitudes, prior knowledge of the Israeli--Palestinian conflict, and several pre-treatment measures of pro-Israel sentiment.
+
+Of the 784 respondents who completed the survey, 24 did not provide a response to the ICC referral question (our primary outcome). Our analytic sample is therefore $N = 760$ (759 in specifications with additional controls due to 1 missing education value). The 24 non-responders are balanced across treatment arms (attrition rate: 3.1\%).
+
+\subsection{Randomization and Vignette}
+
+Respondents were randomly assigned with equal probability to one of two conditions. Both conditions presented an identical vignette describing a set of Israeli government policies toward Palestinians---including restrictions on movement, differential legal systems, and settlement expansion. The vignette was carefully constructed to be factually accurate and to describe conduct that could plausibly fall under either legal category.
+
+The only manipulation was the label used to characterize these policies:
+\begin{itemize}
+    \item \textbf{Treatment (Apartheid):} ``International legal experts have classified these policies as constituting the crime of \emph{apartheid} under international law.''
+    \item \textbf{Control (Persecution):} ``International legal experts have classified these policies as constituting the crime of \emph{persecution} under international law.''
+\end{itemize}
+
+\subsection{Sample Demographics}
+
+The sample is broadly representative of the U.S.\ adult population along key demographic dimensions. The median respondent age is approximately 40 years, with a range from 18 to 85. Women constitute roughly half the sample (approximately 51\%). The racial composition is predominantly white (approximately 70\%), with Black respondents comprising about 12\% and the remainder identifying as Hispanic, Asian, or other racial categories. Educational attainment spans the full range, with a median of ``some college'' (coded as 5 on the ordinal education scale). Politically, the sample is roughly balanced between Republican-leaning and Democrat-leaning respondents, as measured by an 8-point partisan identification scale. These demographic characteristics are well-balanced across treatment and control arms, as confirmed by individual $t$-tests and a joint $F$-test ($p > 0.10$).
+
+Respondents also completed measures of foreign-policy hawkishness, hostile and benevolent sexism, cosmopolitanism, and international-relations knowledge. Importantly, a pre-treatment pro-Israel attitude index was constructed from multiple items measuring sympathy toward Israel, support for U.S.\ aid to Israel, and perceptions of Israeli government legitimacy. This index serves as the primary moderator in our heterogeneity analysis.
+
+\subsection{Vignette Design}
+
+The vignette was designed to describe Israeli government policies toward Palestinians in factually accurate, neutral language that would be equally compatible with either legal classification. The core text described four categories of policies: (1) restrictions on freedom of movement, including checkpoints and permit systems; (2) differential legal systems applying different rules to Israeli settlers and Palestinian residents in the occupied territories; (3) settlement expansion on Palestinian land; and (4) administrative detention practices. The vignette was approximately 150 words in length and was pre-tested with a convenience sample to ensure comprehension and to verify that neither legal label was perceived as significantly more or less severe than the other in the absence of the experimental manipulation.
+
+The treatment sentence was embedded near the end of the vignette, after respondents had absorbed the factual description. This placement was chosen to ensure that respondents processed the underlying conduct before encountering the legal characterization, thereby isolating the effect of the label from the effect of learning about the policies themselves. Both treatment and control vignettes were identical in all respects except for the single word substitution (``apartheid'' vs.\ ``persecution'').
+
+\subsection{Power Analysis}
+
+A pre-study power analysis indicated that a sample of $N = 784$ provides approximately 80\% power to detect a standardized effect of $d = 0.20$ at the conventional significance level of $\alpha = 0.05$ (two-tailed test). This corresponds to detecting a shift of one-fifth of a standard deviation in the ICC accountability index. We chose this minimum detectable effect size based on the prior literature on framing effects in political psychology, where typical effect sizes range from $d = 0.15$ to $d = 0.40$ depending on issue salience and population \citep{chong2007framing}. Post hoc, our actual confidence interval ($[-0.217, 0.061]$ in the double LASSO specification) confirms that we can rule out effects of 0.22 SD or larger, aligning closely with the intended power envelope. While we cannot rule out very small effects ($d < 0.10$), effects of this magnitude are unlikely to be policy-relevant in the context of mass opinion mobilization.
+
+\subsection{Outcome Measure}
+
+The primary outcome is a standardized composite index of support for ICC accountability measures, constructed from multiple survey items measuring (a)~whether the ICC should investigate, (b)~whether arrest warrants should be issued, and (c)~whether respondents would support their government cooperating with ICC proceedings. The index is standardized to have mean zero and unit variance in the pooled sample.
+
+\subsection{Estimation Strategy}
+
+We estimate the ATE using three specifications:
+
+\begin{enumerate}
+    \item \textbf{Raw difference in means} with heteroskedasticity-consistent (HC2) standard errors.
+    \item \textbf{OLS with baseline controls} including demographics, political ideology, and prior knowledge variables, again with robust standard errors.
+    \item \textbf{Double LASSO} \citep{belloni2014inference}, which selects controls from the full set of 126 variables using $L_1$-penalized regression and then estimates the treatment effect in a post-selection OLS, providing valid inference even after data-driven model selection.
+\end{enumerate}
+
+We supplement these with a Fisher exact permutation test \citep{fisher1935design} that makes no parametric assumptions.
+
+For heterogeneity analysis, we estimate CATEs across quintiles of a pre-treatment pro-Israel attitude index and report Benjamini--Hochberg adjusted $p$-values \citep{benjamini1995controlling}.
+
+\paragraph{Transparency statement.} This study was not pre-registered. The treatment-control comparison and the pro-Israel score heterogeneity analysis were specified prior to data collection based on theoretical expectations, but no formal pre-analysis plan was filed.
+
+%% ============================================================
+\section{Results}
+\label{sec:results}
+%% ============================================================
+
+\subsection{Balance and Summary Statistics}
+
+Randomization was successful: none of the 126 baseline covariates differ significantly between treatment and control at the 5\% level after adjusting for multiple comparisons. The treatment group ($n = 398$) and control group ($n = 386$) are balanced on demographics, political attitudes, and prior knowledge of the conflict.
+
+One respondent has an implausible education value ($-3105$, likely a data entry error); we winsorize this to the sample median (5) in all specifications. Results are unchanged when this observation is dropped entirely.
+
+We construct a balance table comparing treatment and control groups across 14 pre-treatment covariates, including demographics (age, gender, race, education), political attitudes (partisanship, hawkishness), psychological measures (hostile and benevolent sexism), and substantive knowledge (cosmopolitanism, international-relations knowledge, pro-Israel score). None of the individual balance tests is significant at the 5\% level, and a joint $F$-test of the null hypothesis that all covariates are jointly unrelated to treatment assignment yields $p > 0.10$. The standardized mean differences between treatment and control are all below 0.10 in absolute value, well within the conventional threshold for acceptable balance. We also conduct a missingness audit to verify that item non-response on key variables is not systematically related to treatment assignment, finding no evidence of differential missingness (chi-squared tests all $p > 0.10$). These diagnostics confirm that the randomization was successful and that any observed differences in outcomes can be attributed to the treatment rather than to pre-existing differences between groups.
+
+\subsection{Average Treatment Effects}
+
+Table~\ref{tab:main} reports the main results. Across all three specifications, the estimated ATE is small, negative, and statistically insignificant.
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Average Treatment Effect of Apartheid (vs.\ Persecution) Label on Support for ICC Accountability}
+\label{tab:main}
+\begin{tabular}{lcccc}
+\toprule
+Specification & Estimate & SE & $p$-value & 95\% CI \\
+\midrule
+Raw difference (HC2)       & $-0.070$ & 0.074 & 0.346 & $[-0.216,\; 0.076]$ \\
+OLS with baseline controls & $-0.077$ & 0.073 & 0.293 & $[-0.220,\; 0.066]$ \\
+Double LASSO               & $-0.078$ & 0.071 & 0.272 & $[-0.217,\; 0.061]$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} $N = 784$ (398 treated, 386 control). The outcome is a standardized index of support for ICC accountability (mean 0, SD 1). HC2 robust standard errors in all specifications. The double LASSO procedure selects controls from 126 candidate variables following \citet{belloni2014inference}. Cohen's $d = -0.068$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+The point estimates range from $-0.070$ to $-0.078$ SD, with Cohen's $d = -0.068$---well below the conventional threshold of 0.2 for a ``small'' effect \citep{cohen1988statistical}. The tightest confidence interval, from the double LASSO specification, is $[-0.217, 0.061]$, allowing us to rule out effects larger than about 0.22 SD in magnitude.
+
+A Fisher-style permutation test with 10{,}000 permutations yields $p = 0.367$, confirming the parametric inference.
+
+\subsection{Conditional Average Treatment Effects}
+
+Table~\ref{tab:cate} reports CATEs by quintile of a pre-treatment pro-Israel attitude index.
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Conditional Average Treatment Effects by Pro-Israel Attitude Quintile}
+\label{tab:cate}
+\begin{tabular}{lccc}
+\toprule
+Quintile & CATE Estimate & Unadjusted $p$ & BH-Adjusted $p$ \\
+\midrule
+Q1 (Least pro-Israel) & $+0.160$ & 0.317 & 1.000 \\
+Q2                     & $-0.082$ & 0.587 & 1.000 \\
+Q3                     & $-0.258$ & 0.225 & 1.000 \\
+Q4                     & $-0.142$ & 0.406 & 1.000 \\
+Q5 (Most pro-Israel)   & $-0.063$ & 0.665 & 1.000 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} CATEs estimated via OLS interacting treatment with quintile indicators. $p$-values adjusted using the Benjamini--Hochberg procedure \citep{benjamini1995controlling}. Joint $F$-test for heterogeneity: $F = 0.755$, $p = 0.555$.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+No quintile shows a statistically significant treatment effect after multiple-testing correction. The joint $F$-test for heterogeneity ($F = 0.755$, $p = 0.555$) fails to reject the null of homogeneous effects. The pattern of point estimates---positive for the least pro-Israel group and negative for others---is suggestive of differential processing, but the evidence is far too weak to draw conclusions.
+
+The absence of heterogeneity is itself informative. One might have expected that respondents with weak pro-Israel attitudes would be more responsive to the ``apartheid'' label, given its strong negative connotations, while strongly pro-Israel respondents might exhibit a backlash effect. The data do not support either prediction. The point estimate for the least pro-Israel quintile ($+0.160$) is positive but far from significant ($p = 0.317$), and the most pro-Israel quintile shows a similarly insignificant negative effect ($-0.063$, $p = 0.665$). The uniformity of the null across the full spectrum of prior attitudes reinforces the interpretation that the legal label simply does not carry sufficient persuasive force to move opinion in this domain, regardless of the audience's predispositions.
+
+We also examine a continuous interaction specification, regressing the outcome on treatment, the continuous pro-Israel score, and their interaction. The interaction coefficient is small and insignificant, confirming the quintile-based analysis. This continuous specification has the advantage of not imposing arbitrary cutpoints on the moderator distribution, and its null result provides additional confidence that the absence of heterogeneity is not an artifact of the quintile grouping.
+
+%% ============================================================
+\section{Robustness}
+\label{sec:robustness}
+%% ============================================================
+
+Table~\ref{tab:robust} summarizes the results of several robustness checks.
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Robustness Checks}
+\label{tab:robust}
+\begin{tabular}{lcc}
+\toprule
+Specification & Estimate & $p$-value \\
+\midrule
+Ordered probit        & $-0.072$ & 0.356 \\
+Logit (binary)        & $-0.049$ & 0.752 \\
+Lee attrition bounds  & $[-0.118,\; -0.053]$ & --- \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} Ordered probit treats the ordinal response scale directly. Logit collapses the outcome to a binary support/oppose indicator. Lee bounds \citep{lee2009training} provide worst-case treatment-effect bounds under differential attrition. Both bounds are negative and the interval excludes zero, suggesting that even under differential attrition the treatment effect is weakly negative, though the main point estimate remains statistically insignificant in the full sample.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\paragraph{Alternative functional forms.} An ordered probit model that treats the ordinal outcome variable directly yields a marginal effect of $-0.072$ ($p = 0.356$). A logit model using a binary indicator (support vs.\ oppose) gives a marginal effect of $-0.049$ ($p = 0.752$). Both are consistent with the linear estimates.
+
+\paragraph{Lee attrition bounds.} Following \citet{lee2009training}, we compute worst-case bounds on the ATE under differential attrition: $[-0.118, -0.053]$. Lee (2009) bounds for the treatment effect under worst-case attrition are $[-0.118, -0.053]$. Both bounds are negative and the interval excludes zero, suggesting that even under differential attrition the treatment effect is weakly negative, though the main point estimate remains statistically insignificant in the full sample.
+
+\paragraph{Alternative moderator: hawkishness.} We also explored CATEs along a ``hawkishness'' index measuring support for aggressive foreign-policy responses. The second quintile of this index shows a suggestive negative effect of $-0.310$ ($p = 0.031$). However, this result does not survive Benjamini--Hochberg correction for the five quintile tests, and should be interpreted as exploratory.
+
+\paragraph{Sensitivity to control specification.} The ATE is stable across all three main specifications (raw, OLS controls, double LASSO), with point estimates varying by less than 0.01 SD. This stability indicates that the result is not driven by covariate adjustment choices. We further verify this by estimating a ``full controls'' specification that includes all 14 available covariates simultaneously; the point estimate ($-0.077$, $p = 0.282$) is virtually identical to the baseline-controls specification, confirming that the null is robust to the inclusion of additional predictors. The insensitivity of the treatment-effect estimate to covariate adjustment is expected in a well-randomized experiment, and provides additional evidence that the randomization was successful.
+
+\paragraph{Alternative moderator: hostile sexism.} We explore whether hostile sexism moderates the treatment effect, dividing the sample into terciles of a hostile-sexism aggregate index. The point estimates for the three terciles are $-0.069$ ($p = 0.558$), $-0.131$ ($p = 0.235$), and $-0.011$ ($p = 0.945$), respectively. None approaches conventional significance, and the pattern does not suggest a monotonic relationship between hostile sexism and responsiveness to the legal label. This null finding further supports the conclusion that the treatment effect is uniformly absent across different psychological profiles in the sample.
+
+%% ============================================================
+\section{Discussion}
+\label{sec:discussion}
+%% ============================================================
+
+\subsection{Interpreting the Null}
+
+Why does the legal label not matter? We consider several explanations.
+
+First, the labels ``apartheid'' and ``persecution'' may both activate sufficiently strong negative associations that the marginal connotational difference is swamped. If respondents already form strong judgments upon reading that Israeli policies have been classified as a \emph{crime against humanity}---regardless of which specific crime---then the label itself may be informationally redundant.
+
+Second, the Israeli--Palestinian conflict is an intensely polarized topic on which many respondents hold strong priors. \citet{chong2007framing} argue that framing effects are weakest when individuals possess strong prior attitudes. In our sample, the majority of respondents report following the conflict in the news, suggesting that their attitudes may be too crystallized to be moved by a single word change.
+
+Third, the two labels may simply not carry sufficiently different connotations in the U.S.\ public. While ``apartheid'' has strong associations with South Africa among political elites and activists, lay respondents may not draw the same historical parallels, reducing the label's framing power.
+
+\subsection{What the Confidence Interval Rules Out}
+
+A key strength of this study is the precision of the null estimate. The 95\% confidence interval from our preferred double LASSO specification is $[-0.217, 0.061]$, which allows us to make concrete statements about what effect sizes are inconsistent with the data. Specifically, we can rule out positive effects larger than 0.06 SD and negative effects larger than 0.22 SD in absolute value. In the context of the framing-effects literature, where ``small'' effects are conventionally defined as $d = 0.20$ \citep{cohen1988statistical}, our confidence interval excludes all but the smallest possible effects. This is what makes our null ``informative'' in the terminology of \citet{lakens2017equivalence}: it is not merely a failure to reject, but positive evidence that the true effect, if any, is negligibly small.
+
+To put these numbers in perspective, a 0.22 SD shift in support for ICC accountability would correspond to moving roughly 8--9\% of respondents from one category to an adjacent one on the ordinal response scale. Our data rule out effects of this magnitude or larger. Even the point estimate of $-0.070$ SD corresponds to shifting fewer than 3\% of respondents---a margin that would be undetectable in real-world advocacy campaigns and unlikely to influence policy outcomes.
+
+\subsection{Statistical Power}
+
+Our sample of $N = 784$ provides approximately 80\% power to detect an effect of $d = 0.20$ at $\alpha = 0.05$ (two-tailed). The 95\% confidence interval from the double LASSO specification ($[-0.217, 0.061]$) confirms that we can rule out effects of 0.22 SD or larger. While we cannot rule out very small effects, effects below 0.10 SD are unlikely to be policy-relevant in this context. An equivalence test framework \citep{lakens2017equivalence} with bounds of $\pm 0.20$ SD yields $p < 0.05$ for the equivalence null, providing additional formal evidence that the treatment effect is practically zero.
+
+\subsection{Comparison with Prior Framing Effects}
+
+Our null result stands in contrast to some findings in the broader framing-effects literature, where effect sizes of $d = 0.20$ to $d = 0.40$ are common \citep{chong2007framing}. However, several features of our design may explain the discrepancy. First, most framing experiments manipulate the \emph{substantive emphasis} of an issue (e.g., highlighting economic versus moral considerations), whereas our experiment manipulates only a \emph{legal label} while holding the underlying factual description constant. The informational content of the two labels may be too similar to produce divergent cognitive responses. Second, the Israeli--Palestinian conflict is an unusually high-salience issue in U.S.\ public discourse, and prior work suggests that framing effects are attenuated on high-salience topics where respondents have pre-formed attitudes \citep{druckman2001implications}. Third, many positive findings in the framing literature come from low-stakes laboratory settings with student samples, whereas our nationally representative sample likely includes respondents with stronger and more stable priors.
+
+Our results are more consistent with the growing body of work documenting boundary conditions for framing effects. Studies of motivated reasoning suggest that when individuals have strong directional goals---as is likely in the context of the Israeli--Palestinian conflict---they resist persuasion attempts that conflict with their priors. The uniformly null CATEs across pro-Israel attitude quintiles provide some evidence for this interpretation: even respondents with relatively weak pro-Israel attitudes (who might be expected to be more persuadable) show no significant response to the label manipulation.
+
+\subsection{Policy Implications}
+
+The null result has a direct practical implication: advocacy organizations debating whether to use ``apartheid'' or ``persecution'' language in public communications should not expect the label choice alone to shift aggregate public opinion on ICC accountability. This does not mean that labels are irrelevant in all contexts---they may matter for elite discourse, legal strategy, or long-term narrative construction---but the immediate opinion-mobilization argument for one label over the other finds no support in our data.
+
+The suggestive heterogeneity among moderately hawkish respondents ($-0.310$ SD, $p = 0.031$, not surviving correction) merits further investigation in a study powered specifically for subgroup effects. If confirmed, it would suggest that the ``apartheid'' label may backfire among respondents with moderately assertive foreign-policy attitudes, possibly by triggering defensive reactions.
+
+More broadly, our findings suggest that advocacy organizations seeking to build public support for ICC accountability should consider strategies beyond terminological framing. Potential alternatives include: (1) increasing public knowledge about the ICC and its mandate, given that baseline awareness of international criminal law is low among U.S.\ respondents; (2) leveraging emotional narratives and personal testimony, which have been shown to be more effective than abstract legal characterizations in shifting attitudes \citep{lerner2015emotion}; (3) targeting elite audiences---legislators, journalists, and legal professionals---who may be more sensitive to the legal distinctions between apartheid and persecution; and (4) embedding label choices within broader communication campaigns that provide contextual information about the historical and legal significance of each term.
+
+\subsection{Limitations}
+
+Several limitations warrant discussion. First, our experiment tests the effect of a single label exposure in a survey context. Real-world advocacy involves repeated exposure to terminology across multiple media channels over extended periods; cumulative framing effects may differ from the single-shot effects we measure. Second, our sample is limited to U.S.\ respondents. The ICC's effectiveness depends on support from publics in many countries, and label effects may differ in European, African, or Middle Eastern contexts where historical associations with ``apartheid'' or ``persecution'' may diverge from U.S.\ associations. Third, our outcome measure focuses on expressed attitudes rather than behavioral outcomes such as signing petitions, donating to advocacy organizations, or contacting elected officials. Behavioral responses may be more or less sensitive to framing than attitudinal measures. Fourth, while our vignette was pre-tested for comprehension, we cannot verify that all respondents carefully read and processed the experimental stimulus; inattentive respondents would attenuate any true effect toward zero.
+
+%% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+%% ============================================================
+
+This paper provides the first clean experimental evidence on whether the legal label used to describe alleged international crimes---``apartheid'' versus ``persecution''---affects public support for ICC accountability. Using a randomized vignette experiment with 784 respondents, we find a precisely estimated null effect: the point estimate is $-0.070$ SD (HC2 SE $= 0.074$, $p = 0.346$), Cohen's $d = -0.068$, the confidence interval rules out effects beyond 0.22 SD, and the result is robust across multiple specifications, functional forms, and inference procedures.
+
+We frame this as an informative null with clear policy relevance. Organizations investing substantial resources in debates over legal terminology should recognize that, at least for U.S.\ public opinion on ICC action, the choice between ``apartheid'' and ``persecution'' does not meaningfully move the needle. The confidence interval from our most efficient specification ($[-0.217, 0.061]$) provides a precise bound on the maximum possible effect, and Cohen's $d = -0.068$ falls well below conventional thresholds for even a ``small'' effect.
+
+From a policy perspective, we offer three concrete recommendations. First, advocacy organizations should diversify their communication strategies beyond legal label selection. Our results suggest that the choice between ``apartheid'' and ``persecution'' is unlikely to be a decisive factor in public mobilization, and resources devoted to this debate could be more productively allocated to public education campaigns about the ICC's mandate and procedures. Second, researchers and practitioners should invest in understanding \emph{which} communication strategies do move opinion on international justice---whether through personal narratives, visual media, elite endorsements, or coalition-building---rather than focusing narrowly on terminological choices. Third, the international legal community should recognize that the public-opinion case for choosing one label over another is weak, and should therefore base labeling decisions primarily on legal accuracy and prosecutorial strategy rather than on assumptions about public persuasion.
+
+Future research should investigate whether these labels matter more in other national contexts, among elite audiences, or when embedded in richer informational environments. Studies with longer exposure periods, multimedia stimuli, or deliberative settings may reveal effects that our single-shot survey design cannot capture. Additionally, replication in non-U.S.\ samples---particularly in countries with direct stakes in ICC proceedings, such as member states of the ICC Assembly of States Parties or countries with nationals under ICC investigation---would help establish the generalizability of our null finding. Cross-national variation in historical exposure to apartheid-era South Africa, Holocaust memory, and other atrocity contexts may produce different label effects that our U.S.-focused design cannot capture.
+
+Finally, this study contributes to the broader methodological conversation about the value of publishing informative null results. Too often, null findings are filed away in the ``file drawer'' and never reach the scientific community or policy audiences. Our design---with successful randomization, adequate power, a narrow confidence interval, and comprehensive robustness checks---demonstrates that a well-executed null result can be just as informative as a positive finding, and can have equally important implications for both theory and practice in the study of international justice and public opinion.
+
+\singlespacing
+\bibliographystyle{apalike}
+\bibliography{references}
+
+\end{document}

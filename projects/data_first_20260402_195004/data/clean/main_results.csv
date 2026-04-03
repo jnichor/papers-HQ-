@@ -1,0 +1,8 @@
+specification,coef,se_hc2,ci_lower,ci_upper,t_stat,p_value,n,r_squared
+Raw difference in means,-0.069997,0.074256,-0.215536,0.075541,-0.9427,0.345857,760,0.00117
+OLS with baseline controls,-0.076848,0.073027,-0.219978,0.066282,-1.0523,0.292648,759,0.044428
+Double LASSO,-0.078101,0.071105,-0.217464,0.061262,-1.0984,0.272032,759,0.126467
+Joint F-test heterogeneity,0.7549238736678375,,,,,0.5548765927933735,760,
+Continuous interaction (treat x pro_israel_score),-0.001374,0.001605,,,,0.391825,760,
+Cohen's d,-0.068364,,,,,,760,
+Permutation test (2000 reshuffles),-0.069997,,,,,0.367,760,

@@ -37,29 +37,49 @@ def run(project_dir: Path, state: dict) -> dict:
 def _score_identification(state: dict) -> int:
     """Score the identification strategy based on the causal design tier.
 
-    Tier 1 (CAUSAL): DiD, IV, RDD, event study, RCT, synthetic control → 75-90
-    Tier 2 (PANEL-CAUSAL): TWFE + shock, Arellano-Bond, CRE → 65-80
-    Tier 3 (PANEL-DESCRIPTIVE): FE without identification → 40-55
-    Tier 4 (CROSS-SECTION): OLS, matching, decomposition → 20-35
+    First checks identification_level from Stage 2 (most reliable).
+    Falls back to keyword matching on method string.
+
+    Tier 1 (CAUSAL): DiD, IV, RDD, event study, RCT, synthetic control -> 75-90
+    Tier 2 (PANEL-CAUSAL): TWFE + shock, Arellano-Bond, CRE -> 65-80
+    Tier 3 (PANEL-DESCRIPTIVE): FE without identification -> 40-55
+    Tier 4 (CROSS-SECTION): OLS, matching, decomposition -> 20-35
     """
-    # Get method from various state locations
+    # First check: identification_level from Stage 2 (most reliable signal)
+    selected = state["stages"].get("stage2_5", {}).get("selected_idea", {})
+    id_level = selected.get("identification_level", "")
+    id_score_raw = selected.get("identification", 0)
+
+    if id_level == "A" or id_score_raw >= 5:
+        return 90  # Level A: RCT, strong natural experiment
+    elif id_level == "A" or id_score_raw == 4:
+        return 80  # Strong Level A or Level B
+    elif id_level == "B" or id_score_raw == 3:
+        return 75  # Level B: dose variation
+
+    # Second check: search method + title + RQ for RCT/experiment keywords
     method = ""
     strategy = state["stages"].get("stage3_5", {}).get("approved_strategy", {})
     if strategy:
         method = str(strategy.get("method", "")).lower()
     if not method:
-        selected = state["stages"].get("stage2_5", {}).get("selected_idea", {})
         method = str(selected.get("method", "")).lower()
     if not method:
         validation = state["stages"].get("stage3", {}).get("result", {})
         method = str(validation.get("method", "")).lower()
+
+    # Also check title and RQ for experiment keywords
+    title = str(selected.get("title", "")).lower()
+    rq = str(selected.get("research_question", "")).lower()
+    all_text = method + " " + title + " " + rq
 
     # Tier 1: Strong causal identification
     tier1_keywords = [
         "did", "diff-in-diff", "difference-in-differences", "difference in differences",
         "event study", "event-study", "iv ", "iv,", "instrumental variable", "2sls",
         "rdd", "regression discontinuity", "rct", "randomized", "experiment",
-        "synthetic control", "synth",
+        "synthetic control", "synth", "vignette", "survey experiment",
+        "field experiment", "lab experiment", "natural experiment",
     ]
     # Tier 2: Panel-causal
     tier2_keywords = [
@@ -80,19 +100,19 @@ def _score_identification(state: dict) -> int:
     ]
 
     for kw in tier1_keywords:
-        if kw in method:
+        if kw in all_text:
             return 80  # Strong causal
 
     for kw in tier2_keywords:
-        if kw in method:
+        if kw in all_text:
             return 70  # Panel-causal
 
     for kw in tier3_keywords:
-        if kw in method:
+        if kw in all_text:
             return 50  # Panel-descriptive
 
     for kw in tier4_keywords:
-        if kw in method:
+        if kw in all_text:
             return 30  # Cross-sectional
 
     return 40  # Unknown method — assume moderate

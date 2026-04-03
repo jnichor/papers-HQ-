@@ -1,0 +1,47 @@
+RESEARCH IDEA SUBMISSION
+========================
+
+IDEA TITLE:
+Apartheid vs. Persecution Label Effects on ICC Referral Support
+
+PAPER TYPE: Empirical
+
+RESEARCH QUESTION:
+Does labeling Israeli actions as 'apartheid' vs. 'persecution' differentially increase support for ICC referral, holding casualty salience constant?
+
+HYPOTHESIS / MECHANISM:
+Apartheid and persecution are both Rome Statute crimes, but 'apartheid' carries unique historical weight that may shift ICC support independently of casualty information. This experiment provides the first clean causal estimate of legal label precision on international justice preferences — directly actionable for advocacy organizations deciding which frames to deploy.
+
+IDENTIFICATION STRATEGY:
+OLS with treatment dummy (apartheid_vs_persecution_treat), LASSO covariate selection, CATE estimation by pro_israel_score quintile — Balance check on apartheid_vs_persecution_treat arms → OLS on primary ICC support outcome → CATE estimation by pro_israel_score quintile to identify who is movable
+
+DATA SOURCES:
+- Survey experiment already collected (N=1,185)
+
+DATA STRUCTURE: cross-sectional
+TIME COVERAGE: unknown
+
+
+*** IDENTIFICATION ASSESSMENT (MANDATORY) ***
+You MUST explicitly evaluate the following in your assessment:
+
+1. SOURCE OF EXOGENOUS VARIATION: What is the specific source of identifying
+   variation? (e.g., "policy reform in year X", "geographic discontinuity at
+   threshold Y", "instrument Z correlated with treatment but not outcome").
+   Is it clearly stated? Is it plausible?
+
+2. IDENTIFICATION THREATS: What are the main threats to identification?
+   (e.g., selection bias, reverse causality, omitted variables, violation of
+   exclusion restriction, non-parallel trends).
+
+3. PRE-TRENDS: Can parallel trends be tested with the available data?
+   If not, how does this affect credibility?
+
+4. IDENTIFICATION TIER: Classify the identification strategy:
+   - Tier 1 (STRONG): RCT, natural experiment, sharp RDD, DiD with pre-trends
+   - Tier 2 (GOOD): IV with strong first stage, fuzzy RDD, DiD without pre-trends
+   - Tier 3 (MODERATE): Panel FE exploiting within-variation, CRE
+   - Tier 4 (WEAK): Cross-sectional matching, OLS with controls, decompositions
+
+Include these assessments in your evaluation and factor them into your score.
+A Tier 4 identification strategy should not score above 6/10 regardless of novelty.

@@ -189,6 +189,33 @@ def _check_code_patterns(vr: ValidationResult, scripts_dir: Path):
             all_code += path.read_text(encoding="utf-8") + "\n"
 
     if all_code:
+        # ── Check for manual implementations of complex estimators ────
+        # These are fragile and produce bugs that referees detect
+        manual_patterns = [
+            (r'def\s+two_by_two_did|def\s+manual.*cs|def\s+manual.*did',
+             "Manual 2x2 DiD implementation detected -- use pyfixest or csdid package instead"),
+            (r'def\s+.*bacon.*decomp|# Manual Bacon',
+             "Manual Bacon decomposition detected -- use validated package or omit"),
+            (r'for\s+g\s+in\s+cohorts.*for\s+t\s+in.*years',
+             "Manual cohort x time loop detected -- likely manual CS, use pyfixest instead"),
+        ]
+        for pat, msg in manual_patterns:
+            if re.search(pat, all_code, re.IGNORECASE):
+                vr.add("no_manual_estimators", CheckLevel.SOFT, False, msg)
+
+        # Check for validated package usage
+        uses_validated = bool(re.search(
+            r'(import pyfixest|from pyfixest|import csdid|from csdid'
+            r'|pf\.did|ATTgt|feols|event_study)',
+            all_code
+        ))
+        if not uses_validated:
+            # Check if it at least uses linearmodels (acceptable for simple TWFE)
+            uses_linearmodels = bool(re.search(r'(import linearmodels|from linearmodels|PanelOLS)', all_code))
+            if not uses_linearmodels:
+                vr.add("validated_package", CheckLevel.SOFT, False,
+                       "No validated econometrics package (pyfixest/csdid/linearmodels) detected")
+
         # Detect if this is a DiD/event study design
         is_did = bool(re.search(
             r'(did|diff.*in.*diff|event.study|twfe|two.way.*fixed)',

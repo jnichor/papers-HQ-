@@ -923,90 +923,102 @@ def _run_path_c(project_dir: Path, state: dict) -> dict:
 
     # Curated list of VERIFIED replication packages from Harvard Dataverse.
     # Every DOI confirmed to return downloadable data files (verified Apr 2026).
+    # Priority order: RCT > Field Experiment > Natural Experiment > Staggered DiD > Panel
+    # RCTs and experiments go FIRST because they have the highest score ceiling (~95)
     CURATED_PACKAGES = [
-        # ── QJE papers ───────────────────────────────────────────────
-        {
-            "title": "Wages and Value of Nonemployment (Jaeger et al., QJE)",
-            "dataverse_doi": "10.7910/DVN/GBRHTC",
-            "method": "Event study", "area": "labor",
-        },
-        {
-            "title": "Labor in the Boardroom (Jaeger, Schoefer, Heining, QJE)",
-            "dataverse_doi": "10.7910/DVN/WYWCBP",
-            "method": "DiD / Panel", "area": "labor",
-        },
-        {
-            "title": "Socially Responsible Consumers (QJE)",
-            "dataverse_doi": "10.7910/DVN/49CETN",
-            "method": "Field experiment", "area": "industrial organization",
-        },
-        # ── REStat papers ────────────────────────────────────────────
+        # ══ TIER 1: RCTs and Field Experiments (score ceiling ~95) ═══
         {
             "title": "Wage Subsidies RCT Jordan (REStat)",
             "dataverse_doi": "10.7910/DVN/XJI9LO",
             "method": "RCT", "area": "labor / development",
-        },
-        {
-            "title": "Fairness in Winner-Take-All Competition (REStat)",
-            "dataverse_doi": "10.7910/DVN/EZBJDL",
-            "method": "Experiment", "area": "behavioral",
-        },
-        # ── Development / Agriculture ────────────────────────────────
-        {
-            "title": "Household Plot Soil Rainfall Price Panel (Agricultural)",
-            "dataverse_doi": "10.7910/DVN/NXILME",
-            "method": "Panel / RCT", "area": "agriculture",
-        },
-        {
-            "title": "Afrobarometer Microdata Round 9 (Migration & Corruption)",
-            "dataverse_doi": "10.7910/DVN/OASFBM",
-            "method": "Survey / IV", "area": "development",
-        },
-        # ── Political Economy ────────────────────────────────────────
-        {
-            "title": "Oil, Gas and Political Institutions (Ross-Mahdavi 1932-2014)",
-            "dataverse_doi": "10.7910/DVN/ZTPW0Y",
-            "method": "Panel IV", "area": "political economy",
-        },
-        {
-            "title": "Government Austerity and World Values Survey Panel",
-            "dataverse_doi": "10.7910/DVN/V7RQQ4",
-            "method": "Panel FE", "area": "political economy",
-        },
-        {
-            "title": "Lexical Index of Electoral Democracy (LIED v6)",
-            "dataverse_doi": "10.7910/DVN/WPKNIT",
-            "method": "Panel", "area": "political science",
-        },
-        # ── Other verified ───────────────────────────────────────────
-        {
-            "title": "Elite Study Survey Data (Crime and Policing)",
-            "dataverse_doi": "10.7910/DVN/WO36SX",
-            "method": "Survey / Experiment", "area": "crime",
+            "design_tier": 1,
         },
         {
             "title": "Cash Transfer Replication Data",
             "dataverse_doi": "10.7910/DVN/U4QVLA",
             "method": "RCT", "area": "development",
+            "design_tier": 1,
+        },
+        {
+            "title": "Socially Responsible Consumers (QJE)",
+            "dataverse_doi": "10.7910/DVN/49CETN",
+            "method": "Field experiment", "area": "industrial organization",
+            "design_tier": 1,
+        },
+        {
+            "title": "Fairness in Winner-Take-All Competition (REStat)",
+            "dataverse_doi": "10.7910/DVN/EZBJDL",
+            "method": "Experiment", "area": "behavioral",
+            "design_tier": 1,
+        },
+        {
+            "title": "Household Plot Soil Rainfall Price Panel (Agricultural)",
+            "dataverse_doi": "10.7910/DVN/NXILME",
+            "method": "Panel / RCT", "area": "agriculture",
+            "design_tier": 1,
+        },
+        {
+            "title": "Elite Study Survey Data (Crime and Policing)",
+            "dataverse_doi": "10.7910/DVN/WO36SX",
+            "method": "Survey / Experiment", "area": "crime",
+            "design_tier": 1,
+        },
+        # ══ TIER 2: Natural Experiments / Staggered DiD (ceiling ~85-90) ═══
+        {
+            "title": "Wages and Value of Nonemployment (Jaeger et al., QJE)",
+            "dataverse_doi": "10.7910/DVN/GBRHTC",
+            "method": "Event study", "area": "labor",
+            "design_tier": 2,
+        },
+        {
+            "title": "Labor in the Boardroom (Jaeger, Schoefer, Heining, QJE)",
+            "dataverse_doi": "10.7910/DVN/WYWCBP",
+            "method": "DiD / Panel", "area": "labor",
+            "design_tier": 2,
+        },
+        {
+            "title": "Oil, Gas and Political Institutions (Ross-Mahdavi 1932-2014)",
+            "dataverse_doi": "10.7910/DVN/ZTPW0Y",
+            "method": "Panel IV", "area": "political economy",
+            "design_tier": 2,
+        },
+        # ══ TIER 3: Observational Panel (ceiling ~75-85) ═══
+        {
+            "title": "Government Austerity and World Values Survey Panel",
+            "dataverse_doi": "10.7910/DVN/V7RQQ4",
+            "method": "Panel FE", "area": "political economy",
+            "design_tier": 3,
+        },
+        {
+            "title": "Lexical Index of Electoral Democracy (LIED v6)",
+            "dataverse_doi": "10.7910/DVN/WPKNIT",
+            "method": "Panel", "area": "political science",
+            "design_tier": 3,
+        },
+        {
+            "title": "Afrobarometer Microdata Round 9 (Migration & Corruption)",
+            "dataverse_doi": "10.7910/DVN/OASFBM",
+            "method": "Survey / IV", "area": "development",
+            "design_tier": 3,
         },
     ]
 
     # ── Also search Dataverse API live for fresh datasets ─────────
     print("  [search] Also searching Dataverse API for fresh datasets...")
     live_queries = [
+        # PRIORITY: RCTs and experiments (highest score ceiling)
+        "randomized controlled trial RCT replication data",
+        "field experiment treatment control replication",
+        "lab experiment behavioral economics data",
+        "RCT education health development replication",
         # Natural experiments and policy discontinuities
         "regression discontinuity threshold eligibility",
         "staggered rollout policy reform panel",
         "natural experiment ban restriction access",
-        "randomized controlled trial RCT replication",
         # Standard high-quality panels
+        "difference in differences policy change state",
         "panel health expenditure insurance household",
         "minimum wage employment county quarterly",
-        "trade shock employment manufacturing",
-        "cash transfer poverty consumption",
-        # Designs with built-in variation
-        "difference in differences policy change state",
-        "instrumental variable geographic distance exposure",
     ]
     for q in live_queries:
         results = _search_dataverse(q, max_results=2)
@@ -1019,11 +1031,23 @@ def _run_path_c(project_dir: Path, state: dict) -> dict:
                 "provider": "Harvard Dataverse",
             })
 
-    # Shuffle to avoid always trying the same ones first
+    # Sort by design tier (RCTs first), shuffle within each tier
     import random
     random.seed(int(_time.time()) % 10000)
     packages = CURATED_PACKAGES.copy()
-    random.shuffle(packages)
+    # Group by tier, shuffle within tier, concatenate in tier order
+    tier_groups = {}
+    for p in packages:
+        tier = p.get("design_tier", 9)
+        tier_groups.setdefault(tier, []).append(p)
+    packages = []
+    for tier in sorted(tier_groups.keys()):
+        group = tier_groups[tier]
+        random.shuffle(group)
+        packages.extend(group)
+    print(f"  [search] Priority: {sum(1 for p in packages if p.get('design_tier') == 1)} RCTs, "
+          f"{sum(1 for p in packages if p.get('design_tier') == 2)} natural experiments, "
+          f"{sum(1 for p in packages if p.get('design_tier', 9) >= 3)} observational")
 
     replication_papers = packages
     print(f"  [search] {len(replication_papers)} curated packages available")
@@ -1107,9 +1131,20 @@ def _run_path_c(project_dir: Path, state: dict) -> dict:
             )
             ceiling = feasibility["score_ceiling"]
             tier = feasibility["max_tier"]
+
+            # Boost ceiling for RCTs/experiments (identification is built-in)
+            method_lower = candidate.get("method", "").lower()
+            design_tier = candidate.get("design_tier", 9)
+            if design_tier == 1 or any(k in method_lower for k in ["rct", "experiment", "randomiz"]):
+                ceiling = max(ceiling, 90)  # RCTs have minimum 90 ceiling
+                tier = min(tier, 1)
+            elif design_tier == 2 or any(k in method_lower for k in ["natural experiment", "stagger", "did"]):
+                ceiling = max(ceiling, 85)
+
             print(f"       [ok] {profile['rows']:,} rows x {profile['cols']} cols | "
                   f"Structure: {profile['structure']} | "
-                  f"Ceiling: {ceiling}/100 | Tier: {tier}")
+                  f"Ceiling: {ceiling}/100 | Tier: {tier}"
+                  + (" [RCT BOOST]" if design_tier == 1 else ""))
 
             if ceiling >= 85:
                 qualified.append({

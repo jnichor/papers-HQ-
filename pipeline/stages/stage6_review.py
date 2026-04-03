@@ -249,6 +249,37 @@ def _gather_evidence_packet(project_dir: Path) -> str:
     return "\n".join(parts) if parts else "(no evidence packet available)"
 
 
+def _gather_estimator_constraints(state: dict) -> str:
+    """Build a note about which estimators work and which don't."""
+    stage3_3 = state.get("stages", {}).get("stage3_3", {})
+    avail = stage3_3.get("available_estimators", {})
+    warnings = stage3_3.get("estimator_warnings", [])
+
+    if not avail:
+        return ""
+
+    working = [k for k, v in avail.items() if v]
+    broken = [k for k, v in avail.items() if not v]
+
+    parts = [
+        "## Estimator Constraints (verified on real data)",
+        "The following estimators were tested on the actual dataset:",
+        "Working: " + ", ".join(working),
+    ]
+    if broken:
+        parts.append("BROKEN (do NOT request these): " + ", ".join(broken))
+    if warnings:
+        parts.append("Details:")
+        for w in warnings:
+            parts.append("  - " + w)
+    parts.append(
+        "\nIMPORTANT FOR REFEREES: Do NOT request estimators listed as BROKEN. "
+        "They were tested and failed on this specific dataset. Requesting them "
+        "will not improve the paper -- it will only create implementation issues."
+    )
+    return "\n".join(parts)
+
+
 def run(project_dir: Path, state: dict) -> dict:
     """Execute Stage 6: editorial desk review + 2 referee reports."""
     paper_dir = project_dir / "paper"
@@ -262,6 +293,11 @@ def run(project_dir: Path, state: dict) -> dict:
     paper_content = _gather_paper(paper_dir)
     strategy_memo = _read_file_or(project_dir / "strategy" / "strategy_memo.md")
     evidence_packet = _gather_evidence_packet(project_dir)
+
+    # Add estimator constraints so referees don't request broken methods
+    estimator_note = _gather_estimator_constraints(state)
+    if estimator_note:
+        evidence_packet += "\n\n" + estimator_note
 
     # Track R&R round
     rr_round = state["stages"].get("stage6", {}).get("rr_round", 0) + 1

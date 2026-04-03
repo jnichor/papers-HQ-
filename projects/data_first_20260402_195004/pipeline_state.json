@@ -1,0 +1,934 @@
+{
+  "project": "data_first_20260402_195004",
+  "created_at": "2026-04-02T19:50:04.832093",
+  "current_stage": 7,
+  "stages": {
+    "stage1": {
+      "status": "completed",
+      "topic": "Civilian Casualty Framing and ICC Referral Support",
+      "path": "C",
+      "output_file": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\stage1_discovery.md",
+      "completed_at": "2026-04-02T19:52:53.471593",
+      "data_path": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\data\\external\\Public_Study_Data.tab",
+      "data_profile": {
+        "rows": 1185,
+        "cols": 126,
+        "columns": [
+          "rank_1",
+          "rank_2",
+          "rank_3",
+          "rank_4",
+          "respondent_age",
+          "hhi",
+          "education",
+          "region",
+          "over_65",
+          "female",
+          "white",
+          "black",
+          "stronger_republican_8pt",
+          "democrat",
+          "republican",
+          "independent",
+          "hostile_sexism_1",
+          "hostile_sexism_2",
+          "hostile_sexism_3",
+          "hostile_sexism_agg",
+          "benevolent_sexism_1",
+          "benevolent_sexism_2",
+          "benevolent_sexism_3",
+          "benevolent_sexism_agg",
+          "pro_israel_score",
+          "hawk1",
+          "hawk2",
+          "hawk3",
+          "hawkish_aggregate",
+          "cosmopolitan",
+          "R2P",
+          "attention_intl_affairs",
+          "vote_trump",
+          "vote_harris",
+          "knowledge_ir_1",
+          "knowledge_ir_2",
+          "knowledge_ir_agg",
+          "Afghanistan_treatment",
+          "apartheid_plus_treatment",
+          "apartheid_treatment",
+          "apartheid_treatment_broad",
+          "persecution_treatment",
+          "apart_plus_vs_apart_treatment",
+          "apart_plus_vs_persec_treatment",
+          "apartheid_vs_persecution_treat",
+          "illegal_treatment",
+          "illegal_treatment_broad",
+          "ICC_referral",
+          "ICC_referral_binary",
+          "UNSC_condemn",
+          "UNSC_condemn_binary",
+          "sanctions",
+          "sanctions_binary",
+          "airstrikes",
+          "airstrikes_binary",
+          "regime_change",
+          "regime_change_binary",
+          "immigration",
+          "immigration_binary",
+          "foreign_aid",
+          "foreign_aid_binary",
+          "pressuring_IOs",
+          "pressuring_IOs_binary",
+          "top_priority",
+          "top_priority_binary",
+          "policy_index",
+          "policy_index_binary",
+          "new_information",
+          "new_information_binary",
+          "chance_success",
+          "chance_success_binary",
+          "moral_obligation",
+          "moral_obligation_binary",
+          "threat_perc",
+          "threat_perc_binary",
+          "reputation_suffer",
+          "reputation_suffer_binary",
+          "as_bad_jim_crow",
+          "as_bad_jim_crow_binary",
+          "illegal_perception",
+          "illegal_perception_binary",
+          "willing_write_letter",
+          "ICC_referral2",
+          "ICC_referral2_binary",
+          "UNSC_condemn2",
+          "UNSC_condemn2_binary",
+          "sanctions2",
+          "sanctions2_binary",
+          "airstrikes2",
+          "airstrikes2_binary",
+          "regime_change2",
+          "regime_change2_binary",
+          "immigration2",
+          "immigration2_binary",
+          "foreign_aid2",
+          "foreign_aid2_binary",
+          "pressuring_IOs2",
+          "pressuring_IOs2_binary",
+          "top_priority2",
+          "top_priority2_binary",
+          "policy_index2",
+          "ICC_referral_within",
+          "UNSC_condemn_within",
+          "sanctions_within",
+          "airstrikes_within",
+          "regime_change_within",
+          "immigration_within",
+          "foreign_aid_within",
+          "pressuring_IOs_within",
+          "top_priority_within",
+          "policy_index_within",
+          "ICC_referral_within_bin",
+          "UNSC_condemn_within_bin",
+          "sanctions_within_bin",
+          "airstrikes_within_bin",
+          "regime_change_within_bin",
+          "immigration_within_bin",
+          "foreign_aid_within_bin",
+          "pressuring_IOs_within_bin",
+          "top_priority_within_bin",
+          "policy_index_within_bin",
+          "make_illegal",
+          "make_illegal_binary",
+          "apartheid_ranked_worst",
+          "pro_Israel_median",
+          "apartheid_ranked_worse_persec"
+        ],
+        "structure": "cross-sectional",
+        "panel_flag": false,
+        "panel_details": {},
+        "id_cols": [
+          "apartheid_plus_treatment",
+          "apartheid_treatment",
+          "apartheid_treatment_broad",
+          "apartheid_vs_persecution_treat",
+          "foreign_aid",
+          "foreign_aid_binary",
+          "foreign_aid2",
+          "foreign_aid2_binary",
+          "foreign_aid_within",
+          "foreign_aid_within_bin",
+          "apartheid_ranked_worst",
+          "apartheid_ranked_worse_persec"
+        ],
+        "time_cols": [],
+        "wide_panel": null
+      },
+      "recommended_data_sources": [
+        {
+          "name": "Elite Study Survey Data (Crime and Policing)",
+          "provider": "Harvard Dataverse",
+          "url": "https://doi.org/10.7910/DVN/WO36SX",
+          "description": "",
+          "method": "Survey / Experiment",
+          "area": "crime"
+        },
+        {
+          "name": "Cash Transfer Replication Data",
+          "provider": "Harvard Dataverse",
+          "url": "https://doi.org/10.7910/DVN/U4QVLA",
+          "description": "",
+          "method": "RCT",
+          "area": "development"
+        },
+        {
+          "name": "Household Plot Soil Rainfall Price Panel (Agricultural)",
+          "provider": "Harvard Dataverse",
+          "url": "https://doi.org/10.7910/DVN/NXILME",
+          "description": "",
+          "method": "Panel / RCT",
+          "area": "agriculture"
+        }
+      ]
+    },
+    "stage1_5": {
+      "status": "skipped",
+      "reason": "Path B or data already profiled"
+    },
+    "stage2": {
+      "status": "completed",
+      "output_file": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\stage2_ideation.md",
+      "completed_at": "2026-04-02T19:55:12.807797",
+      "top_ideas": [
+        {
+          "rank": 1,
+          "title": "Apartheid vs. Persecution Label Effects on ICC Referral Support",
+          "research_question": "Does labeling Israeli actions as 'apartheid' vs. 'persecution' differentially increase support for ICC referral, holding casualty salience constant?",
+          "method": "OLS with treatment dummy (apartheid_vs_persecution_treat), LASSO covariate selection, CATE estimation by pro_israel_score quintile",
+          "identification_level": "A",
+          "identification_source": "Random assignment to apartheid vs. persecution legal label in survey experiment",
+          "sub_topic": "Legal Framing Precision",
+          "data_sources": [
+            "Survey experiment already collected (N=1,185)"
+          ],
+          "novelty": 5,
+          "feasibility": 5,
+          "impact": 5,
+          "identification": 5,
+          "total_score": 5.0,
+          "pitch": "Apartheid and persecution are both Rome Statute crimes, but 'apartheid' carries unique historical weight that may shift ICC support independently of casualty information. This experiment provides the first clean causal estimate of legal label precision on international justice preferences — directly actionable for advocacy organizations deciding which frames to deploy.",
+          "first_experiment": "Balance check on apartheid_vs_persecution_treat arms → OLS on primary ICC support outcome → CATE estimation by pro_israel_score quintile to identify who is movable"
+        },
+        {
+          "rank": 2,
+          "title": "Partisan Asymmetry in Legal Frame Receptivity for ICC Referral",
+          "research_question": "Do Democrats and Republicans diverge in ICC referral support in response to apartheid framing, and does the partisan gap widen with stronger legal frames?",
+          "method": "OLS with apartheid_treatment × stronger_republican_8pt interaction; Causal Forest (GRF) for full CATE map across partisan spectrum",
+          "identification_level": "A",
+          "identification_source": "Random assignment to apartheid framing; partisan identity is pre-determined and exogenous to treatment",
+          "sub_topic": "Political Polarization and International Law",
+          "data_sources": [
+            "Survey experiment already collected (N=1,185)",
+            "stronger_republican_8pt continuous scale"
+          ],
+          "novelty": 4,
+          "feasibility": 5,
+          "impact": 5,
+          "identification": 5,
+          "total_score": 4.8,
+          "pitch": "If apartheid framing backfires among Republicans via reactance while activating Democrats, universal communication strategies are counterproductive — advocates should micro-target frames. This paper provides the first experimental evidence on partisan frame asymmetry for ICC referral, with immediate practical implications.",
+          "first_experiment": "OLS with treatment × republican_8pt interaction → Causal Forest estimation → visualize treatment effect as function of partisan score"
+        },
+        {
+          "rank": 3,
+          "title": "Hostile Sexism as a Moderator of Civilian Casualty Framing Effects",
+          "research_question": "Do respondents high in hostile sexism discount civilian casualties involving women, and does apartheid (structural) framing bypass this psychological desensitization?",
+          "method": "OLS with hostile_sexism_agg × apartheid_treatment interaction; quantile regression to detect tail effects; benevolent_sexism_agg as opposite-sign check",
+          "identification_level": "A",
+          "identification_source": "Random assignment to apartheid framing; hostile_sexism_agg measured pre-treatment and exogenous",
+          "sub_topic": "Psychological Predispositions and Atrocity Response",
+          "data_sources": [
+            "Survey experiment already collected (N=1,185)",
+            "hostile_sexism_1-3/agg",
+            "benevolent_sexism_1-3/agg"
+          ],
+          "novelty": 5,
+          "feasibility": 5,
+          "impact": 4,
+          "identification": 5,
+          "total_score": 4.8,
+          "pitch": "Ambivalent sexism theory predicts that hostile sexists view female suffering as less credible — which may cause them to discount civilian casualty frames featuring women and children. Structural/legal frames like apartheid may circumvent this by shifting from victim-centered to systemic framing. No prior work connects Glick & Fiske's sexism scales to international humanitarian law opinion, making this a genuine cross-disciplinary contribution.",
+          "first_experiment": "Distribution check on hostile_sexism_agg → OLS with interaction term → quantile regression at 75th and 90th percentile of sexism distribution → repeat with benevolent_sexism_agg for mechanism test"
+        }
+      ]
+    },
+    "stage2_5": {
+      "status": "completed",
+      "action": "SELECT",
+      "completed_at": "2026-04-02T19:55:41.610394",
+      "selected_idea": {
+        "rank": 1,
+        "title": "Apartheid vs. Persecution Label Effects on ICC Referral Support",
+        "research_question": "Does labeling Israeli actions as 'apartheid' vs. 'persecution' differentially increase support for ICC referral, holding casualty salience constant?",
+        "method": "OLS with treatment dummy (apartheid_vs_persecution_treat), LASSO covariate selection, CATE estimation by pro_israel_score quintile",
+        "identification_level": "A",
+        "identification_source": "Random assignment to apartheid vs. persecution legal label in survey experiment",
+        "sub_topic": "Legal Framing Precision",
+        "data_sources": [
+          "Survey experiment already collected (N=1,185)"
+        ],
+        "novelty": 5,
+        "feasibility": 5,
+        "impact": 5,
+        "identification": 5,
+        "total_score": 5.0,
+        "pitch": "Apartheid and persecution are both Rome Statute crimes, but 'apartheid' carries unique historical weight that may shift ICC support independently of casualty information. This experiment provides the first clean causal estimate of legal label precision on international justice preferences — directly actionable for advocacy organizations deciding which frames to deploy.",
+        "first_experiment": "Balance check on apartheid_vs_persecution_treat arms → OLS on primary ICC support outcome → CATE estimation by pro_israel_score quintile to identify who is movable"
+      }
+    },
+    "stage3": {
+      "status": "completed",
+      "output_file": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\evaluation\\master.md",
+      "idea_file": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\evaluation\\idea.txt",
+      "result": {
+        "question_score": 9,
+        "identification_score": 8,
+        "data_score": 8,
+        "novelty_score": 7,
+        "impact_score": 7,
+        "threats_addressed_score": 8,
+        "composite_score": 7.9,
+        "top_threats": [
+          "Sample non-representativeness: platform sample (Prolific/Lucid/MTurk) limits generalizability to general publics and policymakers — CPS comparison partially mitigates but does not resolve",
+          "Mechanism moderators may be post-treatment: if apartheid knowledge and racial justice attitudes were measured after treatment exposure, the mechanism test is uninterpretable — instrument must be reviewed immediately",
+          "Label comprehension failure still unaddressed: no manipulation check confirms respondents distinguish apartheid from persecution legally vs. rhetorically"
+        ],
+        "verdict": "PROMISING",
+        "one_line_summary": "Upgraded from a clean A/B test to a mechanism-decomposing RCT; pre-registration + specification curve neutralize the HARK concern, and the historical-resonance vs. racial-justice-priming test is genuinely novel — but the mechanism test is only credible if moderators were measured pre-treatment, which must be verified immediately.",
+        "final_score": 7.9,
+        "status": "STALLED",
+        "iterations": 3,
+        "title": "Apartheid vs. Persecution Label Effects on ICC Referral Support",
+        "refined_question": "Does labeling Israeli actions as 'apartheid' vs. 'persecution' differentially increase support for ICC referral, holding casualty salience constant?",
+        "method": "OLS with treatment dummy (apartheid_vs_persecution_treat), LASSO covariate selection, CATE estimation by pro_israel_score quintile",
+        "data_sources": [
+          "Survey experiment already collected (N=1,185)"
+        ]
+      },
+      "completed_at": "2026-04-02T20:04:00.334953"
+    },
+    "stage3_3": {
+      "status": "skipped",
+      "reason": "cannot_identify_panel_structure",
+      "completed_at": "2026-04-02T20:04:00.348040"
+    },
+    "stage3_5": {
+      "status": "completed",
+      "action": "APPROVE",
+      "data_selection": {
+        "choice": 1,
+        "use_external": false
+      },
+      "completed_at": "2026-04-02T20:08:03.262808",
+      "approved_strategy": {
+        "title": "Apartheid vs. Persecution Label Effects on ICC Referral Support",
+        "method": "OLS with treatment dummy (apartheid_vs_persecution_treat), LASSO covariate selection, CATE estimation by pro_israel_score quintile",
+        "design": "Does labeling Israeli actions as 'apartheid' vs. 'persecution' differentially increase support for ICC referral, holding casualty salience constant?",
+        "data_sources": [
+          "Public_Study_Data.tab"
+        ],
+        "pre_analysis_plan": "",
+        "user_notes": "Use ONLY the main dataset (Public_Study_Data.tab). Do NOT reference or require any external datasets."
+      }
+    },
+    "stage3_7": {
+      "status": "completed",
+      "n_must": 30,
+      "n_should": 15,
+      "n_nice": 0,
+      "n_fatal_pitfalls": 0,
+      "fatal_pitfalls": [],
+      "domain_result": {
+        "code_requirements": [
+          {
+            "category": "randomization_check",
+            "requirement": "Produce a covariate balance table (treatment vs control) with standardized mean differences (SMD) and p-values from t-tests. Flag any covariate with SMD > 0.1 or p < 0.10 as a balance failure requiring investigation.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Primary OLS specification: ICC_referral_support ~ apartheid_vs_persecution_treat + LASSO_selected_covariates, with HC2 heteroskedasticity-robust standard errors (not HC1/HC3). Report coefficient, 95% CI, and effect size in outcome SD units.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "LASSO covariate selection must use cross-validated lambda (cv.glmnet or sklearn equivalent with CV). Document the exact lambda chosen and how many of the 126 columns survive selection. Do NOT include post-LASSO variables mechanically; run OLS on selected set using standard SEs (Post-LASSO OLS, not LASSO coefficients directly).",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "CATE by pro_israel_score quintile: estimate treatment effect within each quintile via OLS with quintile-x-treatment interactions. Report point estimates + 95% CIs for all five quintiles in a single table. Test joint significance of heterogeneity (F-test on interaction terms).",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "If ICC referral support is ordinal (Likert), report both OLS and ordered probit as parallel specifications. Confirm conclusions are qualitatively identical across both; if not, explain divergence.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "estimation",
+            "requirement": "Report unadjusted (no covariates) treatment effect alongside adjusted specification in the same table. This documents how much LASSO covariate adjustment moves the estimate — a large shift suggests residual confounding from imperfect randomization.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Permutation/randomization inference: reshuffle treatment label 2000+ times and recompute the t-statistic. Report the exact p-value under sharp null. This is especially important given N=1185 which may be underpowered for small effects.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Estimate CATE using a continuous interaction (treatment x pro_israel_score, centered) in addition to quintile binning. Quintile results must not reverse sign relative to the continuous specification.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Sensitivity to outcome coding: if support is measured on a scale (e.g., 1-7), re-run primary OLS with outcome dichotomized at the median AND at 'strong support' threshold. Confirm sign and significance stability.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Attrition/missing-data analysis: report missingness rates by treatment arm for outcome and key covariates. If differential missingness > 2% between arms, run inverse-probability-weighting (IPW) as a robustness check.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Manipulation check / awareness covariate: if the survey includes any measure of prior familiarity with 'apartheid' terminology, include it as a moderator. Respondents who already knew the term may respond differently from naive ones — this is a referee red flag for framing experiments.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Multiple-outcome correction: if ICC referral support is one of several outcomes tested, report Benjamini-Hochberg adjusted q-values alongside raw p-values. Even if it is the sole pre-specified primary outcome, document this explicitly.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Exclude top and bottom 1% of pro_israel_score as outlier robustness check. Verify CATE quintile results do not hinge on extreme scorers.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "power",
+            "requirement": "Report post-hoc MDE (minimum detectable effect) at 80% power given N=1185 and observed outcome variance. If the detected effect is close to the MDE, flag underpowering explicitly rather than overclaiming precision.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "cate_estimation",
+            "requirement": "For CATE quintiles, report cell N per quintile x treatment cell. Flag any cell with N < 30 as unreliable; widen to terciles if quintile cells are too sparse.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "cate_estimation",
+            "requirement": "Report whether the CATE monotonically increases or decreases across quintiles, or is non-monotonic. Non-monotonicity must be explicitly discussed — it changes the political economy interpretation.",
+            "priority": "SHOULD",
+            "source": "domain"
+          },
+          {
+            "category": "construction",
+            "requirement": "Document pro_israel_score construction in code and appendix: which columns, what aggregation (sum, mean, factor score), and whether it was standardized pre- or post-analysis. If factor analysis, report Cronbach's alpha.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "construction",
+            "requirement": "Assert that treatment assignment is binary (0/1) with no partial assignment, missing values, or third conditions. Any respondent in a third label condition (e.g., 'genocide') must be explicitly excluded or coded as control with justification.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "construction",
+            "requirement": "Verify that casualty salience variables are balanced or held constant between arms — this is stated as a design control. Run a specific balance test on all casualty-related columns and report it in Table 1.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "reporting",
+            "requirement": "Report Cohen's d for the main treatment effect. Editors in political psychology / public opinion journals now require standardized effect sizes, not just p-values.",
+            "priority": "MUST",
+            "source": "domain"
+          },
+          {
+            "category": "reporting",
+            "requirement": "Include a CONSORT-style participant flow diagram: total recruited → screened out → randomized to each arm → completed outcome → analytic sample. Required for any survey experiment.",
+            "priority": "SHOULD",
+            "source": "domain"
+          }
+        ],
+        "data_warnings": [
+          "126 columns on 1185 rows creates a 10:1 column-to-row ratio — LASSO must use cross-validation strictly; manual variable selection post-LASSO inflates false positive rates.",
+          "pro_israel_score constructed from survey items may be endogenous to the treatment itself if any score items were measured post-treatment. Verify the temporal ordering in the survey instrument.",
+          "Framing experiments on politically charged topics (Israel-Palestine) are prone to social desirability bias and survey satisficing — check for response time data or straight-lining patterns if available.",
+          "Quintile cutpoints for pro_israel_score are sample-dependent; if computed in-sample, report the actual score thresholds so the paper is replicable.",
+          "With N=1185 split across quintiles, each quintile x arm cell is ~118 observations — CATE estimates at the extremes will have wide confidence intervals and low power for detecting heterogeneity.",
+          "The 'apartheid' label carries legal connotations that may interact with respondent legal literacy or news consumption; these potential confounders should be checked against available covariates.",
+          "If the survey was fielded on MTurk or Prolific, report platform, completion rate, and whether attention checks were used to filter responses — reviewers in public opinion research will ask.",
+          "Missing outcome data in survey experiments is rarely MCAR; test whether missingness on ICC referral support predicts treatment arm or pro_israel_score."
+        ],
+        "tables_required": [
+          "Table 1: Covariate balance table — means by arm, SMD, p-values, with casualty-salience variables highlighted in a separate panel",
+          "Table 2: Main OLS results — unadjusted, LASSO-adjusted, and ordered probit side-by-side with HC2 SEs and Cohen's d",
+          "Table 3: CATE estimates by pro_israel_score quintile — point estimates, 95% CIs, cell N, F-test for heterogeneity",
+          "Table 4: LASSO covariate selection summary — variables selected, their OLS coefficients in the adjusted specification",
+          "Table A1 (appendix): Full OLS results with all LASSO-selected covariates reported",
+          "Table A2 (appendix): Robustness to outcome coding (continuous, median-dichotomized, 'strong support' dichotomized)",
+          "Table A3 (appendix): Permutation test results and IPW estimates if differential attrition is detected"
+        ],
+        "figures_required": [
+          "Figure 1: Coefficient plot — treatment effect with 95% CI across all specifications (unadjusted, adjusted, ordered probit) on a single axis for visual comparison",
+          "Figure 2: CATE by quintile — dot plot with 95% CIs across five quintiles, horizontal reference line at zero, annotated with cell N",
+          "Figure 3: Distribution of pro_israel_score by treatment arm (overlaid histograms or density plots) to confirm balance on this key moderator",
+          "Figure 4: Continuous CATE — predicted treatment effect as a function of pro_israel_score (continuous interaction), with pointwise confidence band"
+        ]
+      },
+      "methods_result": {
+        "code_requirements": [
+          {
+            "category": "inference",
+            "requirement": "Use HC2 heteroskedasticity-robust standard errors (not HC1/White) for the main OLS estimator. HC2 has better finite-sample properties than HC1 and is preferred for N~1000 experiments. Report alongside 95% CIs.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "inference",
+            "requirement": "Apply Double/Debiased LASSO (Belloni, Chernozhukov & Hansen 2014) for post-selection inference — NOT naive post-LASSO OLS. Naive post-selection OLS produces invalid SEs and biased estimates due to omitted-variable bias from the selection step. Use 'doubleml' Python package or implement the partialling-out estimator manually.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "inference",
+            "requirement": "For CATE estimates across pro_israel_score quintiles (5 comparisons), apply Benjamini-Hochberg FDR correction in addition to reporting unadjusted p-values. Report both. Do NOT rely solely on unadjusted p-values for the heterogeneity analysis.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "inference",
+            "requirement": "Conduct a joint F-test (or chi-squared Wald test) for treatment effect heterogeneity across quintiles (H0: all five quintile-specific CATEs are equal). A pattern of 'some quintiles significant, some not' is NOT sufficient evidence of heterogeneity without this joint test.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "inference",
+            "requirement": "If survey respondents were recruited in batches, waves, or via MTurk HITs with natural groupings, cluster SEs at that grouping level. If individual randomization with no natural clusters, document this explicitly and confirm HC2 suffices. Do NOT cluster arbitrarily.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "Run a covariate balance check: regress the treatment indicator on all pre-treatment covariates and report a joint F-test (H0: all coefficients = 0). This verifies randomization integrity. A significant F-statistic is a red flag requiring investigation.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "Check for differential attrition or non-response by treatment arm. If treatment completion rates differ, the estimand shifts from ATE to a selected population. Report completion rates per arm and test equality.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "Report LASSO lambda selection method (cross-validation vs. BIC vs. theory-driven). For Double-LASSO, use separate LASSO for (a) regressing outcome on controls and (b) regressing treatment on controls. Document the number of covariates selected in each step.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "If the ICC referral support outcome is measured on a Likert scale (e.g., 1-5 or 1-7), test whether treating it as continuous is defensible: report the empirical distribution, check for mass points at endpoints, and run ordered logit/probit as a robustness check.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "specification",
+            "requirement": "Check variance of the outcome by treatment arm (Levene/Breusch-Pagan test). Heteroskedasticity that is correlated with treatment is theoretically expected if the treatment shifts both mean and variance of beliefs — HC2 SEs handle this but it should be documented.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Report three specifications in a single table: (1) Raw difference in means with HC2 SEs, no controls; (2) OLS with pre-specified baseline controls only (no LASSO); (3) Double-LASSO. The coefficient stability across these three is the primary credibility check.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Estimate CATE using a continuous interaction (treatment × pro_israel_score as a continuous variable) in addition to the quintile split. Report both. Quintile splits can be sensitive to binning choices and may mask or manufacture heterogeneity.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Placebo test: re-run the main specification with a randomly assigned pseudo-treatment (same sample size and balance) to verify the inferential procedure's Type I error rate under the null. Repeat 500+ times and confirm rejection rate ≈ 0.05.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Run the main specification excluding respondents who failed attention checks or completed the survey in implausibly short time (speeders). Report N excluded and verify results are stable.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "robustness",
+            "requirement": "Test sensitivity of CATE results to quintile cutpoint choice: re-run with terciles and quartiles. If heterogeneity patterns change substantially across binning choices, that is a major credibility concern to flag.",
+            "priority": "SHOULD",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "Main results table must include: treatment coefficient, HC2 SE in parentheses, 95% CI in brackets, N, R², control set description, and a note on lambda selection for LASSO specifications. No asterisks without also reporting CIs.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "Covariate balance table must be included in the paper or appendix: columns for treatment arm, control arm, difference, and p-value of t-test. Cover all major demographic and attitudinal covariates including pro_israel_score.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "CATE plot: show point estimates with 95% CIs for each pro_israel_score quintile, clearly labeled. Overlay the ATE as a horizontal reference line. Use the BH-adjusted significance threshold as the decision boundary for heterogeneity claims.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "presentation",
+            "requirement": "Report the exact wording of both treatment conditions ('apartheid' and 'persecution' labels) and the control condition in the paper body, not just the appendix. Label framing is the core mechanism — exact wording is critical for replication.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "DO NOT use naive post-LASSO OLS (run LASSO, note selected variables, re-run OLS on those variables with standard HC2 SEs). This is a known error that produces anti-conservative inference. The Double-LASSO partialling-out approach is the correct procedure.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "DO NOT treat the five quintile CATE estimates as independent hypothesis tests without correction. With 5 tests at alpha=0.05, expected false positives under global null = 0.25. BH correction or joint F-test is required.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "DO NOT include post-treatment variables as controls in the main OLS. If pro_israel_score or any attitudinal variable could be affected by the treatment (even partially), controlling for it induces bad-control bias. Verify all LASSO covariate candidates are pre-treatment or demographic.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "DO NOT interpret the treatment effect as 'apartheid label increases support more than persecution label' if the design has no pure control (no-label) arm. The coefficient measures the DIFFERENCE between the two label treatments, not the level effect of either. State the estimand precisely.",
+            "priority": "MUST",
+            "source": "methods"
+          },
+          {
+            "category": "pitfall",
+            "requirement": "Avoid demand characteristic confounding: if respondents infer the researcher's intent from the label (e.g., 'apartheid' signals a more politically charged framing), the mechanism may be demand effects rather than the label per se. Discuss this limitation explicitly.",
+            "priority": "SHOULD",
+            "source": "methods"
+          }
+        ],
+        "method_warnings": [
+          "LASSO covariate selection followed by naive OLS (not Double-LASSO) is one of the most common and consequential errors in applied ML-assisted causal inference. The inferential invalidity is not cosmetic — SEs can be severely anti-conservative.",
+          "With N=1185 and only two treatment arms, the study is reasonably powered for the ATE but may be underpowered for detecting heterogeneity across 5 quintile groups (each quintile ~237 observations). Pre-register a minimum detectable effect for the heterogeneity tests or explicitly acknowledge power limitations.",
+          "pro_israel_score is likely a continuous composite. Quintile splitting discards within-quintile variation and may be sensitive to outliers in the tails. The continuous interaction robustness check is essential, not optional.",
+          "If ICC referral support is binary or near-binary (e.g., yes/no), LPM-OLS is defensible but should be accompanied by logit/probit marginal effects as robustness. Large predicted probabilities outside [0,1] would be a warning sign.",
+          "Survey experiments on politically sensitive topics (Israel-Palestine, ICC) are susceptible to social desirability bias and acquiescence bias that may be differential by treatment arm if labels prime different identity cues. Discuss as a threat to internal validity."
+        ],
+        "must_not_claim": [
+          "Must not claim 'apartheid label causes higher ICC support' — the estimand is the differential effect of the apartheid label *relative to* the persecution label, not a level effect versus a no-label baseline.",
+          "Must not claim heterogeneous treatment effects exist based solely on visual inspection of quintile-specific coefficients or selectively significant quintile p-values without a joint F-test.",
+          "Must not claim LASSO 'controls for all relevant confounders' — LASSO selects among observed covariates only. Unobserved confounders are irrelevant for the ATE if randomization holds, but the balance check must confirm this.",
+          "Must not claim double-LASSO results are robust to model misspecification — Double-LASSO requires approximate sparsity and correct functional form assumptions. These are not guaranteed with 126 columns.",
+          "Must not extrapolate the treatment effect to non-survey populations or non-experimental settings — the sample composition (MTurk, opt-in panel, etc.) bounds the external validity claims."
+        ]
+      },
+      "checklist_path": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\strategy\\referee_checklist.md",
+      "completed_at": "2026-04-02T20:09:21.876079"
+    },
+    "stage4a": {
+      "status": "completed",
+      "strategy_dir": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\strategy",
+      "completed_at": "2026-04-02T20:20:51.923458"
+    },
+    "stage4bc": {
+      "status": "completed",
+      "scripts_dir": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\scripts\\python",
+      "scripts": [
+        "00_clean.py",
+        "01_main.py",
+        "02_robustness.py",
+        "03_output.py"
+      ],
+      "all_scripts_ok": true,
+      "critic_score": 75,
+      "critic_result": {
+        "score": 75,
+        "summary": "Manual intervention."
+      },
+      "validation": {
+        "hard_passed": 12,
+        "hard_failed": 0,
+        "hard_total": 12,
+        "soft_passed": 3,
+        "soft_failed": 6,
+        "soft_total": 9
+      },
+      "validation_hard_pass": true,
+      "completed_at": "2026-04-02T20:20:56.246272"
+    },
+    "stage4_5": {
+      "status": "completed",
+      "audit_report": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\quality_reports\\data_audit.md",
+      "n_critical": 0,
+      "n_warnings": 3,
+      "flags": [
+        {
+          "severity": "WARNING",
+          "category": "variable_construction",
+          "detail": "No 'insurance_cat' column found in clean data."
+        },
+        {
+          "severity": "WARNING",
+          "category": "sample_size",
+          "detail": "Total sample N = 784. Consider power limitations."
+        },
+        {
+          "severity": "WARNING",
+          "category": "survey_weights",
+          "detail": "No survey weight column found. Results may not be population-representative."
+        }
+      ],
+      "completed_at": "2026-04-02T20:20:56.260789"
+    },
+    "stage5": {
+      "status": "completed",
+      "paper_dir": "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\paper",
+      "saved_files": [
+        "C:\\Users\\jesus\\Desktop\\papers-HQ-\\projects\\data_first_20260402_195004\\paper\\main.tex"
+      ],
+      "compiled": true,
+      "critic_score": 80,
+      "critic_result": {
+        "score": 80,
+        "summary": "Manual intervention."
+      },
+      "validation": {
+        "hard_passed": 2,
+        "hard_failed": 1,
+        "hard_total": 3,
+        "soft_passed": 4,
+        "soft_failed": 2,
+        "soft_total": 6
+      },
+      "validation_hard_pass": false,
+      "completed_at": "2026-04-02T20:25:58.849330"
+    },
+    "stage6": {
+      "status": "completed",
+      "decision": "MINOR_REVISIONS",
+      "rr_round": 2,
+      "domain_score": 69,
+      "methods_score": 76,
+      "avg_score": 72.5,
+      "editor_result": {
+        "desk_decision": "PROCEED",
+        "reason": "The paper presents a clean, well-executed survey experiment on a policy-relevant question at the intersection of international law and public opinion. The identification strategy is sound (randomized vignette with confirmed balance), the sample size is adequate for the claimed precision, and the null result is reported transparently with appropriate equivalence-testing logic. The writing is clear, the estimands are well-defined, and the robustness battery is thorough. The lack of pre-registration is noted but the authors disclose this honestly. The topic—whether legal labels in ICC discourse move U.S. public opinion—is substantively interesting and the informative-null framing is methodologically defensible. Minor concerns (Lee bounds interpretation, exploratory hawkishness result, no manipulation check reported) are appropriate for referees rather than grounds for desk rejection.",
+        "referee_1_type": "CREDIBILITY",
+        "referee_2_type": "MEASUREMENT"
+      },
+      "domain_result": {
+        "score": 69,
+        "decision": "MAJOR_REVISIONS",
+        "dimension_scores": {
+          "contribution_novelty": 78,
+          "literature_positioning": 63,
+          "substantive_arguments": 65,
+          "external_validity": 62,
+          "journal_fit": 75
+        },
+        "major_comments": [
+          "No manipulation check is reported. For a null-result paper, the absence of a comprehension/recall check makes it impossible to distinguish a true null from experimental failure due to inattention or prior attitude anchoring. This must be added before the informative-null framing is credible.",
+          "The balance table reports education means of -11.035 (treatment) and 4.627 (control) after the authors claim only one observation (coded -3105) was winsorized. Winsorizing one value to 5 cannot produce a group mean of -11 on a conventional education scale; additional corrupted values must be present. The full cleaning procedure must be documented and the extent of data anomalies transparently reported.",
+          "The Lee attrition bounds [-0.118, -0.053] both exclude zero and are both negative. The paper characterizes this as consistent with the null, but under worst-case attrition assumptions these bounds imply a systematically negative treatment effect — the opposite of a null. The paper must reconcile this finding with the main analysis, show arm-specific attrition rates, and clearly state whether the bounds are substantively informative or mechanical artifacts of the trimming procedure.",
+          "The paper does not report the survey fielding date or engage with the fact that ICC proceedings in the Israeli-Palestinian situation were active and high-profile during the period when this study was plausibly conducted (2024-2026). The ICC investigation was opened in 2021, arrest warrant applications were filed in May 2024, and warrants were issued November 2024. This institutional context directly affects vignette realism, respondent priors, and the ecological validity argument."
+        ],
+        "minor_comments": [
+          "Composite index reliability (Cronbach's alpha, item-total correlations) is not reported. Given the null result, readers need confidence that low index coherence is not inflating outcome variance.",
+          "The survey platform is not named. Lucid, Prolific, and MTurk have materially different sample quality profiles; this omission impedes assessment and replication.",
+          "The control condition ('persecution') is itself a legally loaded term with strong historical associations. A neutral control would have helped distinguish between 'both labels are equally activating' and 'neither label moves opinion.' This should be acknowledged as a design limitation.",
+          "No survey weights and no sample benchmarking against population distributions, despite policy-implications framing in terms of aggregate U.S. public opinion.",
+          "The Glick (1996) ambivalent sexism citation is theoretically inappropriate for the in-group/out-group dynamics of national identity in conflict settings. Replace with Tajfel & Turner (1979) or Brewer (1999).",
+          "The hawkishness CATE (p=0.031, not surviving correction) appears in the abstract, introduction, robustness section, and discussion section. This repetition creates a misleading impression of a positive finding for a paper claiming an informative null.",
+          "Item-level results for the three components of the ICC accountability index are not reported. Showing that all three items individually yield nulls would strengthen the informative-null interpretation."
+        ],
+        "missing_literature": [
+          "Berinsky, Margolis & Sances (2014) on satisficing and attention in survey experiments — essential for null-result credibility.",
+          "Clifford, Jewell & Waggoner (2015) on attention checks and data quality in online panels.",
+          "Coppock & McClellan (2019) on the properties of Lucid convenience samples.",
+          "Jerit & Barabas (2012) on partisan motivated reasoning as a moderator of framing effects — directly relevant to the polarized topic.",
+          "Simmons (2009) Mobilizing for Human Rights — foundational for ICC public legitimacy.",
+          "Falk & Tilley (2017 UN report), Human Rights Watch (2021), Amnesty International (2022) — these institutional reports are the real-world policy context motivating the advocacy-strategy discussion.",
+          "Lakens et al. (2018, Advances in Methods and Practices in Psychological Science) — updated equivalence testing guidance beyond the 2017 piece already cited.",
+          "Levendusky & Malhotra (2016) on elite cues reducing persuasion in polarized environments."
+        ]
+      },
+      "methods_result": {
+        "score": 76,
+        "decision": "MINOR_REVISIONS",
+        "dimension_scores": {
+          "identification_strategy": 86,
+          "estimation_implementation": 70,
+          "statistical_inference": 74,
+          "robustness_sensitivity": 72,
+          "replication_readiness": 68
+        },
+        "sanity_checks": {
+          "sign": "PASS",
+          "magnitude": "PASS",
+          "dynamics": "NA",
+          "consistency": "PASS"
+        },
+        "major_comments": [
+          "Lee attrition bounds are presented as point estimates only (no SEs or CIs), and are misinterpreted: bounds of [-0.118, -0.053] that exclude zero would constitute evidence of a significant negative effect, not support for a null. CIs for the bounds must be constructed and correctly interpreted.",
+          "Composite outcome index is underspecified: response scales, weighting scheme, and Cronbach's alpha are not reported; effects on individual components are not shown.",
+          "Balance table uses pre-winsorized education data (Mean T = -11.035 vs Mean C = 4.627), making it invalid as a balance check. The over_65 imbalance (p=0.037) and the multiple-testing correction procedure applied to all 126 balance tests should be explicitly described.",
+          "No manipulation check is reported. An online null result is ambiguous between a true null and treatment non-receipt from inattentive respondents.",
+          "Multiple heterogeneity dimensions (pro-Israel quintiles, hawkishness quintiles, hostile sexism tertiles, yielding 15 subgroup estimates) are explored post-hoc without pre-registration, with BH correction applied only within moderator families. The hawkishness Q2 finding (-0.310, p=0.031) is mentioned repeatedly in a way that overstates its evidentiary weight."
+        ],
+        "minor_comments": [
+          "Table 1 note reports N=784 but analytic sample is N=760; the discrepancy should be explained in the table note.",
+          "Ordered probit coefficient is not comparable to OLS SD-unit estimates; report a marginal effect or note the scaling difference explicitly.",
+          "Double LASSO selected controls should be listed in an appendix for transparency.",
+          "Abstract CI phrasing ('rules out effects larger than 0.22 SD in magnitude') obscures asymmetry of the CI [-0.217, +0.061]; the positive bound is only +0.061.",
+          "Absence of survey weights should be acknowledged as a limitation for external validity to the U.S. adult population.",
+          "Vignette pre-testing details (sample, comprehension pass rate) are mentioned but not reported.",
+          "Mechanism discussion (redundancy, crystallized priors, limited connotations) is plausible but untested; even descriptive evidence on respondent awareness of South Africa associations would help discriminate."
+        ]
+      },
+      "decision_result": {
+        "avg_referee_score": 72.5,
+        "must_address": [
+          "No manipulation check reported: without a comprehension/recall check, a null result cannot be distinguished from experimental failure due to inattention. Must be added for the informative-null claim to be credible.",
+          "Balance table contains corrupted education data (group means of -11.035 and 4.627) inconsistent with the claimed single winsorized observation. Full cleaning procedure must be documented and extent of data anomalies transparently disclosed.",
+          "Lee attrition bounds [-0.118, -0.053] are misinterpreted: both bounds exclude zero and are negative, implying a systematically negative treatment effect under worst-case attrition — not a null. Confidence intervals for the bounds must be constructed and the finding reconciled with the main analysis, including arm-specific attrition rates.",
+          "Survey fielding date must be reported and the paper must engage with the active ICC proceedings context (2021 investigation, May 2024 warrant applications, November 2024 warrants issued), which directly affects vignette realism, respondent priors, and ecological validity claims."
+        ],
+        "should_address": [
+          "Composite outcome index is underspecified: response scales, weighting scheme, and Cronbach's alpha must be reported; effects on individual components should be shown separately.",
+          "The over_65 imbalance (p=0.037) should be explicitly acknowledged and the multiple-testing correction procedure applied across all 126 balance tests should be described.",
+          "Post-hoc heterogeneity analysis across 15 subgroup estimates (pro-Israel quintiles, hawkishness quintiles, hostile sexism tertiles) lacks pre-registration; the hawkishness Q2 finding (-0.310, p=0.031) is repeatedly highlighted in a way that overstates its evidentiary weight given the exploratory nature of the analysis. BH correction scope and rationale should be clarified."
+        ],
+        "may_address": [
+          "Authors may consider pre-registering any follow-up heterogeneity analyses or clearly demarcating confirmatory vs. exploratory subgroup findings in the paper's framing.",
+          "Additional discussion of how ICC institutional salience may have affected treatment uptake or ceiling effects on outcome measures would strengthen the ecological validity argument."
+        ],
+        "fatal_issues": [],
+        "decision": "MINOR_REVISIONS"
+      },
+      "completed_at": "2026-04-02T20:35:49.877684"
+    },
+    "stage7": {
+      "status": "completed",
+      "replication_ok": true,
+      "replication_results": {
+        "00_clean.py": {
+          "ok": true,
+          "returncode": 0
+        },
+        "01_main.py": {
+          "ok": true,
+          "returncode": 0
+        },
+        "02_robustness.py": {
+          "ok": true,
+          "returncode": 0
+        },
+        "03_output.py": {
+          "ok": true,
+          "returncode": 0
+        }
+      },
+      "outputs_reproducible": true,
+      "changed_outputs": [],
+      "validation": {
+        "code": {
+          "hard_passed": 12,
+          "hard_failed": 0,
+          "hard_total": 12,
+          "soft_passed": 4,
+          "soft_failed": 4,
+          "soft_total": 8
+        },
+        "paper": {
+          "hard_passed": 3,
+          "hard_failed": 0,
+          "hard_total": 3,
+          "soft_passed": 4,
+          "soft_failed": 2,
+          "soft_total": 6
+        },
+        "integration": {
+          "hard_passed": 6,
+          "hard_failed": 0,
+          "hard_total": 6,
+          "soft_passed": 9,
+          "soft_failed": 2,
+          "soft_total": 11
+        },
+        "all_hard_pass": true,
+        "total_hard_failures": 0
+      },
+      "components": {
+        "identification": 90,
+        "code": 75,
+        "paper": 80,
+        "polish": 72.5,
+        "replication": 100
+      },
+      "aggregate_score": 82.9,
+      "gate_passed": true,
+      "below_minimum": {},
+      "targeting": {
+        "primary_journal": {
+          "name": "Journal of Economic Behavior & Organization",
+          "fit_reason": "Strong fit for empirical tech/labor papers",
+          "turnaround_months": 4
+        },
+        "backup_journal": {
+          "name": "Information Economics and Policy",
+          "fit_reason": "Specialized in technology and economics",
+          "turnaround_months": 3
+        },
+        "conferences": [
+          "AEA Annual Meeting",
+          "WEAI",
+          "European Economic Association"
+        ]
+      },
+      "user_choice": "accept",
+      "completed_at": "2026-04-02T21:27:44.589551"
+    }
+  },
+  "path_c": true,
+  "updated_at": "2026-04-02T21:27:44.589562"
+}

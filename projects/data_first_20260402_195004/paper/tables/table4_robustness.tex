@@ -1,0 +1,26 @@
+\begin{table}[htbp]
+\centering
+\caption{Robustness Checks}
+\label{tab:robustness}
+\begin{tabular}{lccccc}
+\hline\hline
+Test & Outcome & Coef & SE & $p$-value & $N$ \\
+\hline
+Ordered probit & ICC\_referral & -0.0724 & 0.0785 & 0.3564 & 760 \\
+Logit (binary outcome) & ICC\_referral\_binary & -0.0492 & 0.1554 & 0.7516 & 760 \\
+Logit marginal effect & ICC\_referral\_binary & -0.0107 & 0.0339 & 0.7516 & 760 \\
+CATE hawkish Q1 & ICC\_referral & -0.1156 & 0.1495 & 0.4393 & 192 \\
+CATE hawkish Q2 & ICC\_referral & -0.3103 & 0.1438 & 0.0309 & 205 \\
+CATE hawkish Q3 & ICC\_referral & -0.1373 & 0.1745 & 0.4317 & 102 \\
+CATE hawkish Q4 & ICC\_referral & 0.1367 & 0.1576 & 0.3857 & 161 \\
+CATE hawkish Q5 & ICC\_referral & 0.2794 & 0.2157 & 0.1953 & 100 \\
+CATE hostile\_sexism T1 & ICC\_referral & -0.0694 & 0.1186 & 0.5583 & 280 \\
+CATE hostile\_sexism T2 & ICC\_referral & -0.1305 & 0.1099 & 0.2352 & 308 \\
+CATE hostile\_sexism T3 & ICC\_referral & -0.0114 & 0.1640 & 0.9447 & 172 \\
+Lee bounds & ICC\_referral & [-0.1180, -0.0533] &  &  & 760 \\
+Sensitivity: no controls & ICC\_referral & -0.0700 & 0.0743 & 0.3459 & 760 \\
+Sensitivity: baseline controls & ICC\_referral & -0.0768 & 0.0730 & 0.2926 & 759 \\
+Sensitivity: full controls & ICC\_referral & -0.0765 & 0.0711 & 0.2820 & 759 \\
+\hline\hline
+\end{tabular}
+\end{table}

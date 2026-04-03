@@ -182,8 +182,18 @@ def _check_results_to_paper(vr: ValidationResult, project_dir: Path):
 
     summary_text = summary.read_text(encoding="utf-8")
 
-    # Extract key numbers from results_summary (decimals likely to be effect sizes)
-    summary_nums = set(re.findall(r'-?\d+\.\d+', summary_text))
+    # Normalize numbers for comparison (handles 0.0700 vs 0.070 vs 0.07)
+    def _norm_nums(text):
+        raw = re.findall(r'-?\d+\.\d+', text)
+        normalized = set()
+        for n in raw:
+            try:
+                normalized.add(round(float(n), 3))
+            except ValueError:
+                pass
+        return normalized
+
+    summary_nums = _norm_nums(summary_text)
 
     # Check if these numbers appear in the paper (main.tex)
     main_tex = paper_dir / "main.tex"
@@ -192,9 +202,8 @@ def _check_results_to_paper(vr: ValidationResult, project_dir: Path):
                "paper/main.tex not found")
         return
 
-    paper_nums = set()
     paper_text = main_tex.read_text(encoding="utf-8")
-    paper_nums.update(re.findall(r'-?\d+\.\d+', paper_text))
+    paper_nums = _norm_nums(paper_text)
 
     if not summary_nums:
         vr.add("results_in_paper", CheckLevel.SOFT, False,
@@ -213,22 +222,19 @@ def _check_results_to_paper(vr: ValidationResult, project_dir: Path):
 
     # Check that abstract has at least one result number
     abstract_text = ""
-    main_tex = paper_dir / "main.tex"
-    if main_tex.exists():
-            main_content = main_tex.read_text(encoding="utf-8")
-            m = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', main_content, re.DOTALL)
-            if m:
-                abstract_text = m.group(1)
+    m = re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}', paper_text, re.DOTALL)
+    if m:
+        abstract_text = m.group(1)
 
     if abstract_text:
-        abstract_nums = set(re.findall(r'-?\d+\.\d+', abstract_text))
+        abstract_nums = _norm_nums(abstract_text)
         abstract_overlap = abstract_nums & summary_nums
         vr.add(
             "abstract_has_results", CheckLevel.SOFT,
             len(abstract_overlap) >= 1,
             f"Abstract contains {len(abstract_overlap)} numbers from results"
             if abstract_overlap else
-            "Abstract contains NO numbers from results_summary — "
+            "Abstract contains NO numbers from results_summary -- "
             "main finding may be missing or fabricated"
         )
 

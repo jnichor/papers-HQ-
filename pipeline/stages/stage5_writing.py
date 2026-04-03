@@ -136,7 +136,12 @@ def run(project_dir: Path, state: dict) -> dict:
                 "Tell Claude: 'revisa el pipeline'. Claude will read the strategy memo "
                 "and results, write a single main.tex with all sections (intro, literature, "
                 "data, empirical strategy, results, robustness, conclusion), create "
-                "references.bib, compile to PDF, and signal completion."
+                "references.bib, compile to PDF, and signal completion. "
+                "WORD COUNT: The paper MUST be between 5,000 and 12,000 words. "
+                "Papers under 5,000 words fail validation. Expand the introduction, "
+                "literature review, and discussion sections to reach this target. "
+                "NUMBERS: The abstract MUST contain the exact key results (coefficients, "
+                "p-values) matching the numbers in results_summary.md."
                 + output_note
             ),
             files=[
@@ -202,6 +207,29 @@ def run(project_dir: Path, state: dict) -> dict:
     validation = validate_paper(paper_dir, project_dir, compiled=compiled)
     print(f"  [5] {validation.format_for_log()}")
 
+    # Compute paper score from validation results
+    counts = validation.summary_counts
+    hard_pass = counts.get("hard_pass", 0)
+    hard_total = counts.get("hard_total", 1)
+    soft_pass = counts.get("soft_pass", 0)
+    soft_total = counts.get("soft_total", 1)
+
+    if hard_pass == hard_total:
+        paper_score = 60
+    else:
+        paper_score = 40
+
+    if soft_total > 0:
+        soft_rate = soft_pass / soft_total
+        paper_score += int(soft_rate * 40)
+
+    if compiled:
+        paper_score = min(100, paper_score + 5)
+
+    print(f"  [5] Paper score: {paper_score}/100 "
+          f"(hard {hard_pass}/{hard_total}, soft {soft_pass}/{soft_total}, "
+          f"compiled={'yes' if compiled else 'no'})")
+
     # Save state
     saved_files = []
     if main_tex.exists():
@@ -212,8 +240,12 @@ def run(project_dir: Path, state: dict) -> dict:
         "paper_dir": str(paper_dir),
         "saved_files": saved_files,
         "compiled": compiled,
-        "critic_score": 80,  # manual intervention assumed good quality
-        "critic_result": {"score": 80, "summary": "Manual intervention."},
+        "critic_score": paper_score,
+        "critic_result": {
+            "score": paper_score,
+            "summary": f"Computed from validation: hard {hard_pass}/{hard_total}, "
+                       f"soft {soft_pass}/{soft_total}",
+        },
         "validation": validation.summary_counts,
         "validation_hard_pass": validation.hard_pass,
         "completed_at": datetime.now().isoformat(),

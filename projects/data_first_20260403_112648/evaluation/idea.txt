@@ -1,0 +1,51 @@
+RESEARCH IDEA SUBMISSION
+========================
+
+IDEA TITLE:
+Program Complementarity: Is Voucher + Training Superadditive?
+
+PAPER TYPE: Empirical
+
+RESEARCH QUESTION:
+Does simultaneous access to both a wage voucher and vocational training produce employment gains larger than the sum of each program in isolation, and does this complementarity vary by gender or SES?
+
+HYPOTHESIS / MECHANISM:
+The dataset's rare four-arm RCT structure allows direct identification of whether vouchers and training are complements or substitutes — a question virtually no published paper has answered cleanly. If superadditive, bundling is cost-effective; if substitutes, policymakers must choose. The interaction estimator β₃ is fully identified by randomization, requiring no additional assumptions.
+
+IDENTIFICATION STRATEGY:
+Factorial RCT with interaction term (Voucher × Training) — Construct four treatment cells from voucher/training/both dummies. Run joint F-test of pre-treatment balance across cells. Estimate LPM with Y = α + β₁·Voucher + β₂·Training + β₃·(Voucher×Training) + controls. Test H₀: β₃ = 0. Plot cell-mean employment outcomes with 95% CIs.
+
+DATA SOURCES:
+- voucher
+- training
+- both
+- treatstat
+- employment outcome variables l, t, w, e
+
+DATA STRUCTURE: pooled-cross-sections
+TIME COVERAGE: ['17/07/2010', '1707/2010', '20/07/2010', '24/07/2010']
+
+
+*** IDENTIFICATION ASSESSMENT (MANDATORY) ***
+You MUST explicitly evaluate the following in your assessment:
+
+1. SOURCE OF EXOGENOUS VARIATION: What is the specific source of identifying
+   variation? (e.g., "policy reform in year X", "geographic discontinuity at
+   threshold Y", "instrument Z correlated with treatment but not outcome").
+   Is it clearly stated? Is it plausible?
+
+2. IDENTIFICATION THREATS: What are the main threats to identification?
+   (e.g., selection bias, reverse causality, omitted variables, violation of
+   exclusion restriction, non-parallel trends).
+
+3. PRE-TRENDS: Can parallel trends be tested with the available data?
+   If not, how does this affect credibility?
+
+4. IDENTIFICATION TIER: Classify the identification strategy:
+   - Tier 1 (STRONG): RCT, natural experiment, sharp RDD, DiD with pre-trends
+   - Tier 2 (GOOD): IV with strong first stage, fuzzy RDD, DiD without pre-trends
+   - Tier 3 (MODERATE): Panel FE exploiting within-variation, CRE
+   - Tier 4 (WEAK): Cross-sectional matching, OLS with controls, decompositions
+
+Include these assessments in your evaluation and factor them into your score.
+A Tier 4 identification strategy should not score above 6/10 regardless of novelty.

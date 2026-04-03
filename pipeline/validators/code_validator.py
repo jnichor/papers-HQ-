@@ -148,21 +148,43 @@ def _check_code_patterns(vr: ValidationResult, scripts_dir: Path):
                 "Random seed found" if has_seed else "No random seed set"
             )
 
-    # SE clustering in regression scripts
+    # SE robustness in regression scripts (design-aware)
     for name in ["01_main.py", "02_robustness.py"]:
         path = scripts_dir / name
         if not path.exists():
             continue
         code = path.read_text(encoding="utf-8")
-        has_cluster = bool(re.search(
-            r'(cov_type.*cluster|\.fit\(.*cluster|get_robustcov|ClusteredSE|cluster.*se)',
-            code, re.IGNORECASE
+        code_lower = code.lower()
+
+        # Detect if this is an RCT/experiment (individual-level, no clustering needed)
+        is_rct_design = bool(re.search(
+            r'(rct|randomiz|experiment|vignette|treatment.*assign|balance.*table)',
+            code_lower
         ))
-        vr.add(
-            f"se_clustering:{name}", CheckLevel.SOFT, has_cluster,
-            "Clustering pattern found" if has_cluster else
-            "No SE clustering detected — verify this is intentional"
-        )
+
+        if is_rct_design:
+            # For RCTs: check for HC2 robust SEs (not clustering)
+            has_robust_se = bool(re.search(
+                r'(HC[0-9]|hc2|heteroskedast.*robust|cov_type.*HC|robust.*se)',
+                code, re.IGNORECASE
+            ))
+            vr.add(
+                f"se_robust:{name}", CheckLevel.SOFT, has_robust_se,
+                "HC robust SEs found (appropriate for individual-level RCT)"
+                if has_robust_se else
+                "No robust SEs detected -- HC2 recommended for RCT"
+            )
+        else:
+            # For panel/DiD: check for clustering
+            has_cluster = bool(re.search(
+                r'(cov_type.*cluster|\.fit\(.*cluster|get_robustcov|ClusteredSE|cluster.*se)',
+                code, re.IGNORECASE
+            ))
+            vr.add(
+                f"se_clustering:{name}", CheckLevel.SOFT, has_cluster,
+                "Clustering pattern found" if has_cluster else
+                "No SE clustering detected -- verify this is intentional"
+            )
 
     # Imports in 01_main.py
     main_path = scripts_dir / "01_main.py"
@@ -293,23 +315,94 @@ def _check_code_patterns(vr: ValidationResult, scripts_dir: Path):
 
 # Keywords that indicate a MUST requirement is addressed in the code.
 # Each tuple: (checklist keyword pattern, code keyword patterns)
-_CHECKLIST_CODE_MAP = [
-    # Estimation
+# Generic (works for any design)
+_CHECKLIST_CODE_MAP_GENERIC = [
+    (r"summary.*statistic", [r"summary.*stat|describe|mean.*sd|\.describe\("]),
+    (r"missingness|missing.*data", [r"miss|isnull|dropna|MCAR|MAR"]),
+    (r"data.*provenance|document.*construct", [r"provenance|source.*log|construct|document"]),
+    (r"winsoriz", [r"winsoriz|clip|percentile.*trim"]),
+    (r"robust.*standard|heteroskedast", [r"HC[0-9]|robust|cov_type|hc2|heteroskedast"]),
+    (r"placebo.*test|permutation|reshuffle", [r"placebo|permut|shuffle|fake.*treat|randomiz.*infer|reshuffle"]),
+    (r"heterogeneity.*interact|subgroup|CATE", [r"interact|subgroup|CATE|quintile|tercile|_x_"]),
+    (r"power.*analys|MDE|minimum.*detect", [r"power|MDE|minimum.*detect|effect.*size"]),
+    (r"multiple.*test.*correct|benjamini|FDR", [r"benjamini|hochberg|FDR|bonferroni|multiple.*test"]),
+    # Presentation / reporting requirements
+    (r"report.*three.*spec|three.*specification", [r"spec.*1|spec.*2|spec.*3|raw.*diff|baseline.*control|lasso"]),
+    (r"main.*results.*table|treatment.*coefficient", [r"table|to_csv|to_latex|result"]),
+    (r"confidence.*interval|95.*CI", [r"ci_|conf.*int|1\.96|ci_lower|ci_upper"]),
+    (r"joint.*f.?test|wald.*test|chi.*squared", [r"f_test|f.?stat|wald|chi2|joint.*test|fvalue"]),
+    (r"continuous.*interact|linear.*interact", [r"continuous.*inter|treat.*score|_x_.*score"]),
+    (r"cell.*N|report.*N.*per|sample.*size.*per", [r"cell.*n|group.*count|value_counts|crosstab|n_per"]),
+    # Additional generic requirements
+    (r"r.?squared|within.?r2|goodness.*fit", [r"r.?squared|r2|rsquared|r_sq"]),
+    (r"n.*observat|sample.*size|number.*obs", [r"nobs|n_obs|len\(|shape\[0\]|\.nobs"]),
+    (r"standard.*error.*parenthes|SE.*parenthes", [r"se.*paren|\(.*se\)|std.*error"]),
+    (r"sensitivity.*analys|sensitivity.*check", [r"sensitiv|alternative|robust"]),
+    (r"save.*result|export.*result|write.*csv", [r"to_csv|to_parquet|to_excel|save|write"]),
+    (r"figure.*plot|generate.*figure", [r"plt\.|savefig|figure|\.plot\("]),
+    (r"latex.*table|tex.*table|generate.*table", [r"to_latex|\\\\begin\{tab|\.tex|tabular"]),
+    (r"log.*transform|logarithm", [r"np\.log|log_|log\("]),
+    (r"seed|reproducib", [r"random\.seed|np\.random\.seed|rng|default_rng"]),
+]
+
+# DiD / event study specific
+_CHECKLIST_CODE_MAP_DID = [
     (r"event.study|distributed.lag", [r"event.?time|event.?study|distributed.?lag"]),
     (r"cluster.*standard.*error", [r"cluster|cov_type.*cluster"]),
     (r"wild.*cluster.*bootstrap", [r"wildboot|wild.*cluster.*bootstrap|boottest|rademacher"]),
     (r"pre.?trend.*test|joint.*f.?test", [r"pre.?trend|f.?test|wald.*test|joint.*test"]),
-    (r"heterogeneity.*interact", [r"interact|_x_|epi.*post|treatment.*var"]),
-    (r"placebo.*test", [r"placebo|fake.*treat|false.*treatment"]),
-    (r"country.*specific.*trend", [r"country.*trend|t_trend|linear.*trend"]),
+    (r"country.*specific.*trend|unit.*trend", [r"country.*trend|t_trend|linear.*trend|unit.*trend"]),
     (r"balanced.*panel", [r"balanced|balance"]),
-    (r"winsoriz", [r"winsoriz|clip|percentile.*trim"]),
-    (r"composition.*effect|language.*entry", [r"composition|n_language|balanced.*lang"]),
-    (r"hhi.*shannon|both.*outcome", [r"hhi.*entropy|entropy.*hhi|for.*outcome"]),
-    (r"summary.*statistic", [r"summary.*stat|describe|mean.*sd"]),
-    (r"normalized.*hhi", [r"hhi_norm|normalized"]),
-    (r"data.*provenance", [r"provenance|source.*log"]),
-    (r"missingness|missing.*data", [r"miss|isnull|dropna|MCAR|MAR"]),
+    (r"composition.*effect", [r"composition|n_language|balanced.*lang"]),
+    (r"stagger|callaway|sun.*abraham", [r"callaway|sun.*abraham|stagger|csdid|pyfixest.*did"]),
+    (r"bacon.*decomp|goodman", [r"bacon|decomp|goodman"]),
+    (r"anticipat|lead.*period", [r"anticipat|lead|k.*=.*1|k.*=.*2"]),
+    (r"alternative.*treat.*timing|treatment.*defin", [r"alt.*treat|threshold|alternative.*def"]),
+    # Additional DiD requirements
+    (r"alternative.*outcome|different.*outcome|robustness.*outcome", [r"alt.*outcome|alternative.*outcome|outcome.*2|_alt|v2x|freedom.*house"]),
+    (r"power.*analys.*cohort|MDE.*cohort|minimum.*detect.*cohort", [r"power|MDE|minimum.*detect|n_g.*<"]),
+    (r"overlap|common.*support|covariate.*distribut", [r"overlap|common.*support|propensity|covariate.*dist"]),
+    (r"honest.*did|rambachan|roth.*2022|sensitivity.*pre.?trend", [r"honest.*did|rambachan|roth|sensitivity.*pre|breakdown"]),
+    (r"permutation.*fake.*timing|randomize.*treatment.*onset", [r"permut.*timing|shuffle.*first|fake.*onset|random.*assign.*cohort"]),
+    (r"never.?treated|not.?yet.?treated|control.*group.*type", [r"never.*treat|not.*yet.*treat|control.*group"]),
+    (r"simultaneous.*confidence|pointwise.*confidence", [r"simultaneous|pointwise|bonferroni.*ci"]),
+    (r"cohort.*table|cohort.*composition", [r"cohort.*table|cohort.*compos|n_countries.*cohort|groupby.*cohort"]),
+    (r"normalize.*reference|omit.*period|reference.*period", [r"ref.*period|omit|normalize|t.*=.*-1"]),
+    (r"aggregate.*ATT|simple.*ATT|calendar.*time.*ATT", [r"simple.*att|aggregate|calendar.*att|att_simple"]),
+]
+
+# RCT / experiment specific
+_CHECKLIST_CODE_MAP_RCT = [
+    # Balance and randomization
+    (r"balance.*table|covariate.*balance|randomiz.*check", [r"balance|smd|standardized.*mean|t.?test"]),
+    (r"regress.*treatment.*covariate|joint.*f.*balance", [r"joint.*f|ols.*treat.*covar|f_test.*balance|fvalue"]),
+    (r"casualty.*salient|held.*constant|balanced.*between", [r"balance|t.?test|smd"]),
+    # Effect sizes
+    (r"cohen.*d|effect.*size|standardized.*effect", [r"cohen|effect.*size|cohens_d"]),
+    # Standard errors
+    (r"HC2|heteroskedast.*robust", [r"HC2|hc2|heteroskedast|cov_type.*HC"]),
+    # LASSO
+    (r"LASSO|double.*select|post.*selection|cross.*valid.*lambda", [r"lasso|LassoCV|double.*select|debiased|cross_val"]),
+    (r"lambda.*select|cv\.glmnet|sklearn.*CV", [r"lambda|alpha|LassoCV|cross_val"]),
+    # CATE
+    (r"CATE.*quintile|treatment.*within.*quintile", [r"CATE|quintile|qcut|treatment.*quintile|cate"]),
+    (r"quintile.*treatment.*interact", [r"quintile.*inter|q\d.*treat|quintile_x"]),
+    # Attrition
+    (r"attrition|non.?response|differential.*dropout|completion.*rate", [r"attrition|non.?response|dropout|lee.*bound|missing.*treat"]),
+    (r"lee.*bound", [r"lee.*bound|trim|attrition.*bound"]),
+    # Treatment verification
+    (r"treatment.*binary|assert.*treatment|no.*partial", [r"treat.*binary|assert|unique.*treat|nunique.*treat|value_counts.*treat"]),
+    # Specifications
+    (r"unadjusted.*effect|raw.*difference|no.*control|without.*covariate", [r"unadjust|raw.*diff|no.*control|without.*control|spec.*1"]),
+    (r"ordered.*probit|ordinal|likert", [r"ordered.*probit|ordinal|OrderedModel|likert"]),
+    (r"logit|binary.*outcome", [r"logit|Logit|binary|_binary"]),
+    # Reporting
+    (r"manipulation.*check|attention.*check|comprehension", [r"manipulation|attention.*check|comprehension"]),
+    (r"report.*wording|exact.*wording|treatment.*condition", [r"wording|vignette|condition|label"]),
+    # Pitfalls (these match if the code avoids the pitfall)
+    (r"do not.*naive.*post.*lasso|not.*naive", [r"double|debiased|two.*step"]),
+    (r"do not.*independent.*hypothesis|without.*correction", [r"benjamini|hochberg|FDR|bonferroni"]),
+    (r"do not.*post.*treatment.*control", [r"pre.*treatment|baseline|pre_treat"]),
 ]
 
 
@@ -350,13 +443,30 @@ def _check_referee_checklist_coverage(
 
     all_code_lower = all_code.lower()
 
+    # Detect design type to use appropriate keyword map
+    is_rct = bool(re.search(
+        r'(rct|randomiz|experiment|vignette|treatment.*assign|balance.*table)',
+        all_code_lower
+    ))
+    is_did = bool(re.search(
+        r'(did|event.study|stagger|twfe|diff.*in.*diff)',
+        all_code_lower
+    ))
+
+    # Build keyword map: generic + design-specific
+    checklist_map = list(_CHECKLIST_CODE_MAP_GENERIC)
+    if is_rct:
+        checklist_map.extend(_CHECKLIST_CODE_MAP_RCT)
+    if is_did:
+        checklist_map.extend(_CHECKLIST_CODE_MAP_DID)
+
     # Check each MUST against code
     implemented = 0
     not_implemented = []
     for must in musts:
         must_lower = must.lower()
         found = False
-        for checklist_pat, code_pats in _CHECKLIST_CODE_MAP:
+        for checklist_pat, code_pats in checklist_map:
             if re.search(checklist_pat, must_lower):
                 if any(re.search(cp, all_code_lower) for cp in code_pats):
                     found = True

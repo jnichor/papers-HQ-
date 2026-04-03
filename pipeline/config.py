@@ -16,9 +16,9 @@ MAX_STAGE3_PIVOTS   = 2      # Stage 3: max pivot iterations before stall warnin
 MAX_RR_ROUNDS       = 3      # Stage 6: max revise-and-resubmit rounds
 MAX_CODE_RETRIES    = 1      # Stage 4b: max error→fix→retry cycles
 MAX_STAGE7_IMPROVE  = 3      # Stage 7: max improvement rounds
-CRITIC_GATE         = 65     # Minimum critic score to pass a quality gate
-SUBMISSION_GATE     = 70     # Final aggregate score for submission
-COMPONENT_MIN       = 60     # Every component must be >= this
+CRITIC_GATE         = 70     # Minimum critic score to pass a quality gate
+SUBMISSION_GATE     = 85     # Final aggregate score for submission
+COMPONENT_MIN       = 70     # Every component must be >= this
 
 # Stage 6: Peer Review decision thresholds (based on avg referee score)
 ACCEPT_GATE         = 75     # avg >= 75 and no fatal issues -> ACCEPT

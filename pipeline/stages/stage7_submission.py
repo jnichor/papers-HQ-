@@ -169,6 +169,16 @@ def run(project_dir: Path, state: dict) -> dict:
         from .stage4_strategy import _score_identification
         ident_score = _score_identification(state)
 
+    # Adjust identification score based on peer review feedback:
+    # If referees gave a very different assessment, blend the scores
+    polish_score = stage6.get("avg_score", 0)
+    if polish_score > 0 and ident_score > 0:
+        # If referees score is much lower than identification score,
+        # they likely disagree with the identification credibility.
+        # Blend: 80% identification + 20% peer review signal
+        if polish_score < ident_score - 15:
+            ident_score = int(ident_score * 0.8 + polish_score * 0.2)
+
     components = {
         "identification": ident_score,
         "code": code_score,
@@ -814,68 +824,93 @@ def _generate_feedback_pdf(
     # ── 5. RECOMMENDATIONS ──
     pdf.section_title("5. Recommendations to Improve Score")
 
+    # Read peer review must-address issues
+    review_dir = project_dir / "reviews"
+    must_issues = []
+    if review_dir.exists():
+        for dec_file in sorted(review_dir.glob("editorial_decision*.md"), reverse=True):
+            try:
+                import json as _json
+                dec_text = dec_file.read_text(encoding="utf-8")
+                dec_data = _json.loads(dec_text.strip().strip("`").strip("json").strip())
+                must_issues = dec_data.get("must_address", [])
+                break
+            except Exception:
+                pass
+
+    # Show referee must-address issues first (most actionable)
+    if must_issues:
+        pdf.sub_title("[FROM REFEREES] Must-address issues from peer review")
+        for i, issue in enumerate(must_issues[:8], 1):
+            safe = issue.encode("latin-1", errors="replace").decode("latin-1")
+            pdf.body_text("  %d. %s" % (i, safe[:200]))
+
+    # Generic recommendations based on component scores
     recs = []
     if components.get("identification", 0) < 90:
         recs.append((
             "HIGH IMPACT", "Improve identification strategy",
-            "The biggest bottleneck. To reach 90+, add exogenous variation:\n"
-            "  (a) Exploit Italy's ChatGPT ban (March-April 2023) for synthetic control\n"
-            "  (b) Exploit country-level API access rollout for staggered DiD\n"
-            "  (c) Add pre-COVID data (2015-2019) for clean pre-trends"
+            "Add exogenous variation: natural experiments, policy discontinuities, "
+            "staggered rollout, or instrumental variables. RCTs score highest."
         ))
     if components.get("code", 0) < 90:
         recs.append((
-            "MEDIUM IMPACT", "Implement missing robustness checks",
-            "Common gaps: wild cluster bootstrap, Roth (2022) HonestDiD sensitivity, "
-            "fractional logit for bounded HHI, Benjamini-Hochberg correction."
+            "MEDIUM IMPACT", "Improve code quality",
+            "Address referee checklist gaps. Use validated packages (pyfixest, "
+            "linearmodels) instead of manual implementations. Add missing "
+            "robustness checks flagged by the code validator."
         ))
     if components.get("paper", 0) < 90:
         recs.append((
             "MEDIUM IMPACT", "Expand paper content",
-            "Target 8,000-12,000 words. Add full event-time coefficient table. "
-            "Add data appendix with variable definitions and provenance."
+            "Target 8,000-12,000 words. Ensure abstract contains exact key numbers "
+            "matching results_summary. Add data appendix with variable definitions."
         ))
     if components.get("polish", 0) < 80:
         recs.append((
             "LOW IMPACT (depends on above)", "Address referee feedback",
-            "Polish improves automatically when identification and code improve. "
-            "Focus on must-address issues from the editorial decision."
+            "Polish improves when identification and code improve. "
+            "Focus on must-address issues listed above."
         ))
-    recs.append((
-        "HIGHEST IMPACT", "Add new data sources",
-        "The single most effective improvement:\n"
-        "  - Country-level ChatGPT access restrictions (bans, API delays)\n"
-        "  - Pre-2020 GitHub data for clean pre-trends\n"
-        "  - Google Trends 'ChatGPT' by country as treatment intensity proxy\n"
-        "  - GitHub Copilot adoption rates by country as confound control"
-    ))
 
     for priority, rec_title, detail in recs:
-        pdf.sub_title(f"[{priority}] {rec_title}")
+        pdf.sub_title("[%s] %s" % (priority, rec_title))
         pdf.body_text(detail)
 
     # ── 6. SCORE IMPROVEMENT ESTIMATES ──
     pdf.section_title("6. Estimated Score Impact")
 
-    improvements = [
-        ("Add pre-2020 data (2015-2019)", "+5 to +10 identification, +3 polish"),
-        ("Exploit Italy ban (natural experiment)", "+10 to +15 identification, +5 polish"),
-        ("Implement wild cluster bootstrap", "+3 code"),
-        ("Implement HonestDiD sensitivity", "+3 code, +2 polish"),
-        ("Generate .tex tables in paper/tables/", "+2 paper, +2 code"),
-        ("Expand paper to 10,000+ words", "+3 paper"),
-        ("Address all SHOULD-address issues", "+5 polish"),
-        ("Full event-time coefficient table", "+2 paper, +1 polish"),
-    ]
+    improvements = []
+    if components.get("identification", 0) < 90:
+        improvements.append(("Stronger identification (RCT or natural experiment)", "+10 to +20 identification"))
+    if components.get("code", 0) < 85:
+        improvements.append(("Fix code validator soft failures", "+5 to +10 code"))
+    if components.get("paper", 0) < 85:
+        improvements.append(("Expand paper to 8,000+ words", "+5 paper"))
+        improvements.append(("Ensure abstract numbers match results", "+3 paper, +3 integration"))
+    if components.get("polish", 0) < 80:
+        improvements.append(("Address all referee must-address issues", "+5 to +10 polish"))
+    improvements.append(("Address all SHOULD-address issues", "+3 to +5 polish"))
+
     for improvement, impact in improvements:
-        pdf.body_text(f"  {improvement}:  {impact}")
+        pdf.body_text("  %s:  %s" % (improvement, impact))
+
+    # Estimate ceiling
+    id_score = components.get("identification", 0)
+    if id_score >= 90:
+        ceiling = 92
+    elif id_score >= 80:
+        ceiling = 88
+    elif id_score >= 70:
+        ceiling = 82
+    else:
+        ceiling = 75
 
     pdf.ln(4)
     pdf.body_text(
-        f"Current aggregate: {aggregate:.1f}/100. "
-        f"Ceiling with current data: ~88. "
-        f"Ceiling with Italy ban: ~95. "
-        f"Ceiling with pre-2020 + Italy ban: ~98."
+        "Current aggregate: %.1f/100. "
+        "Estimated ceiling with current data: ~%d. "
+        "To reach 90+: need RCT or strong natural experiment data." % (aggregate, ceiling)
     )
 
     # Save

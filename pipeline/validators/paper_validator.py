@@ -276,13 +276,26 @@ def _check_number_consistency(
     summary_text = summary_path.read_text(encoding="utf-8")
 
     # Extract numbers with at least one decimal (likely effect sizes / stats)
-    abstract_nums = set(re.findall(r'-?\d+\.\d+', abstract_text))
-    summary_nums = set(re.findall(r'-?\d+\.\d+', summary_text))
+    # Normalize: strip trailing zeros, handle sign variations
+    def _normalize_nums(text):
+        raw = re.findall(r'-?\d+\.\d+', text)
+        normalized = set()
+        for n in raw:
+            try:
+                val = float(n)
+                # Store as rounded to 3 decimals (handles 0.0700 vs 0.070 vs 0.07)
+                normalized.add(round(val, 3))
+            except ValueError:
+                pass
+        return normalized
+
+    abstract_nums = _normalize_nums(abstract_text)
+    summary_nums = _normalize_nums(summary_text)
 
     if not abstract_nums:
         vr.add(
             "numbers_consistent", CheckLevel.SOFT, False,
-            "No decimal numbers found in abstract — likely missing exact results"
+            "No decimal numbers found in abstract -- likely missing exact results"
         )
         return
 

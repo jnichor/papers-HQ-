@@ -440,6 +440,31 @@ def run(project_dir: Path, state: dict) -> dict:
     validation = validate_code(scripts_dir, project_dir, all_results)
     print(f"  [4c] {validation.format_for_log()}")
 
+    # Compute critic_score from validation results instead of hardcoding
+    counts = validation.summary_counts
+    hard_pass = counts.get("hard_pass", 0)
+    hard_total = counts.get("hard_total", 1)
+    soft_pass = counts.get("soft_pass", 0)
+    soft_total = counts.get("soft_total", 1)
+
+    # Base score: 60 if all hard pass, 40 if not
+    if hard_pass == hard_total:
+        code_score = 60
+    else:
+        code_score = 40
+
+    # Add up to 40 points based on soft check pass rate
+    if soft_total > 0:
+        soft_rate = soft_pass / soft_total
+        code_score += int(soft_rate * 40)
+
+    # Bonus if all scripts ran OK
+    if all_ok:
+        code_score = min(100, code_score + 5)
+
+    print(f"  [4c] Code score: {code_score}/100 "
+          f"(hard {hard_pass}/{hard_total}, soft {soft_pass}/{soft_total})")
+
     # Save state
     from datetime import datetime as _dt
     state["stages"]["stage4bc"] = {
@@ -447,8 +472,12 @@ def run(project_dir: Path, state: dict) -> dict:
         "scripts_dir": str(scripts_dir),
         "scripts": [s.name for s in py_scripts],
         "all_scripts_ok": all_ok,
-        "critic_score": 75,  # manual intervention assumed good quality
-        "critic_result": {"score": 75, "summary": "Manual intervention."},
+        "critic_score": code_score,
+        "critic_result": {
+            "score": code_score,
+            "summary": f"Computed from validation: hard {hard_pass}/{hard_total}, "
+                       f"soft {soft_pass}/{soft_total}",
+        },
         "validation": validation.summary_counts,
         "validation_hard_pass": validation.hard_pass,
         "completed_at": _dt.now().isoformat(),

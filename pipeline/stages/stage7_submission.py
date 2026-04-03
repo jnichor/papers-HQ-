@@ -589,85 +589,212 @@ def _generate_feedback_pdf(
     # ── 2. RESULTS DIAGNOSTICS ──
     pdf.section_title("2. Why the Results Look Like This")
 
+    # Read main results
+    main_path = project_dir / "data" / "clean" / "main_results.csv"
+    if main_path.exists():
+        import csv
+        with open(main_path, encoding="utf-8") as f:
+            main_rows = list(csv.DictReader(f))
+        if main_rows:
+            pdf.sub_title("Main findings")
+            for r in main_rows[:6]:
+                spec = r.get("specification", r.get("estimator", r.get("label", "?")))
+                # Find the coefficient column
+                coef = None
+                for col_name in ["coef", "att", "ATT", "estimate", "coefficient"]:
+                    if col_name in r and r[col_name]:
+                        try:
+                            coef = float(r[col_name])
+                            break
+                        except (ValueError, TypeError):
+                            pass
+                p_val = None
+                for col_name in ["p_value", "p", "pval", "Pr(>|t|)"]:
+                    if col_name in r and r[col_name]:
+                        try:
+                            p_val = float(r[col_name])
+                            break
+                        except (ValueError, TypeError):
+                            pass
+                if coef is not None:
+                    sig = ""
+                    if p_val is not None:
+                        sig = " (p=%.4f)%s" % (p_val, " ***" if p_val < 0.01 else " **" if p_val < 0.05 else " *" if p_val < 0.1 else "")
+                    pdf.body_text("  %s: coef = %+.4f%s" % (spec[:60], coef, sig))
+
+    # Read robustness results
     robustness_path = project_dir / "data" / "clean" / "robustness_results.csv"
     if robustness_path.exists():
         import csv
         with open(robustness_path, encoding="utf-8") as f:
             rob_rows = list(csv.DictReader(f))
 
-        baseline = [r for r in rob_rows if "Baseline" in r.get("label", "") and "hhi" in r.get("outcome", "")]
-        trends = [r for r in rob_rows if "Country trends" in r.get("label", "") and "hhi" in r.get("outcome", "")]
-        placebos = [r for r in rob_rows if "Placebo" in r.get("label", "")]
-        comp_adj = [r for r in rob_rows if "Composition" in r.get("label", "")]
+        if rob_rows:
+            pdf.sub_title("Robustness summary")
 
-        if baseline:
-            b = baseline[0]
-            pdf.sub_title("Baseline result")
-            pdf.body_text(
-                f"The baseline ATT for HHI is {float(b.get('att', 0)):+.4f} "
-                f"(p={float(b.get('pval', 1)):.4f}), suggesting ecosystem diversification."
-            )
+            # Count how many specs are significant vs not
+            sig_count = 0
+            insig_count = 0
+            for r in rob_rows:
+                p_val = None
+                for col_name in ["p", "pval", "p_value"]:
+                    if col_name in r and r[col_name]:
+                        try:
+                            p_val = float(r[col_name])
+                            break
+                        except (ValueError, TypeError):
+                            pass
+                if p_val is not None:
+                    if p_val < 0.05:
+                        sig_count += 1
+                    else:
+                        insig_count += 1
 
-        if trends:
-            t = trends[0]
-            pdf.sub_title("Why country trends eliminate the effect")
-            pdf.body_text(
-                f"Adding country-specific linear trends yields ATT = {float(t.get('att', 0)):+.4f} "
-                f"(p={float(t.get('pval', 1)):.3f}). The diversification was a pre-existing trend, "
-                f"not caused by AI tools. Each country was already on its own trajectory toward "
-                f"more language diversity before Q4 2022."
-            )
-
-        if placebos:
-            pdf.sub_title("Why placebos are significant")
-            pdf.body_text(
-                "Placebo tests assign a fake treatment date before ChatGPT existed. "
-                "Significant placebos mean the 'treatment effect' is not specific to "
-                "the actual date -- the same pattern exists at arbitrary dates."
-            )
-            for p in placebos[:4]:
+            total = sig_count + insig_count
+            if total > 0:
                 pdf.body_text(
-                    f"  {p.get('label', '?')}: ATT={float(p.get('att', 0)):+.4f}, "
-                    f"p={float(p.get('pval', 1)):.4f}"
+                    "Of %d robustness specifications: %d significant (p<0.05), "
+                    "%d insignificant." % (total, sig_count, insig_count)
                 )
+                if sig_count == 0:
+                    pdf.body_text(
+                        "No specification achieves statistical significance. "
+                        "This is consistent with a genuine null result or an underpowered study."
+                    )
+                elif insig_count == 0:
+                    pdf.body_text(
+                        "All specifications are significant. The result is robust "
+                        "across all tested variations."
+                    )
+                elif sig_count < insig_count:
+                    pdf.body_text(
+                        "Most specifications are insignificant. The significant results "
+                        "may reflect specific subgroups or thresholds rather than a "
+                        "general effect."
+                    )
 
-        if comp_adj:
-            c = comp_adj[0]
-            pdf.sub_title("Why the composition-adjusted effect reverses sign")
-            pdf.body_text(
-                f"Composition-adjusted ATT = {float(c.get('att', 0)):+.4f} "
-                f"(p={float(c.get('pval', 1)):.3f}). The sign reversal reveals the apparent "
-                f"diversification was driven by new languages entering the platform "
-                f"(extensive margin), not by developers redistributing activity (intensive "
-                f"margin). Among a fixed set of languages, concentration increased slightly."
-            )
+            # Show key robustness rows
+            pdf.sub_title("Key robustness checks")
+            for r in rob_rows[:10]:
+                label = r.get("specification", r.get("label", "?"))
+                att = None
+                for col_name in ["ATT", "att", "coef", "estimate"]:
+                    if col_name in r and r[col_name]:
+                        try:
+                            att = float(r[col_name])
+                            break
+                        except (ValueError, TypeError):
+                            pass
+                p_val = None
+                for col_name in ["p", "pval", "p_value"]:
+                    if col_name in r and r[col_name]:
+                        try:
+                            p_val = float(r[col_name])
+                            break
+                        except (ValueError, TypeError):
+                            pass
+                if att is not None:
+                    p_str = " (p=%.3f)" % p_val if p_val is not None else ""
+                    pdf.body_text("  %s: %+.4f%s" % (label[:55], att, p_str))
+
+    elif not main_path.exists():
+        pdf.body_text("No main_results.csv or robustness_results.csv found.")
 
     # ── 3. DATA LIMITATIONS ──
     pdf.section_title("3. Data Limitations")
 
     stage1 = state["stages"].get("stage1", {})
     data_profile = stage1.get("data_profile", {})
+    structure = data_profile.get("structure", "unknown")
+
     pdf.sub_title("Current data")
     pdf.body_text(
-        f"Rows: {data_profile.get('rows', '?'):,}  |  "
-        f"Columns: {data_profile.get('cols', '?')}  |  "
-        f"Structure: {data_profile.get('structure', '?')}"
+        "Rows: %s  |  Columns: %s  |  Structure: %s" % (
+            "{:,}".format(data_profile.get("rows", 0)) if data_profile.get("rows") else "?",
+            data_profile.get("cols", "?"),
+            structure,
+        )
     )
 
-    limitations = [
-        ("No pre-COVID data",
-         "Earliest data is 2020. Without 2015-2019, cannot establish a stable "
-         "pre-pandemic baseline or distinguish AI effects from pandemic recovery."),
-        ("Simultaneous treatment (no control group)",
-         "ChatGPT launched globally on the same date. No untreated countries exist, "
-         "so we cannot separate the AI effect from other global shocks in late 2022."),
-        ("Single platform (GitHub)",
-         "Data captures only public GitHub activity, not the global developer population. "
-         "Small countries produce noisy HHI estimates."),
-        ("Country-level aggregation",
-         "Cannot track individual developers. All findings are ecological -- "
-         "country patterns may not reflect individual behavior."),
-    ]
+    # Generate limitations based on actual data structure
+    selected_idea = state["stages"].get("stage2_5", {}).get("selected_idea", {})
+    id_level = selected_idea.get("identification_level", "")
+    method = selected_idea.get("method", "").lower()
+
+    limitations = []
+
+    # Structure-specific limitations
+    if structure == "cross-sectional":
+        limitations.append((
+            "Cross-sectional data",
+            "Single time snapshot. Cannot control for time-invariant unobservables "
+            "or track changes over time. Causal claims rely entirely on "
+            "randomization or instrumental variable assumptions."
+        ))
+    elif structure in ("panel", "wide-panel"):
+        limitations.append((
+            "Panel attrition",
+            "If units drop out of the panel over time, the remaining sample may be "
+            "non-representative. Check attrition rates and Lee bounds."
+        ))
+
+    # Design-specific limitations
+    if "rct" in method or "experiment" in method or "randomiz" in method or id_level == "A":
+        limitations.append((
+            "External validity",
+            "Experimental results may not generalize beyond the study sample. "
+            "The specific population, setting, and time period limit extrapolation."
+        ))
+        limitations.append((
+            "Demand effects",
+            "Survey/lab experiments may be subject to demand effects where "
+            "respondents guess the hypothesis and adjust their responses."
+        ))
+    elif id_level == "C" or "simultaneous" in method:
+        limitations.append((
+            "No control group",
+            "All units received the same treatment simultaneously. Cannot separate "
+            "the treatment effect from other concurrent shocks."
+        ))
+
+    # Sample size limitations
+    rows = data_profile.get("rows", 0)
+    if rows and rows < 1000:
+        limitations.append((
+            "Small sample",
+            "With N=%d, the study may be underpowered to detect small but "
+            "meaningful effects. Report minimum detectable effect (MDE)." % rows
+        ))
+
+    # Referee feedback limitations
+    stage6 = state["stages"].get("stage6", {})
+    must_issues = []
+    review_dir = project_dir / "reviews"
+    if review_dir.exists():
+        for dec_file in sorted(review_dir.glob("editorial_decision*.md"), reverse=True):
+            try:
+                import json as _json
+                dec_text = dec_file.read_text(encoding="utf-8")
+                dec_data = _json.loads(dec_text.strip().strip("`").strip("json").strip())
+                must_issues = dec_data.get("must_address", [])[:3]
+                break
+            except Exception:
+                pass
+
+    if must_issues:
+        limitations.append((
+            "Unresolved referee concerns",
+            "The following issues were flagged by referees and may limit the "
+            "paper's publishability: " + "; ".join(m[:80] for m in must_issues)
+        ))
+
+    if not limitations:
+        limitations.append((
+            "General",
+            "All empirical studies have limitations. Consult the referee feedback "
+            "for specific concerns about this paper."
+        ))
+
     for lim_title, lim_text in limitations:
         pdf.sub_title(lim_title)
         pdf.body_text(lim_text)

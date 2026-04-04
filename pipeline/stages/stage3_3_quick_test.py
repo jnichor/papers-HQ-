@@ -297,31 +297,90 @@ Keep it SIMPLE. For staggered DiD: define treatment as post-onset. For standard 
         save_state(project_dir, state)
         return state
 
-    # Execute the treatment construction
+    # Execute the treatment construction with safety checks
     outcome_col = setup["outcome_col"]
     treat_code = setup["treat_code"]
 
-    try:
-        exec(treat_code, {"df": df, "pd": pd, "np": np})
-    except Exception as e:
-        print(f"  [3.3] Treatment construction failed: {e} -- skipping")
+    # Validate outcome_col exists in data BEFORE exec
+    if outcome_col not in df.columns:
+        print(f"  [3.3] Outcome column '{outcome_col}' not in data -- skipping")
+        # Try to find a similar column
+        close = [c for c in df.columns if outcome_col.lower() in c.lower()]
+        if close:
+            print(f"  [3.3] Did you mean: {close[:5]}?")
         state["stages"]["stage3_3"] = {
-            "status": "skipped", "reason": f"treat_code_error: {e}",
+            "status": "skipped",
+            "reason": "outcome_col '%s' not found" % outcome_col,
             "completed_at": datetime.now().isoformat(),
         }
         save_state(project_dir, state)
         return state
 
-    if "treat" not in df.columns or outcome_col not in df.columns:
-        print(f"  [3.3] Missing columns after construction -- skipping")
+    # Validate treat_code is safe (no imports, no file operations, no network)
+    dangerous_patterns = ["import ", "open(", "exec(", "eval(", "__", "os.",
+                          "subprocess", "system(", "write(", "requests.",
+                          "urllib", "socket"]
+    treat_code_lower = treat_code.lower()
+    for pat in dangerous_patterns:
+        if pat in treat_code_lower:
+            print(f"  [3.3] Unsafe pattern '{pat}' in treat_code -- skipping")
+            state["stages"]["stage3_3"] = {
+                "status": "skipped",
+                "reason": "unsafe_treat_code: contains '%s'" % pat,
+                "completed_at": datetime.now().isoformat(),
+            }
+            save_state(project_dir, state)
+            return state
+
+    # Limit code length (Claude should generate 1-3 lines, not a full script)
+    if len(treat_code) > 500:
+        print(f"  [3.3] treat_code too long ({len(treat_code)} chars) -- skipping")
         state["stages"]["stage3_3"] = {
-            "status": "skipped", "reason": "columns_missing_after_exec",
+            "status": "skipped", "reason": "treat_code_too_long",
+            "completed_at": datetime.now().isoformat(),
+        }
+        save_state(project_dir, state)
+        return state
+
+    print(f"  [3.3] Executing treatment code: {treat_code[:80]}...")
+    n_before = len(df.columns)
+    try:
+        exec(treat_code, {"df": df, "pd": pd, "np": np})
+    except Exception as e:
+        print(f"  [3.3] Treatment construction failed: {e} -- skipping")
+        state["stages"]["stage3_3"] = {
+            "status": "skipped", "reason": "treat_code_error: %s" % str(e)[:100],
+            "completed_at": datetime.now().isoformat(),
+        }
+        save_state(project_dir, state)
+        return state
+
+    # Validate exec produced the expected column
+    if "treat" not in df.columns:
+        print(f"  [3.3] exec() did not create 'treat' column -- skipping")
+        print(f"  [3.3] Columns before: {n_before}, after: {len(df.columns)}")
+        state["stages"]["stage3_3"] = {
+            "status": "skipped", "reason": "treat_column_not_created",
+            "completed_at": datetime.now().isoformat(),
+        }
+        save_state(project_dir, state)
+        return state
+
+    # Validate treat is binary-ish (0/1 or small number of unique values)
+    n_unique = df["treat"].nunique()
+    if n_unique > 10:
+        print(f"  [3.3] WARNING: 'treat' has {n_unique} unique values -- expected binary (0/1)")
+    if n_unique < 2:
+        print(f"  [3.3] 'treat' has only {n_unique} unique value -- no variation, skipping")
+        state["stages"]["stage3_3"] = {
+            "status": "skipped", "reason": "treat_no_variation",
             "completed_at": datetime.now().isoformat(),
         }
         save_state(project_dir, state)
         return state
 
     print(f"  [3.3] Outcome: {outcome_col}, Treatment: treat")
+    print(f"  [3.3] treat values: {df['treat'].value_counts().to_dict()}")
     print(f"  [3.3] Treated obs: {df['treat'].sum():,} / {len(df):,}")
 
     # ===================================================================

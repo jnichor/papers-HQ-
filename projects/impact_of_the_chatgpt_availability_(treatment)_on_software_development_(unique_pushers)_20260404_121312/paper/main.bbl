@@ -1,0 +1,48 @@
+\begin{thebibliography}{}
+
+\bibitem[Abadie et~al., 2010]{abadie2010synthetic}
+Abadie, A., Diamond, A., and Hainmueller, J. (2010).
+\newblock Synthetic control methods for comparative case studies.
+\newblock {\em Journal of the American Statistical Association},
+  105(490):493--505.
+
+\bibitem[Brynjolfsson et~al., 2023]{brynjolfsson2023generative}
+Brynjolfsson, E., Li, D., and Raymond, L.~R. (2023).
+\newblock Generative {AI} at work.
+\newblock {\em NBER Working Paper 31161}.
+
+\bibitem[Eloundou et~al., 2023]{eloundou2023gpts}
+Eloundou, T., Manning, S., Mishkin, P., and Rock, D. (2023).
+\newblock {GPTs} are {GPTs}: An early look at the labor market impact potential
+  of large language models.
+\newblock {\em arXiv preprint arXiv:2303.10130}.
+
+\bibitem[King et~al., 2013]{king2013censorship}
+King, G., Pan, J., and Roberts, M.~E. (2013).
+\newblock How censorship in {China} allows government criticism but silences
+  collective expression.
+\newblock {\em American Political Science Review}, 107(2):326--343.
+
+\bibitem[Noy and Zhang, 2023]{noy2023experimental}
+Noy, S. and Zhang, W. (2023).
+\newblock Experimental evidence on the productivity effects of generative
+  artificial intelligence.
+\newblock {\em Science}, 381(6654):187--192.
+
+\bibitem[{OpenAI}, 2022]{openai2022chatgpt}
+{OpenAI} (2022).
+\newblock Introducing {ChatGPT}.
+\newblock \url{https://openai.com/blog/chatgpt}.
+
+\bibitem[Peng et~al., 2023]{peng2023impact}
+Peng, S., Kalliamvakou, E., Cihon, P., and Demirer, M. (2023).
+\newblock The impact of {AI} on developer productivity: Evidence from {GitHub
+  Copilot}.
+\newblock {\em arXiv preprint arXiv:2302.06590}.
+
+\bibitem[Roberts, 2018]{roberts2018internet}
+Roberts, M.~E. (2018).
+\newblock The digital divide and internet censorship.
+\newblock {\em Annual Review of Political Science}, 21:315--337.
+
+\end{thebibliography}

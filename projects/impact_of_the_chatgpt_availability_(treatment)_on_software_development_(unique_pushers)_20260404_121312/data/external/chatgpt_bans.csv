@@ -1,0 +1,8 @@
+iso2_code,country,ban_start,ban_end,treatment_type,notes
+IT,Italy,2023-03-31,2023-04-28,temporary_ban,Italian DPA ordered ChatGPT blocked; lifted after OpenAI compliance
+CN,China,2022-11-30,,persistent_block,ChatGPT never officially available; Great Firewall blocks access
+RU,Russia,2022-11-30,,persistent_block,OpenAI does not serve Russia; API blocked since launch
+IR,Iran,2022-11-30,,persistent_block,OpenAI does not serve Iran
+KP,North Korea,2022-11-30,,persistent_block,No internet access for general population
+SY,Syria,2022-11-30,,persistent_block,OpenAI does not serve Syria
+CU,Cuba,2022-11-30,,persistent_block,OpenAI does not serve Cuba

@@ -121,20 +121,37 @@ def run(project_dir: Path, state: dict) -> dict:
         # exact numbers instead of hallucinating them
         results_content = ""
         key_files = ["main_results.csv", "robustness_results.csv",
-                     "summary_stats.csv", "arm_means.csv", "balance_table.csv"]
+                     "summary_stats.csv", "arm_means.csv", "balance_table.csv",
+                     "cohort_table.csv", "cate_results.csv"]
+        truncated_files = []
         for fname in key_files:
             fpath = clean_dir / fname if clean_dir.exists() else None
             if fpath and fpath.exists():
                 try:
                     content = fpath.read_text(encoding="utf-8")
-                    # Truncate large files
-                    if len(content) > 3000:
-                        content = content[:3000] + "\n... (truncated)"
+                    # Smart truncation: keep complete rows, never cut mid-line
+                    if len(content) > 4000:
+                        lines = content.splitlines()
+                        header = lines[0] if lines else ""
+                        # Keep header + first 50 data rows
+                        kept = [header] + lines[1:51]
+                        content = "\n".join(kept)
+                        truncated_files.append(
+                            "%s (showing 50 of %d rows)" % (fname, len(lines) - 1)
+                        )
                     results_content += (
                         "\n\n--- %s ---\n%s" % (fname, content)
                     )
                 except Exception:
                     pass
+
+        if truncated_files:
+            results_content += (
+                "\n\nNOTE: The following files were truncated to fit: %s. "
+                "All key results should be in the first 50 rows. "
+                "If you need a number not shown, state it is unavailable."
+                % ", ".join(truncated_files)
+            )
 
         if results_content:
             output_note += (
@@ -269,9 +286,32 @@ def run(project_dir: Path, state: dict) -> dict:
             script_results={"referee_feedback": smart_truncate(latest_decision, 3000)},
         )
 
-    # After intervention: compile LaTeX and validate
-    print("\n  [5] Compiling paper after manual intervention...")
-    compiled = _compile_latex(paper_dir)
+    # After intervention: verify main.tex exists, compile, validate
+    main_tex = paper_dir / "main.tex"
+    if not main_tex.exists():
+        print("  [5] WARNING: main.tex not found after intervention!")
+        print("  [5] The paper was not written. Check intervention logs.")
+        compiled = False
+    else:
+        tex_size = main_tex.stat().st_size
+        if tex_size < 1000:
+            print(f"  [5] WARNING: main.tex is only {tex_size} bytes -- likely incomplete")
+
+        print("\n  [5] Compiling paper after manual intervention...")
+        compiled = _compile_latex(paper_dir)
+
+        # Verify PDF actually exists and is non-trivial
+        pdf_path = paper_dir / "main.pdf"
+        if compiled and pdf_path.exists():
+            pdf_size = pdf_path.stat().st_size
+            if pdf_size < 5000:
+                print(f"  [5] WARNING: main.pdf is only {pdf_size} bytes -- may be empty/broken")
+                compiled = False
+            else:
+                print(f"  [5] PDF verified: {pdf_size:,} bytes")
+        elif compiled:
+            print("  [5] WARNING: Compilation reported success but main.pdf not found!")
+            compiled = False
 
     validation = validate_paper(paper_dir, project_dir, compiled=compiled)
     print(f"  [5] {validation.format_for_log()}")

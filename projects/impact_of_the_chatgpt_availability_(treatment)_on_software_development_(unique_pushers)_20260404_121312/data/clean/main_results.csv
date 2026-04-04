@@ -1,0 +1,4 @@
+model,coefficient,std_error,p_value,n_obs,r_squared
+DiD_persistent_bans,-0.388827,0.259782,0.134552,3586,0.01187
+pre_trend_F_test,3.264973,,0.000326,3586,0.018786
+synth_control_italy,0.012974,0.022619,,23,

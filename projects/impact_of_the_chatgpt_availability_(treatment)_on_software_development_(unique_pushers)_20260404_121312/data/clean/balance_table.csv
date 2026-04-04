@@ -1,0 +1,4 @@
+variable,mean_banned,mean_control,difference
+total_pushers,294585.4727,114611.9066,179973.5661
+log_pushers,10.6073,9.4943,1.113
+n_languages,71.5455,39.8939,31.6516

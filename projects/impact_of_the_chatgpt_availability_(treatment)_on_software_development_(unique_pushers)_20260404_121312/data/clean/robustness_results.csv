@@ -1,0 +1,9 @@
+model,coefficient,std_error,p_value,n_obs,r_squared
+placebo_outcome_n_languages,-0.166379,0.089175,0.062162,3586,0.006962
+placebo_timing_Q2_2021,-0.002271,0.246626,0.992654,1629,1e-06
+did_CN_only,-1.385767,0.035878,0.0,3494,0.031565
+did_RU_only,-0.548562,0.035885,0.0,3494,0.005126
+exclude_covid_2020,-0.398351,0.176326,0.023949,3012,0.015164
+oecd_only_controls,-0.025525,0.259516,0.921671,989,0.000699
+exclude_small_countries,-0.380832,0.259347,0.142087,3390,0.012676
+permutation_test,-0.388827,0.206685,0.006,500,

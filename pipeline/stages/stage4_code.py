@@ -432,13 +432,29 @@ def run(project_dir: Path, state: dict) -> dict:
             project_dir=project_dir,
         )
 
-    # After intervention: validate everything exists
+    # After intervention: validate scripts exist and are complete
     existing_scripts = sorted(scripts_dir.glob("[0-9]*.py"))
+    expected_scripts = ["00_clean.py", "01_main.py", "02_robustness.py", "03_output.py"]
+
     if not existing_scripts:
         print("  [error] No scripts found after intervention.")
         state["stages"]["stage4bc"] = {"status": "failed", "reason": "no_scripts"}
         save_state(project_dir, state)
         return state
+
+    # Check all 4 expected scripts exist
+    found = [s.name for s in existing_scripts]
+    missing_scripts = [s for s in expected_scripts if s not in found]
+    if missing_scripts:
+        print(f"  [warning] Missing scripts: {', '.join(missing_scripts)}")
+        print(f"  [warning] Found: {', '.join(found)}")
+        print(f"  Pipeline will continue with available scripts.")
+
+    # Verify scripts are non-empty (not just touched)
+    for script in existing_scripts:
+        size = script.stat().st_size
+        if size < 100:
+            print(f"  [warning] {script.name} is suspiciously small ({size} bytes) — may be incomplete")
 
     # Mark 4a as completed if strategy exists
     if (strategy_dir / "strategy_memo.md").exists():
@@ -450,13 +466,15 @@ def run(project_dir: Path, state: dict) -> dict:
         }
 
     # Validate scripts ran (check for output files)
+    clean_dir = project_dir / "data" / "clean"
     has_outputs = (
-        (project_dir / "data" / "clean" / "clean_data.csv").exists()
-        and (project_dir / "data" / "clean" / "qr_results.csv").exists()
+        clean_dir.exists()
+        and (clean_dir / "clean_data.csv").exists()
+        and len(list(clean_dir.glob("*.csv"))) >= 3
     )
 
     if has_outputs:
-        print("  [4] Scripts already executed — skipping re-execution.")
+        print("  [4] Scripts already executed -- skipping re-execution.")
         all_ok = True
         all_results = {s.name: {"ok": True} for s in existing_scripts}
         py_scripts = existing_scripts
@@ -464,6 +482,30 @@ def run(project_dir: Path, state: dict) -> dict:
         # Execute scripts
         print(f"\n  [4b] Executing {len(existing_scripts)} scripts...")
         py_scripts, all_results, all_ok = _execute_scripts(existing_scripts, scripts_dir)
+
+    # Post-execution output validation
+    if all_ok:
+        expected_outputs = ["clean_data.csv", "main_results.csv"]
+        for f in expected_outputs:
+            fpath = clean_dir / f
+            if not fpath.exists():
+                print(f"  [warning] Expected output missing: {f}")
+                print(f"  Scripts may have run but produced incomplete results.")
+            elif fpath.stat().st_size < 50:
+                print(f"  [warning] {f} is nearly empty ({fpath.stat().st_size} bytes)")
+
+        # Check that main_results.csv has actual data
+        results_path = clean_dir / "main_results.csv"
+        if results_path.exists():
+            try:
+                import pandas as _pd
+                _mr = _pd.read_csv(results_path)
+                if len(_mr) == 0:
+                    print("  [warning] main_results.csv has 0 rows -- scripts may have failed silently")
+                else:
+                    print(f"  [4] Output validation: main_results.csv has {len(_mr)} rows [OK]")
+            except Exception:
+                pass
 
     # Validation
     from ..validators.code_validator import validate as validate_code

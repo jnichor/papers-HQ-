@@ -1,0 +1,24 @@
+\begin{table}[htbp]
+\centering
+\caption{Difference-in-Differences: Effect of ChatGPT Ban on Software Development}
+\label{tab:main_did}
+\begin{tabular}{lc}
+\toprule
+ & log(Unique Pushers) \\
+\midrule
+Banned $\times$ Post & -0.3888 \\
+ & (0.2598) \\
+ & [p = 0.1346] \\
+\midrule
+Country FE & Yes \\
+Quarter FE & Yes \\
+Observations & 3586 \\
+$R^2$ (within) & 0.0119 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item Note: Standard errors clustered at the country level in parentheses.
+\item * $p<0.10$, ** $p<0.05$, *** $p<0.01$.
+\end{tablenotes}
+\end{table}

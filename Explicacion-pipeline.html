@@ -97,8 +97,9 @@
     <div class="stage"><span class="num" style="background:#F59E0B">2</span> <strong>Ideation</strong> — Generación y ranking de ideas de investigación</div>
     <div class="stage"><span class="num" style="background:#DC2626">2.5</span> <strong>Idea Selection</strong> — El usuario elige qué idea desarrollar</div>
     <div class="stage"><span class="num" style="background:#A855F7">3</span> <strong>Validation</strong> — Evaluación rigurosa de la idea (score &ge; 7)</div>
+    <div class="stage"><span class="num" style="background:#14B8A6">3.3</span> <strong>Quick Empirical Test</strong> — Verifica identificación en datos reales (NUEVO)</div>
     <div class="stage"><span class="num" style="background:#DC2626">3.5</span> <strong>Strategy Review</strong> — Aprobación humana de la estrategia</div>
-    <div class="stage"><span class="num" style="background:#14B8A6">3.7</span> <strong>Referee Preview</strong> — Checklist de requisitos pre-código</div>
+    <div class="stage"><span class="num" style="background:#14B8A6">3.7</span> <strong>Referee Preview</strong> — Checklist de requisitos + assumption audit</div>
     <div class="stage"><span class="num" style="background:#0EA5E9">4</span> <strong>Strategy &amp; Code</strong> — Intervención manual (Claude en conversación)</div>
     <div class="stage"><span class="num" style="background:#4F46E5">4.5</span> <strong>Data Audit</strong> — Sanity checks automáticos sobre datos limpios</div>
     <div class="stage"><span class="num" style="background:#22C55E">5</span> <strong>Writing</strong> — Redacción del paper (Claude en conversación)</div>
@@ -108,8 +109,8 @@
 
   <div class="meta">
     Documento técnico — Pipeline de investigación automatizada<br>
-    Análisis exclusivamente en Python &bull; 11 stages totales<br>
-    Última actualización: Marzo 2026
+    Análisis exclusivamente en Python &bull; 12 stages totales<br>
+    Última actualización: Abril 2026
   </div>
 </div>
 
@@ -158,14 +159,14 @@
 
   <h3>Flujo completo</h3>
   <div class="info-box" style="font-family: 'Cascadia Code', monospace; font-size: 9px; line-height: 1.7;">
-    --topic "Economics" [+ --data opcional] &rarr; <strong>Stage 1</strong> (Discovery: Path A o B) &rarr; 3 seed papers &rarr;<br>
+    --topic "Economics" [+ --data] o --path-c &rarr; <strong>Stage 1</strong> (Discovery: Path A, B, o C) &rarr; dataset + profile &rarr;<br>
     <strong>Stage 2</strong> (Ideation) &rarr; Top 3 ideas &rarr; <strong>Stage 2.5</strong> (Usuario elige) &rarr;<br>
-    <strong>Stage 3</strong> (Validation, score &ge; 7) &rarr; PROMPT.md &rarr; <strong>Stage 3.5</strong> (Usuario aprueba) &rarr;<br>
-    <strong>Stage 3.7</strong> (Referee Preview) &rarr; referee_checklist.md &rarr;<br>
+    <strong>Stage 3</strong> (Validation, score &ge; 7) &rarr; PROMPT.md &rarr; <strong>Stage 3.3</strong> (Quick Test en datos reales) &rarr;<br>
+    <strong>Stage 3.5</strong> (Usuario aprueba) &rarr; <strong>Stage 3.7</strong> (Referee Preview + assumption audit) &rarr; referee_checklist.md &rarr;<br>
     <strong>Stage 4</strong> (Strategy + Code, intervención manual Claude) &rarr; results_summary.md &rarr;<br>
     <strong>Stage 4.5</strong> (Data Audit automático) &rarr; data_audit.md &rarr;<br>
     <strong>Stage 5</strong> (Writing, intervención manual Claude) &rarr; main.tex &rarr; <strong>Stage 6</strong> (Peer Review, umbrales determinísticos) &rarr;<br>
-    Accepted paper &rarr; <strong>Stage 7</strong> (Submission, score &ge; 70) &rarr; <strong>Paper PDF final</strong>
+    Accepted paper &rarr; <strong>Stage 7</strong> (Submission, score &ge; 85) &rarr; <strong>Paper PDF final + feedback.pdf</strong>
   </div>
 
   <h3>Resumen del pipeline</h3>
@@ -176,6 +177,7 @@
     <tr><td>2</td><td>Ideation</td><td>Papers-HQ</td><td style="color:#16A34A">&#10003; Auto</td><td>—</td></tr>
     <tr><td style="font-weight:700">2.5</td><td style="font-weight:700">Idea Selection</td><td style="font-weight:700">Usuario</td><td style="color:#DC2626;font-weight:700">&#129489; Humano</td><td>—</td></tr>
     <tr><td>3</td><td>Validation</td><td>Papers-HQ</td><td style="color:#16A34A">&#10003; Auto (loop)</td><td>—</td></tr>
+    <tr style="background:#F0FDF4"><td>3.3</td><td>Quick Empirical Test</td><td>Papers-HQ</td><td style="color:#16A34A">&#10003; Auto (NEW)</td><td>Python</td></tr>
     <tr><td style="font-weight:700">3.5</td><td style="font-weight:700">Strategy Review</td><td style="font-weight:700">Usuario</td><td style="color:#DC2626;font-weight:700">&#129489; Humano</td><td>—</td></tr>
     <tr><td>3.7</td><td>Referee Preview</td><td>Papers-HQ</td><td style="color:#16A34A">&#10003; Auto</td><td>—</td></tr>
     <tr><td>4</td><td>Strategy &amp; Code</td><td>Clo-Author</td><td style="color:#D97706;font-weight:700">Manual intervention (Claude)</td><td>Python</td></tr>
@@ -226,7 +228,23 @@
     <strong>Ejemplo:</strong> Si el usuario sube un panel de empleo en México 2010-2020 con <code>--topic "Labor Economics"</code>, los 3 papers buscados serán sobre economía laboral en LATAM, con metodologías aplicables a datos de panel (DiD, event studies, etc.).
   </div>
 
-  <h3>Handoff a Stage 2 (ambos paths)</h3>
+  <h3>Path C: Data-First — <code>--path-c</code> (RECOMENDADO para scores 90+)</h3>
+  <p>Se activa con <code>--path-c</code>. Busca los mejores datasets disponibles mundialmente y sugiere topics basados en lo que la data puede soportar.</p>
+  <table>
+    <tr><th>#</th><th>Paso</th><th>Detalle</th></tr>
+    <tr><td>1</td><td>Búsqueda curada</td><td>Lista priorizada: <strong>RCTs primero</strong>, luego natural experiments, luego observacional. 12+ paquetes de replicación de top journals (QJE, REStat, etc.).</td></tr>
+    <tr><td>2</td><td>Búsqueda en APIs</td><td>Harvard Dataverse + Zenodo con queries de: "RCT replication", "natural experiment", "staggered rollout", "regression discontinuity".</td></tr>
+    <tr><td>3</td><td>Descarga y perfil</td><td>Descarga automática, perfila estructura, evalúa <strong>score ceiling</strong>. Solo datasets con ceiling &ge; 85 califican. RCTs reciben boost automático a ceiling 90+.</td></tr>
+    <tr><td>4</td><td>Sugerencia de topics</td><td>Claude sugiere 2 topics por dataset. Cada sugerencia incluye: identification_level (A/B/C), control_group, y score_potential. <strong>Nunca sugiere Level C.</strong></td></tr>
+    <tr><td>5</td><td>Selección del usuario</td><td>El usuario elige topic + dataset. El pipeline continúa con Path B (data ya descargada).</td></tr>
+  </table>
+  <p><strong>Output C:</strong> Dataset descargado + topic con identificación Level A/B + perfil completo.</p>
+
+  <div class="warning-box">
+    <strong>Priorización:</strong> Tier 1 (RCT/experiment, ceiling 90+) &gt; Tier 2 (natural experiment/staggered DiD, ceiling 85+) &gt; Tier 3 (observational panel, ceiling 75+). Los datasets se prueban en orden de prioridad — RCTs primero.
+  </div>
+
+  <h3>Handoff a Stage 2 (todos los paths)</h3>
   <div class="handoff">&rarr; 3 seed papers (título, autores, DOI, resumen) + contexto del dataset &rarr; research-junshi</div>
   <p><strong>Modo:</strong> Completamente automático. No requiere intervención del usuario.</p>
 
@@ -255,7 +273,7 @@
     <tr><td>2</td><td>Búsqueda en arXiv</td><td>Papers publicados en las últimas 24 horas relacionados con los temas de los seeds.</td></tr>
     <tr><td>3</td><td>Búsqueda en target venues</td><td>Exploración de journals específicos del campo para identificar tendencias actuales.</td></tr>
     <tr><td>4</td><td>Generación de ideas</td><td>Se generan entre 8 y 10 ideas de investigación originales.</td></tr>
-    <tr><td>5</td><td>Scoring compuesto</td><td>Cada idea recibe un score: <strong>Novelty &times; 0.4 + Feasibility &times; 0.3 + Impact &times; 0.3</strong></td></tr>
+    <tr><td>5</td><td>Scoring compuesto</td><td>Cada idea recibe un score: <strong>N &times; 0.2 + F &times; 0.2 + I &times; 0.2 + <strong>ID &times; 0.4</strong> (Identification-first)</strong></td></tr>
     <tr><td>6</td><td>Selección top 3</td><td>Las 3 mejores ideas se seleccionan para evaluación en Stage 3.</td></tr>
   </table>
 
@@ -296,7 +314,7 @@
     <tr><th>Elemento</th><th>Detalle</th></tr>
     <tr><td>Research question</td><td>Formulación precisa de la pregunta de investigación</td></tr>
     <tr><td>Metodología propuesta</td><td>Estrategia de identificación causal sugerida (DiD, RDD, IV, etc.)</td></tr>
-    <tr><td>Score compuesto</td><td>Novelty &times; 0.4 + Feasibility &times; 0.3 + Impact &times; 0.3</td></tr>
+    <tr><td>Score compuesto</td><td>N &times; 0.2 + F &times; 0.2 + I &times; 0.2 + <strong>ID &times; 0.4</strong> (Identification-first)</td></tr>
     <tr><td>Justificación del ranking</td><td>Por qué esta idea rankea donde rankea vs. las otras</td></tr>
     <tr><td>Datos requeridos</td><td>Datasets específicos necesarios y su disponibilidad</td></tr>
     <tr><td>Conexión con literatura</td><td>Papers más cercanos y cómo se diferencia la idea</td></tr>
@@ -380,6 +398,57 @@
 </div>
 
 <!-- ══════════════════════════════════════════ -->
+<!-- PAGE 6b: STAGE 3.3 — QUICK EMPIRICAL TEST (NEW) -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page">
+  <span class="section-badge" style="background:#DCFCE7;color:#166534">PAPERS-HQ (NUEVO)</span>
+  <h2>4b. Stage 3.3: Quick Empirical Test</h2>
+
+  <p><strong>Objetivo:</strong> Verificar que la estrategia de identificación propuesta funciona en los datos reales ANTES de invertir tiempo en generación de código y escritura del paper.</p>
+
+  <h3>Input</h3>
+  <p>Dataset del usuario + idea seleccionada de Stage 2.5.</p>
+
+  <h3>Proceso — 5 tests automáticos</h3>
+  <table>
+    <tr><th>#</th><th>Test</th><th>Qué verifica</th><th>Si falla</th></tr>
+    <tr><td>0</td><td><strong>Estimator availability</strong></td><td>Testa pyfixest, linearmodels, csdid en los datos reales. Registra cuáles funcionan y cuáles no.</td><td>Marca estimador como BROKEN — Stage 4 no lo usará</td></tr>
+    <tr><td>1</td><td><strong>Basic DiD</strong></td><td>Regresión rápida: outcome ~ treat + entity_FE + time_FE, clustered SEs</td><td>Puede indicar efecto nulo o datos inadecuados</td></tr>
+    <tr><td>2</td><td><strong>Permutation test</strong></td><td>200 reshuffles del tratamiento. ¿El efecto real está en la cola?</td><td>Si p > 0.1, la identificación es frágil</td></tr>
+    <tr><td>3</td><td><strong>Entity trends</strong></td><td>¿El efecto sobrevive tendencias lineales por entidad?</td><td>Si desaparece, es pre-tendencia, no tratamiento</td></tr>
+  </table>
+
+  <h3>Decisión del usuario</h3>
+  <table>
+    <tr><th>Resultado</th><th>Acción</th></tr>
+    <tr><td style="color:#16A34A;font-weight:700">PASS</td><td>Todos los tests pasan → proceder con confianza</td></tr>
+    <tr><td style="color:#D97706;font-weight:700">WARN</td><td>Algunos tests pasan con flags → proceder con precaución (-5 score)</td></tr>
+    <tr><td style="color:#DC2626;font-weight:700">FAIL</td><td>Permutation o trends eliminan el efecto → usuario elige: (1) Proceder con ceiling ~70, (2) Elegir otra idea (→ Stage 2.5), (3) Proveer nuevos datos</td></tr>
+  </table>
+
+  <div class="warning-box">
+    <strong>¿Por qué es crítico?</strong> En el proyecto oil-democracy, Stage 3.3 hubiera detectado que el permutation p = 0.588 y country trends eliminaban el efecto ANTES de generar 4 scripts y un paper de 31 páginas, ahorrando horas de trabajo.
+  </div>
+
+  <h3>Output</h3>
+  <div class="success-box">
+    <code>pipeline_state.json</code> actualizado con:<br>
+    <strong>available_estimators</strong>: qué paquetes funcionan en estos datos<br>
+    <strong>estimator_warnings</strong>: qué falló y por qué<br>
+    <strong>quick_test_results</strong>: ATT, permutation p, trends p
+  </div>
+
+  <h3>Handoff a Stage 3.5</h3>
+  <div class="handoff">&rarr; Estimadores verificados + test results → presentados al usuario junto con la estrategia</div>
+  <p><strong>Modo:</strong> Completamente automático (~30 segundos).</p>
+
+  <div class="footer">
+    <span>Papers-HQ + Clo-Author — Explicación del Pipeline</span>
+    <span>Página 6b</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
 <!-- PAGE 7: STAGE 3.5 — STRATEGY REVIEW       -->
 <!-- ══════════════════════════════════════════ -->
 <div class="page">
@@ -437,7 +506,7 @@
   <h3>Input</h3>
   <p><code>approved_strategy.md</code> de Stage 3.5 — la estrategia de identificación validada por el usuario.</p>
 
-  <h3>Proceso — Dos referees simulados</h3>
+  <h3>Proceso — Dos referees simulados + assumption audit</h3>
   <div class="two-col">
     <div>
       <h4>Domain Referee</h4>
@@ -459,6 +528,19 @@
         <li>Pitfalls y errores comunes a evitar</li>
       </ul>
     </div>
+  </div>
+
+  <div class="warning-box">
+    <strong>Assumption Audit por método (NUEVO):</strong> Checklists específicos según el diseño causal:<br>
+    <strong>DiD:</strong> parallel trends, no-anticipation, composición estable, HonestDiD sensitivity<br>
+    <strong>IV:</strong> first-stage F &gt; 10, exclusión restriction, monotonicity, Anderson-Rubin CIs<br>
+    <strong>RDD:</strong> McCrary density test, bandwidth sensitivity, donut-hole, continuidad de covariables<br>
+    <strong>RCT:</strong> balance table + joint F-test, permutation inference, attrition, Lee bounds, Cohen's d<br>
+    <strong>SC:</strong> pre-treatment RMSPE, predictor balance, donor pool justification, permutation inference
+  </div>
+
+  <div class="info-box">
+    <strong>Filtro de estimadores:</strong> El checklist se cruza contra los estimadores verificados en Stage 3.3. Si un estimador está marcado como BROKEN, los requisitos que lo necesitan se marcan como [DOWNGRADED] y no se prometen en Stage 4.
   </div>
 
   <h3>Output</h3>
@@ -567,10 +649,10 @@
   <h3>Proceso — 4 checks automáticos</h3>
   <table>
     <tr><th>#</th><th>Check</th><th>Detalle</th><th>Criterio de flag</th></tr>
-    <tr><td>1</td><td>Insurance distribution</td><td>Distribución de seguro vs. benchmarks nacionales</td><td>SIS fuera de 15-60%, EsSalud fuera de 15-45% &rarr; flag de variables mal codificadas</td></tr>
-    <tr><td>2</td><td>Cell sizes</td><td>Tamaños de celda por grupo de interacción (quintil &times; seguro)</td><td>N &lt; 30 en alguna celda &rarr; flag de poder estadístico insuficiente</td></tr>
-    <tr><td>3</td><td>Outcome distribution</td><td>Distribución del outcome: zero rate, skewness, riesgo de degeneración QR</td><td>Zero rate alto, skewness extrema, o riesgo de degeneración en regresión cuantílica</td></tr>
-    <tr><td>4</td><td>Survey weight extremes</td><td>Pesos muestrales extremos que distorsionan la inferencia</td><td>Pesos con ratio max/min extremo o distribución muy sesgada</td></tr>
+    <tr><td>1</td><td>Distribution checks</td><td>Distribución de variables clave vs. rangos esperados</td><td>Variables fuera de rangos plausibles &rarr; flag de posible error de codificación</td></tr>
+    <tr><td>2</td><td>Cell sizes</td><td>Tamaños de celda por grupo de interacción (tratamiento &times; subgrupo)</td><td>N &lt; 30 en alguna celda &rarr; flag de poder estadístico insuficiente</td></tr>
+    <tr><td>3</td><td>Outcome distribution</td><td>Distribución del outcome: zero rate, skewness, outliers extremos</td><td>Zero rate alto, skewness extrema, o outliers &gt; 3 SD de la media</td></tr>
+    <tr><td>4</td><td>Outlier detection</td><td>Observaciones con valores extremos que distorsionan la estimación</td><td>Valores &gt; 3 SD, ratio max/min extremo, o distribución muy sesgada</td></tr>
   </table>
 
   <h3>Output</h3>
@@ -665,7 +747,7 @@
   <h3>Output</h3>
   <div class="success-box">
     <code>paper/main.tex</code> — Manuscrito principal (source of truth)<br>
-    <code>paper/sections/*.tex</code> — Archivos por sección<br>
+    <code>paper/main.tex</code> — Archivo único con todas las secciones (ya no usa sections/)<br>
     <code>Bibliography_base.bib</code> — Bibliografía centralizada
   </div>
 
@@ -758,11 +840,12 @@
   <p><strong>Agentes:</strong> orchestrator + verifier</p>
   <table>
     <tr><th>#</th><th>Paso</th><th>Detalle</th></tr>
-    <tr><td>1</td><td>Journal targeting</td><td>Match del paper contra 30 perfiles de journals (AER, Econometrica, JPE, QJE, REStud + field). Se recomienda el mejor fit.</td></tr>
+    <tr><td>1</td><td>Journal targeting</td><td>Lookup table instantáneo basado en score (no usa Claude). Recomienda journal primario + backup.</td></tr>
     <tr><td>2</td><td>Paquete de replicación</td><td>Auditoría AEA Data Editor compliant: todos los scripts Python corren sin error, datos documentados con codebook, README.</td></tr>
     <tr><td>3</td><td>Verificación de scripts</td><td>Todos los scripts en <code>scripts/python/</code> se ejecutan end-to-end sin errores.</td></tr>
     <tr><td>4</td><td>Documentación</td><td>Codebook completo, fuentes documentadas, requisitos computacionales.</td></tr>
-    <tr><td>5</td><td>Final quality gate</td><td>Score agregado &ge; 70, todos los componentes &ge; 60.</td></tr>
+    <tr><td>5</td><td>Final quality gate</td><td>Score agregado &ge; 85, todos los componentes &ge; 70. Scores de code/paper recalculados dinámicamente.</td></tr>
+    <tr><td>6</td><td>Feedback PDF</td><td>Diagnóstico visual: radar chart, robustness table, referee issues, recomendaciones priorizadas.</td></tr>
     <tr><td>6</td><td>Compilación final</td><td>PDF final compilado con pdflatex (3 pasadas + bibtex).</td></tr>
   </table>
 
@@ -774,7 +857,8 @@
   <div class="success-box">
     <code>paper/main.pdf</code> — Paper final submission-ready<br>
     <code>paper/replication/</code> — Paquete de replicación AEA-compliant<br>
-    <code>journal_targeting.md</code> — Recomendación de journal con justificación
+    <code>journal_targeting.md</code> — Recomendación de journal con justificación<br>
+    <code>feedback.pdf</code> — Reporte visual con radar chart, robustness table, y recomendaciones
   </div>
 
   <hr class="sep" style="border-top: 2px solid #3B82F6; margin: 12px 0;">
@@ -797,12 +881,12 @@
       <h3>Thresholds</h3>
       <table>
         <tr><th>Gate</th><th>Score</th><th>Requisito</th></tr>
-        <tr><td>CRITIC_GATE</td><td>&ge; 65</td><td>—</td></tr>
+        <tr><td>CRITIC_GATE</td><td>&ge; 70</td><td>—</td></tr>
         <tr><td>ACCEPT_GATE</td><td>&ge; 75</td><td>No fatal</td></tr>
         <tr><td>MINOR_REV_GATE</td><td>&ge; 60</td><td>—</td></tr>
         <tr><td>REJECT_FLOOR</td><td>&lt; 40</td><td>+ fatal</td></tr>
-        <tr><td style="font-weight:700">SUBMISSION_GATE</td><td style="font-weight:700">&ge; 70</td><td style="font-weight:700">Todos &ge; 60</td></tr>
-        <tr><td>COMPONENT_MIN</td><td>&ge; 60</td><td>—</td></tr>
+        <tr><td style="font-weight:700">SUBMISSION_GATE</td><td style="font-weight:700">&ge; 85</td><td style="font-weight:700">Todos &ge; 70</td></tr>
+        <tr><td>COMPONENT_MIN</td><td>&ge; 70</td><td>—</td></tr>
       </table>
     </div>
     <div>
@@ -818,7 +902,7 @@
   </div>
 
   <div class="info-box" style="margin-top: 10px;">
-    <strong>11 stages, 2 checkpoints humanos (qué investigar + cómo identificarlo), 2 stages de intervención manual (código + escritura), el resto automático.</strong> De un tema de investigación a un paper submission-ready con paquete de replicación AEA-compliant. Todo el análisis econométrico en Python.
+    <strong>12 stages, 2 checkpoints humanos (qué investigar + cómo identificarlo), 2 stages de intervención manual (código + escritura), el resto automático.</strong> Incluye: Stage 3.3 (Quick Empirical Test), identification-first scoring (ID×0.4), assumption audit por método, outcome validation, falsification planning, sanity checks, writing standards, feedback.pdf visual, y scores dinámicos. Gate: aggregate &ge; 85, cada componente &ge; 70. Todo el análisis econométrico en Python.
   </div>
 
   <div class="footer">
